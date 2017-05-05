@@ -1,9 +1,9 @@
-package Classes;
-
 import javafx.beans.value.ObservableValue;
 
-public class Song implements interfaces.Song{
-
+/**
+ * Created by nilsmilewski on 05.05.17.
+ */
+public class Song implements interfaces.Song {
     private String album, interpret, path, title;
     private long id;
 
@@ -70,5 +70,29 @@ public class Song implements interfaces.Song{
     @Override
     public ObservableValue<String> interpretProperty() {
         return null;
+    }
+
+
+
+
+
+    @Override
+    public String toString(){
+        return "Title: " + getTitle()
+                + " Album: " + getAlbum()
+                + " Interpret: " + getInterpret()
+                + " ID: " + getId()
+                + " Path: " + getPath() ;
+    }
+
+    @Override
+    public Song clone(){
+        Song copySong = new Song();
+        copySong.setAlbum(getAlbum());
+        copySong.setId(getId());
+        copySong.setInterpret(getInterpret());
+        copySong.setPath(getPath());
+        copySong.setTitle(getTitle());
+        return copySong;
     }
 }
