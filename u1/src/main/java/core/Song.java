@@ -1,3 +1,5 @@
+package core;
+
 import javafx.beans.value.ObservableValue;
 
 /**
@@ -6,6 +8,22 @@ import javafx.beans.value.ObservableValue;
 public class Song implements interfaces.Song {
     private String album, interpret, path, title;
     private long id;
+
+    /**
+     * DEBUG USAGE
+     * @param album
+     * @param interpret
+     * @param path
+     * @param title
+     * @param id
+     */
+    public Song(String album, String interpret, String path, String title, long id){
+        this.album = album;
+        this.interpret = interpret;
+        this.path = path;
+        this.title = title;
+        this.id = id;
+    }
 
     @Override
     public String getAlbum() {
@@ -57,6 +75,8 @@ public class Song implements interfaces.Song {
         this.id = id;
     }
 
+
+    // TODO Implement following methods
     @Override
     public ObservableValue<String> pathProperty() {
         return null;
@@ -87,12 +107,17 @@ public class Song implements interfaces.Song {
 
     @Override
     public Song clone(){
-        Song copySong = new Song();
+        Song copySong = new Song(null,null,null,null,0);
         copySong.setAlbum(getAlbum());
         copySong.setId(getId());
         copySong.setInterpret(getInterpret());
         copySong.setPath(getPath());
         copySong.setTitle(getTitle());
         return copySong;
+    }
+
+    @Override
+    public boolean equals(Object another){
+        return ((Song)another).getId() == this.getId();
     }
 }
