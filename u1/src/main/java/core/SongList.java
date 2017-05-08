@@ -88,17 +88,28 @@ public class SongList extends ModifiableObservableListBase<interfaces.Song> impl
         return null;
     }
 
+    /**
+     * Gibt ein Song anhand dex Index zurück
+     * @param index
+     * @return
+     */
     @Override
     public interfaces.Song get(int index) {
-        return null;
-    }
-
-    @Override
-    public int size() {
-        return 0;
+        return songs.get(index);
     }
 
     /**
+     * See sizeOfList
+     * @return
+     */
+    @Deprecated
+    @Override
+    public int size() {
+        return songs.size();
+    }
+
+    /**
+     * See addSong
      * Adds the {@code element} to the List at the position of {@code index}.
      * <p>
      * <p>For the description of possible exceptions, please refer to the documentation
@@ -117,6 +128,7 @@ public class SongList extends ModifiableObservableListBase<interfaces.Song> impl
         songs.add(index, (interfaces.Song)element);
     }
 
+
     /**
      * Sets the {@code element} in the List at the position of {@code index}.
      * <p>
@@ -133,9 +145,7 @@ public class SongList extends ModifiableObservableListBase<interfaces.Song> impl
      *                                   (<tt>index &lt; 0 || index &gt;= size()</tt>)
      */
     @Override
-    protected interfaces.Song doSet(int index, interfaces.Song element) {
-        return songs.set(index, (interfaces.Song)element);
-    }
+    protected interfaces.Song doSet(int index, interfaces.Song element) {  return songs.set(index, (interfaces.Song)element); }
 
     /**
      * Removes the element at position of {@code index}.
