@@ -9,7 +9,7 @@ import java.util.ArrayList;
 /**
  * Created by nilsmilewski on 05.05.17.
  */
-public class SongList extends ModifiableObservableListBase implements interfaces.SongList  {
+public class SongList extends ModifiableObservableListBase<interfaces.Song> implements interfaces.SongList  {
 
     ArrayList<interfaces.Song> songs = new ArrayList<>();
 
@@ -84,12 +84,12 @@ public class SongList extends ModifiableObservableListBase implements interfaces
     public interfaces.Song findSongByPath(String name) throws RemoteException {
 
         for(interfaces.Song s : songs)
-            if(s.getTitle().equals("name")) return s;
+            if(s.getPath().equals(name)) return s;
         return null;
     }
 
     @Override
-    public Object get(int index) {
+    public interfaces.Song get(int index) {
         return null;
     }
 
@@ -113,7 +113,7 @@ public class SongList extends ModifiableObservableListBase implements interfaces
      *                                   (<tt>index &lt; 0 || index &gt; size()</tt>)
      */
     @Override
-    protected void doAdd(int index, Object element) {
+    protected void doAdd(int index, interfaces.Song element) {
         songs.add(index, (interfaces.Song)element);
     }
 
@@ -133,7 +133,7 @@ public class SongList extends ModifiableObservableListBase implements interfaces
      *                                   (<tt>index &lt; 0 || index &gt;= size()</tt>)
      */
     @Override
-    protected Object doSet(int index, Object element) {
+    protected interfaces.Song doSet(int index, interfaces.Song element) {
         return songs.set(index, (interfaces.Song)element);
     }
 
@@ -146,7 +146,7 @@ public class SongList extends ModifiableObservableListBase implements interfaces
      *                                   (<tt>index &lt; 0 || index &gt;= size()</tt>)
      */
     @Override
-    protected Object doRemove(int index) {
+    protected interfaces.Song doRemove(int index) {
         return songs.remove(index);
     }
 }
