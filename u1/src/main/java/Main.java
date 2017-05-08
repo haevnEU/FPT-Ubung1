@@ -16,13 +16,14 @@ public class Main extends Application {
         // hier die Daten verwalten
         Model model = new Model();
 
+        Controller controller = new Controller();
+
         View view = new View();
 
         /////Verschiedene Lösungsmöglichkeiten für den Controller (nur eine wird benötigt) /////
 
         //Lösung mit Lambda-Ausdruck Controller
-        //ControllerWithLambda controllerWithLambda = new ControllerWithLambda();
-        //controllerWithLambda.link(model, view);
+        controller.link(model, view);
 
         //Lösung ohne Lambda-Ausdruck im Controller
         //ControllerWithoutLambda controllerWithoutLamdba = new ControllerWithoutLambda();
