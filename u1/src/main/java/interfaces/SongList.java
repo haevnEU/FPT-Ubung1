@@ -5,7 +5,10 @@ import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 
-public interface SongList extends Remote, Serializable{//, Iterable<Classes.Song>{
+/**
+ * This interface provides basic information for every songlist
+ */
+public interface SongList extends Remote, Serializable, Iterable<Song>{
     boolean addSong(Song s) throws RemoteException;
     boolean deleteSong(Song s) throws RemoteException;
     void setList(ArrayList<Song> s) throws RemoteException;
