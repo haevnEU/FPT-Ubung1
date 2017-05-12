@@ -1,3 +1,4 @@
+import core.Model;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
@@ -11,34 +12,24 @@ public class Main extends Application {
         Application.launch(args);
     }
 
+    private static Stage stage;
+    public static Stage getPrimaryStage(){ return stage;}
+
     @Override
     public void start(Stage primaryStage) throws Exception {
-        // hier die Daten verwalten
+
         Model model = new Model();
 
-        Controller controller = new Controller();
+        Controller mainController = new Controller();
+        View mainView = new View();
+        mainController.link(model, mainView);
 
-        View view = new View();
-
-        /////Verschiedene Lösungsmöglichkeiten für den Controller (nur eine wird benötigt) /////
-
-        //Lösung mit Lambda-Ausdruck Controller
-        controller.link(model, view);
-
-        //Lösung ohne Lambda-Ausdruck im Controller
-        //ControllerWithoutLambda controllerWithoutLamdba = new ControllerWithoutLambda();
-        //controllerWithoutLamdba.link(model, view);
-
-        //Lösung durch die Implemementierung des Interfaces durch den Controller
-        //ControllerImplementsInterface controllerImplementsInterface = new ControllerImplementsInterface();
-        //controllerImplementsInterface.link(model, view);
-
-        // JavaFX new
-        Scene scene = new Scene(view);
-
+        Scene scene = new Scene(mainView);
         primaryStage.setScene(scene);
         primaryStage.setMinWidth(500);
         primaryStage.setMinHeight(300);
         primaryStage.show();
+        stage = primaryStage;
+
     }
 }

@@ -11,18 +11,31 @@ import java.io.StringWriter;
 import java.text.DateFormat;
 import java.util.GregorianCalendar;
 
-/**
- * Created by nilsmilewski on 08.05.17.
- */
 public class util {
+
+
     // http://code.makery.ch/blog/javafx-dialogs-official/
-     public static void showExceptionMessage(String title, String header, String stackTrace) {
+     public static void showExceptionMessage(Exception e) {
 
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle(title);
-        alert.setHeaderText(header);
+         String title, header, stackTrace;
 
-        alert.setContentText("Fatal InvalidFileException occurred\nPlease submit the following StackTrace at GitHub");
+         StringWriter sw = new StringWriter();
+         PrintWriter pw = new PrintWriter(sw);
+         e.printStackTrace(pw);
+
+         title = "Fatal Error occurred";
+
+         header = e.getMessage();
+
+         stackTrace = sw.toString();
+
+
+
+         Alert alert = new Alert(Alert.AlertType.ERROR);
+         alert.setTitle(title);
+         alert.setHeaderText(header);
+
+         alert.setContentText("Fatal exception occurred\nPlease submit the following StackTrace at GitHub");
 
         // Create expandable Exception.
 
@@ -30,7 +43,7 @@ public class util {
 
 
 
-       TextArea textArea = new TextArea("Time: " +  getDateWithTime() + " \n\nStackTrace\n" +stackTrace);
+        TextArea textArea = new TextArea("Time: " +  getDateWithTime() + " \n\nStackTrace\n" +stackTrace);
         textArea.setEditable(false);
         textArea.setWrapText(true);
 
@@ -44,7 +57,7 @@ public class util {
         expContent.add(label, 0, 0);
         expContent.add(textArea, 0, 1);
 
-// Set expandable Exception into the dialog pane.
+        // Set expandable Exception into the dialog pane.
         alert.getDialogPane().setExpandableContent(expContent);
 
         alert.showAndWait();
@@ -56,4 +69,7 @@ public class util {
 
         return df.format(now.getTime());
     }
+
+
+
 }

@@ -1,33 +1,27 @@
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.*;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyCodeCombination;
-import javafx.scene.input.KeyCombination;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
+import javafx.scene.input.*;
+import javafx.scene.layout.*;
 
-/**
- * Created by nilsmilewski on 05.05.17.
- */
 public class View extends BorderPane{
+
+
 
     private boolean playPause = true;
 
+    // UI Stuff
     private ListView lvPlayList, lvQueue;
 
-
-    private GridPane bottomControl;
-    private Label lbTitle, lbRemain;
+    private VBox bottomControl;
+    private Label lbRemain;
     private ToggleButton btPlayPause;
-    private ProgressBar pbProgress;
+    private Slider sliderProgress;
 
     private MenuBar menuBar;
     private Menu menuGeneral, menuHelp;
-    private MenuItem menuItemOpenDetails, menuItemOpenFile, menuItemClose, menuItemAbout;
+    private MenuItem menuItemOpenDetails, menuItemOpenFile, menuItemAbout;
 
-    // Unsichtbare
-    private MenuItem menuItemPlayPause;
 
     public View(){
 
@@ -48,17 +42,17 @@ public class View extends BorderPane{
     }
 
     private void prepareBottomControl(){
-        lbTitle = new Label("Hier steht der titel");
         lbRemain = new Label("Zeit");
         btPlayPause = new ToggleButton("Play");
 
-        pbProgress = new ProgressBar();
 
-        bottomControl = new GridPane();
-        bottomControl.add(lbTitle,0,0);
-        bottomControl.add(lbRemain,2,0);
-        bottomControl.add(pbProgress,1,0);
-        bottomControl.add(btPlayPause,3,0);
+        sliderProgress = new Slider();
+
+        bottomControl = new VBox();
+
+        bottomControl.getChildren().add(lbRemain);//,2,0);
+        bottomControl.getChildren().add(sliderProgress);//,1,0);
+        bottomControl.getChildren().add(btPlayPause);//,3,0);
 
     }
 
@@ -71,10 +65,8 @@ public class View extends BorderPane{
 
         menuItemOpenFile = new MenuItem("Open File");
         menuItemOpenFile.setAccelerator(new KeyCodeCombination(KeyCode.L, KeyCombination.ALT_DOWN));
-        menuItemClose = new MenuItem("Close Application");
-        menuItemClose.setAccelerator(new KeyCodeCombination(KeyCode.F4, KeyCombination.ALT_DOWN));
         menuGeneral = new Menu("General");
-        menuGeneral.getItems().addAll(menuItemOpenFile, menuItemOpenDetails, menuItemClose);
+        menuGeneral.getItems().addAll(menuItemOpenFile, menuItemOpenDetails);
 
 
         menuItemAbout = new MenuItem("About");
@@ -85,36 +77,24 @@ public class View extends BorderPane{
 
         menuBar.getMenus().addAll(menuGeneral, menuHelp);
 
-
-
-        // Unsichtbare Menus
-        menuItemPlayPause = new MenuItem();
-        menuItemPlayPause.setAccelerator(new KeyCodeCombination(KeyCode.SPACE));
-
     }
 
+    public void addMenuItemDetailEventHandler(EventHandler<ActionEvent> eventHandler ){
+        menuItemOpenDetails.addEventHandler(ActionEvent.ACTION, eventHandler);
+    }
 
     public void addButtonPlayPauseEventHandler(EventHandler<ActionEvent> eventHandler) {
         btPlayPause.addEventHandler(ActionEvent.ACTION, eventHandler);
     }
 
-    public void addMenutItemLoadEventHandler(EventHandler<ActionEvent> eventHandler) {
+    public void addMenuItemLoadEventHandler(EventHandler<ActionEvent> eventHandler) {
         menuItemOpenFile.addEventHandler(ActionEvent.ACTION, eventHandler);
     }
 
-    public void addMenutItemCloseEventHandler(EventHandler<ActionEvent> eventHandler) {
-        menuItemClose.addEventHandler(ActionEvent.ACTION, eventHandler);
-    }
-
-    public void addmenuItemAboutEventHandler(EventHandler<ActionEvent> eventHandler) {
+    public void addMenuItemAboutEventHandler(EventHandler<ActionEvent> eventHandler) {
         menuItemAbout.addEventHandler(ActionEvent.ACTION, eventHandler);
     }
 
-    // Unsichtbare Menu
-
-    public void addmenuItemPlayPauseEventHandler(EventHandler<ActionEvent> eventHandler) {
-        menuItemPlayPause.addEventHandler(ActionEvent.ACTION, eventHandler);
-    }
 
     public void togglePlayPause() {
         if(playPause) btPlayPause.setText("Pause");

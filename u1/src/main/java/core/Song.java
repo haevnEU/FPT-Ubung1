@@ -3,10 +3,8 @@ package core;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableValue;
 
-/**
- * Created by nilsmilewski on 05.05.17.
- */
 public class Song implements interfaces.Song {
+
     private SimpleStringProperty album, interpret, path, title;
     private long id;
 

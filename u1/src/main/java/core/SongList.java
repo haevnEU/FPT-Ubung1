@@ -1,7 +1,10 @@
 package core;
 
 import interfaces.*;
+import javafx.collections.FXCollections;
 import javafx.collections.ModifiableObservableListBase;
+import javafx.collections.ObservableList;
+import javafx.collections.ObservableListBase;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -11,8 +14,12 @@ import java.util.ArrayList;
  */
 public class SongList extends ModifiableObservableListBase<interfaces.Song> implements interfaces.SongList  {
 
-    ArrayList<interfaces.Song> songs = new ArrayList<>();
+    ArrayList<interfaces.Song> songs2 = new ArrayList<>();
+    ObservableList<interfaces.Song> songs;
 
+    public SongList() {
+        songs = FXCollections.observableArrayList();
+    }
     /**
      * Fügt ein core.Song in die Songlist
      * @param s hinzuzufügender core.Song
@@ -42,7 +49,7 @@ public class SongList extends ModifiableObservableListBase<interfaces.Song> impl
      */
     @Override
     public void setList(ArrayList<interfaces.Song> s) throws RemoteException {
-        this.songs = s;
+        this.songs2 = s;
     }
 
     /**
@@ -52,7 +59,7 @@ public class SongList extends ModifiableObservableListBase<interfaces.Song> impl
      */
     @Override
     public ArrayList<interfaces.Song> getList() throws RemoteException {
-        return songs;
+        return songs2;
     }
 
     /**
@@ -125,7 +132,7 @@ public class SongList extends ModifiableObservableListBase<interfaces.Song> impl
      */
     @Override
     protected void doAdd(int index, interfaces.Song element) {
-        songs.add(index, (interfaces.Song)element);
+        songs.add(index, element);
     }
 
 
@@ -145,7 +152,7 @@ public class SongList extends ModifiableObservableListBase<interfaces.Song> impl
      *                                   (<tt>index &lt; 0 || index &gt;= size()</tt>)
      */
     @Override
-    protected interfaces.Song doSet(int index, interfaces.Song element) {  return songs.set(index, (interfaces.Song)element); }
+    protected interfaces.Song doSet(int index, interfaces.Song element) {  return songs.set(index, element); }
 
     /**
      * Removes the element at position of {@code index}.
