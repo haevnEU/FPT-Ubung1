@@ -1,14 +1,18 @@
 package detailView;
 
-public class Controller {
+public class DetailController {
     private core.Model model;
     private DetailView view;
 
 
+    /**
+     * This method links the application model with the detailview
+     * @param m
+     * @param v
+     */
     public void link(core.Model m, DetailView v){
 
         this.model = m;
-
         this.view = v;
 
 //        view.tbInterpret.setText(model.getQueue().get(0).getInterpret());
@@ -16,19 +20,22 @@ public class Controller {
 //        view.tbAlbum.setText(model.getQueue().get(0).getAlbum());
 //        view.lbBase.setText(view.lbBase.getText() + model.getQueue().get(0).getId());
 
-        this.view.addButtonCommitEventHandler(e -> btControllerEventHandler(e));
+        // Apply click event
+        this.view.addButtonCommitEventHandler(e -> buttonCommitClickEventHandler(e));
     }
 
 
-    public void btControllerEventHandler (javafx.event.ActionEvent e){
+    // This method allows buttonCommit event handling !INTERNAL USAGE!
+    private void buttonCommitClickEventHandler(javafx.event.ActionEvent e){
 
-         //chance Model
+//        TODO Implement functionality
+
 //        model.getQueue().get(0).setAlbum(view.tbAlbum.getText());
 //        model.getQueue().get(0).setInterpret(view.tbInterpret.getText());
 //        model.getQueue().get(0).setTitle(view.tbTitle.getText());
-//        // cose Detail window
-//        Stage stage = (Stage) view.btCommit.getScene().getWindow();
-//        stage.close();
+
+        // close Detail window
+        view.closeView();
     }
 
 }

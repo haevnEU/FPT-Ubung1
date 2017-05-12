@@ -2,6 +2,10 @@ package interfaces;
 
 import java.io.IOException;
 
+/**
+ * This interface ist used uhm yeah idk wtf is going?!
+ * #hordeFTW #mercyForYou
+ */
 public interface SerializableStrategy {
 
     /*

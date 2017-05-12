@@ -1,5 +1,6 @@
 import core.Model;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
@@ -12,13 +13,14 @@ public class Main extends Application {
         Application.launch(args);
     }
 
+    // following lines are used to access primaryStage inside other classes
     private static Stage stage;
     public static Stage getPrimaryStage(){ return stage;}
 
     @Override
     public void start(Stage primaryStage) throws Exception {
 
-        Model model = new Model();
+        Model model = Model.getInstance();
 
         Controller mainController = new Controller();
         View mainView = new View();
@@ -28,6 +30,7 @@ public class Main extends Application {
         primaryStage.setScene(scene);
         primaryStage.setMinWidth(500);
         primaryStage.setMinHeight(300);
+        primaryStage.setOnCloseRequest(e -> Platform.exit());
         primaryStage.show();
         stage = primaryStage;
 

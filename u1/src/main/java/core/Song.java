@@ -3,6 +3,11 @@ package core;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableValue;
 
+// TODO Rewrite comments
+
+/**
+ * This class provides song information
+ */
 public class Song implements interfaces.Song {
 
     private SimpleStringProperty album, interpret, path, title;
@@ -10,8 +15,7 @@ public class Song implements interfaces.Song {
 
 
     /**
-     *
-     * @return Albumname
+     * @return Name of album
      */
     @Override
     public String getAlbum() {
@@ -19,7 +23,7 @@ public class Song implements interfaces.Song {
     }
 
     /**
-     * Setzt den Namen des Albums
+     * Set the name of the song album
      * @param album
      */
     @Override
@@ -27,7 +31,7 @@ public class Song implements interfaces.Song {
 
     /**
      *
-     * @return Interpetenname
+     * @return Name of interpret
      */
     @Override
     public String getInterpret() {
@@ -35,7 +39,7 @@ public class Song implements interfaces.Song {
     }
 
     /**
-     * Aendern den Namen des Interpretens
+     * Set name of interpret
      * @param interpret
      */
     @Override
@@ -43,13 +47,13 @@ public class Song implements interfaces.Song {
 
     /**
      *
-     * @return Pfad der Songdatei
+     * @return Path of song
      */
     @Override
     public String getPath() { return path.getValue(); }
 
     /**
-     * Setzt den Songdateipfad
+     * Set the path to the song
      * @param path
      */
     @Override
@@ -57,7 +61,7 @@ public class Song implements interfaces.Song {
 
     /**
      *
-     * @return Songtitel
+     * @return Return title of song
      */
     @Override
     public String getTitle() {
@@ -65,14 +69,13 @@ public class Song implements interfaces.Song {
     }
 
     /**
-     * Setzt den Titel des Songs
+     * Set title of song
      * @param title
      */
     @Override
     public void setTitle(String title) { this.title = new SimpleStringProperty(title); }
 
     /**
-     *
      * @return Song ID
      */
     @Override
@@ -81,7 +84,7 @@ public class Song implements interfaces.Song {
     }
 
     /**
-     * Setzt die Song ID
+     * Set song ID
      * @param id
      */
     @Override
@@ -108,8 +111,7 @@ public class Song implements interfaces.Song {
 
 
     /**
-     * Gibt Informationen zu diesem Song
-     * @return
+     *  @return
      */
     @Override
     public String toString(){
@@ -146,3 +148,30 @@ public class Song implements interfaces.Song {
         return another != null && ((Song)another).getId() == this.getId();
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// I sing a song for you its about silence, wanna hear?
+// yeah go for it!
+// <silence>

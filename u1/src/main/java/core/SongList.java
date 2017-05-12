@@ -1,16 +1,16 @@
 package core;
 
-import interfaces.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ModifiableObservableListBase;
 import javafx.collections.ObservableList;
-import javafx.collections.ObservableListBase;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 
+// TODO Rewrite comments
+
 /**
- * Created by nilsmilewski on 05.05.17.
+ * This class provides a List of Song objects
  */
 public class SongList extends ModifiableObservableListBase<interfaces.Song> implements interfaces.SongList  {
 
@@ -20,9 +20,10 @@ public class SongList extends ModifiableObservableListBase<interfaces.Song> impl
     public SongList() {
         songs = FXCollections.observableArrayList();
     }
+
     /**
-     * Fügt ein core.Song in die Songlist
-     * @param s hinzuzufügender core.Song
+     * Adds a song into songlist
+     * @param s
      * @return
      * @throws RemoteException
      */
@@ -32,8 +33,8 @@ public class SongList extends ModifiableObservableListBase<interfaces.Song> impl
     }
 
     /**
-     * Löscht ein core.Song aus der Songlist
-     * @param s zu löschender core.Song
+     * Deletes a song from the songlist
+     * @param s
      * @return
      * @throws RemoteException
      */
@@ -43,7 +44,8 @@ public class SongList extends ModifiableObservableListBase<interfaces.Song> impl
     }
 
     /**
-     * Setzt die aktuelle Songliste, falls eine existiert wird diese überschrieben
+     * set current songlist
+     * <p><i>if there is a songlist this will be overwritten </i></p>
      * @param s Neue Songlist
      * @throws RemoteException
      */
@@ -53,7 +55,7 @@ public class SongList extends ModifiableObservableListBase<interfaces.Song> impl
     }
 
     /**
-     * Gibt die Songliste zurück
+     * returns songlist
      * @return
      * @throws RemoteException
      */
@@ -63,7 +65,7 @@ public class SongList extends ModifiableObservableListBase<interfaces.Song> impl
     }
 
     /**
-     * Löscht alle Songs in der Songliste
+     * Deletes all songs inside songlist
      * @throws RemoteException
      */
     @Override
@@ -72,7 +74,7 @@ public class SongList extends ModifiableObservableListBase<interfaces.Song> impl
     }
 
     /**
-     * Gibt die Größe der Songliste zurück
+     * Returns the dimension of the songlist
      * @return
      * @throws RemoteException
      */
@@ -82,9 +84,9 @@ public class SongList extends ModifiableObservableListBase<interfaces.Song> impl
     }
 
     /**
-     * Sucht nach einem core.Song
+     * Search for specific song using path
      * @param name
-     * @return Bei einer übereinstimmung gefundener core.Song ansonsten null
+     * @return If there is no match it will returned null otherwise it returns the song
      * @throws RemoteException
      */
     @Override
@@ -96,7 +98,7 @@ public class SongList extends ModifiableObservableListBase<interfaces.Song> impl
     }
 
     /**
-     * Gibt ein Song anhand dex Index zurück
+     * Returns a song using index
      * @param index
      * @return
      */
