@@ -9,10 +9,12 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.input.*;
 import javafx.stage.DirectoryChooser;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import java.io.*;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 // Here were are the mainview! Im happy!
@@ -40,44 +42,43 @@ public class Controller extends interfaces.IController{
         this.view.addButtonPlayPauseEventHandler(e -> playPause(e));
 
         locale = core.util.load(getClass().getName());
+
     }
+
+
 
 
     /**
-     * Eventhandler for opening Deleteview
-      * @param e
+     * Loads any directory
+     * @param e
      */
-    public void menuItemDeleteEventHandle(ActionEvent e){
-        // Singleton part II access to the object!
-        // here we receive the object from the class, !IMPORTANT! class not object
-        deleteView.DeleteView v = DeleteView.getInstance();
-        // return if view is null
-        if(v == null) return;
-        deleteView.DeleteController deleteController = new DeleteController();
-        deleteController.link(model,v);
+    public void menuItemLoadEventHandler(javafx.event.ActionEvent e) {
+        try {
 
-        // calculate position on screen
-        double centerX = Main.getPrimaryStage().getX() + (Main.getPrimaryStage().getWidth() * 0.5);
-        double centerY = Main.getPrimaryStage().getY() + (Main.getPrimaryStage().getHeight() * 0.5);
+            FileChooser fc = new FileChooser();
+            fc.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("MP3 Files","*.mp3"));
+            List<File> selectedFiles = fc.showOpenMultipleDialog(null);
+            if (selectedFiles != null)
+                view.setLvPlayList(selectedFiles);
+        }
+        catch(Exception ex){
+            core.util.showExceptionMessage(ex);
+        }
 
 
-        Stage deleteStage = new Stage();
+        /* try {
 
-        deleteStage.setHeight(Main.getPrimaryStage().getHeight() * 0.9);
-        deleteStage.setWidth(250);
-        deleteStage.setX(centerX + (deleteStage.getWidth()));
-        deleteStage.setY(centerY - (deleteStage.getHeight() * 0.5));
-        deleteStage.setResizable(false);
-        deleteStage.setTitle("Delete");
+            DirectoryChooser directoryChooser = new DirectoryChooser();
+            File selectedDirectory = directoryChooser.showDialog(Main.getPrimaryStage());
 
-        // Singleton part II reset object... if we miss this call we cannot create new objects from this view
-        deleteStage.setOnCloseRequest(e3-> deleteView.DeleteView.closeView ());
-
-        Scene s = new Scene(v);
-        deleteStage.setScene(s);
-        deleteStage.show();
-
+            this.model.load(selectedDirectory.getAbsolutePath());
+            Main.getPrimaryStage().setTitle(selectedDirectory.getName());
+        }
+        catch(Exception ex){
+            core.util.showExceptionMessage(ex);
+        } */
     }
+
 
     /**
      * Eventhandler for DetailView
@@ -113,22 +114,41 @@ public class Controller extends interfaces.IController{
     }
 
     /**
-     * Loads any directory
+     * Eventhandler for opening Deleteview
      * @param e
      */
-    public void menuItemLoadEventHandler(javafx.event.ActionEvent e) {
-        try {
+    public void menuItemDeleteEventHandle(ActionEvent e){
+        // Singleton part II access to the object!
+        // here we receive the object from the class, !IMPORTANT! class not object
+        deleteView.DeleteView v = DeleteView.getInstance();
+        // return if view is null
+        if(v == null) return;
+        deleteView.DeleteController deleteController = new DeleteController();
+        deleteController.link(model,v);
 
-            DirectoryChooser directoryChooser = new DirectoryChooser();
-            File selectedDirectory = directoryChooser.showDialog(Main.getPrimaryStage());
+        // calculate position on screen
+        double centerX = Main.getPrimaryStage().getX() + (Main.getPrimaryStage().getWidth() * 0.5);
+        double centerY = Main.getPrimaryStage().getY() + (Main.getPrimaryStage().getHeight() * 0.5);
 
-            this.model.load(selectedDirectory.getAbsolutePath());
-            Main.getPrimaryStage().setTitle(selectedDirectory.getName());
-        }
-        catch(Exception ex){
-            core.util.showExceptionMessage(ex);
-        }
+
+        Stage deleteStage = new Stage();
+
+        deleteStage.setHeight(Main.getPrimaryStage().getHeight() * 0.9);
+        deleteStage.setWidth(250);
+        deleteStage.setX(centerX + (deleteStage.getWidth()));
+        deleteStage.setY(centerY - (deleteStage.getHeight() * 0.5));
+        deleteStage.setResizable(false);
+        deleteStage.setTitle("Delete");
+
+        // Singleton part II reset object... if we miss this call we cannot create new objects from this view
+        deleteStage.setOnCloseRequest(e3-> deleteView.DeleteView.closeView ());
+
+        Scene s = new Scene(v);
+        deleteStage.setScene(s);
+        deleteStage.show();
+
     }
+
 
     /**
      * Opens About window

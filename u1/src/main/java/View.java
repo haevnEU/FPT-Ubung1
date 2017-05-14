@@ -5,6 +5,8 @@ import javafx.scene.control.*;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
 
+import java.io.File;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -21,6 +23,7 @@ public class View extends BorderPane implements interfaces.IView{
     private VBox bottomControl;
     private Label lbRemain;
     private ToggleButton btPlayPause;
+    private Button btNext;
     private Slider sliderProgress;
 
     private MenuBar menuBar;
@@ -52,7 +55,8 @@ public class View extends BorderPane implements interfaces.IView{
     private void prepareBottomControl(){
 
         lbRemain = new Label("Zeit");
-        btPlayPause = new ToggleButton("Play");
+        btPlayPause = new ToggleButton("▶");
+        btNext = new Button("⏭");
 
 
         sliderProgress = new Slider();
@@ -62,6 +66,7 @@ public class View extends BorderPane implements interfaces.IView{
         bottomControl.getChildren().add(lbRemain);
         bottomControl.getChildren().add(sliderProgress);
         bottomControl.getChildren().add(btPlayPause);
+        //bottomControl.getChildren().add(btNext);
 
     }
 
@@ -95,6 +100,7 @@ public class View extends BorderPane implements interfaces.IView{
 //    NOTE Im note describe the following methods because they just attach events to every object
     public void addMenuItemOpenDeleteEventHandler(EventHandler<ActionEvent> eventHandler ){
         menuItemOpenDelete.addEventHandler(ActionEvent.ACTION, eventHandler);
+
     }
 
     public void addMenuItemDetailEventHandler(EventHandler<ActionEvent> eventHandler ){
@@ -113,9 +119,16 @@ public class View extends BorderPane implements interfaces.IView{
         menuItemAbout.addEventHandler(ActionEvent.ACTION, eventHandler);
     }
 
+    public void setLvPlayList (List<File> s ){
+        for (int i=0;i<s.size();i++){
+            File songPath =  s.get(i);
+            lvPlayList.getItems().add(songPath.getName());
+        }
+    }
+
     public void togglePlayPause() {
-        if(playPause) btPlayPause.setText("Pause");
-        else btPlayPause.setText("Play");
+        if(playPause) btPlayPause.setText("II");
+        else btPlayPause.setText("▶");
         playPause = !playPause;
     }
 
