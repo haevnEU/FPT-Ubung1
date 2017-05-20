@@ -1,12 +1,9 @@
 package deleteView;
 
 import core.Model;
-import interfaces.IController;
-import interfaces.IView;
-import javafx.event.ActionEvent;
+import interfaces.*;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.rmi.RemoteException;
 
 /**
  * This class provides the controller for deleteView
@@ -18,25 +15,30 @@ public class DeleteController extends IController{
     public void link(Model m, IView v){
 
         this.model = m;
-
         this.view = (DeleteView)v;
 
-        locale = core.util.load(getClass().getName());
-        this.view.setLocale(locale);
+        this.view.addButtonDeleteEventHandler(e -> btRemoveClickEventHandler());
+        this.view.addButtonDeleteAllEventHandler(e->btRemoveAllEventHandler());
+    }
 
-        this.view.addButtonDeleteEventHandler(e -> btRemoveClickEventHandler(e));
+	/**
+	 * Removes every entry in queue
+	 */
+	private void btRemoveAllEventHandler() {
+	    try {
+		    model.getQueue().remove(0, model.getQueue().sizeOfList());
+	    } catch (RemoteException ex) {
+	    	ex.printStackTrace();
+	    }
     }
 
     /**
-     * Attach event to button remove
-     * @param e
+     * Removes selected entry in queue
      */
-    public void btRemoveClickEventHandler(ActionEvent e){
+    private void btRemoveClickEventHandler(){
         int deleteIndex = view.getSelectedIndex();
         if(deleteIndex >= 0) model.getQueue().remove(deleteIndex);
     }
-
-
 }
 
 

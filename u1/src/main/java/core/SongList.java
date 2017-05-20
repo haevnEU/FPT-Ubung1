@@ -14,15 +14,14 @@ import java.util.ArrayList;
  */
 public class SongList extends ModifiableObservableListBase<interfaces.Song> implements interfaces.SongList  {
 
-    ArrayList<interfaces.Song> songs2 = new ArrayList<>();
-    ObservableList<interfaces.Song> songs;
+    private final ObservableList<interfaces.Song> songs;
 
     public SongList() {
         songs = FXCollections.observableArrayList();
     }
 
     /**
-     * Adds a song into songlist
+     * Adds a song into SongList
      * @param s
      * @return
      * @throws RemoteException
@@ -33,7 +32,7 @@ public class SongList extends ModifiableObservableListBase<interfaces.Song> impl
     }
 
     /**
-     * Deletes a song from the songlist
+     * Deletes a song from the SongList
      * @param s
      * @return
      * @throws RemoteException
@@ -44,28 +43,30 @@ public class SongList extends ModifiableObservableListBase<interfaces.Song> impl
     }
 
     /**
-     * set current songlist
-     * <p><i>if there is a songlist this will be overwritten </i></p>
-     * @param s Neue Songlist
+     * set current SongList
+     * <p><i>if there is a SongList this will be overwritten </i></p>
+     * @param s new SongList
      * @throws RemoteException
      */
     @Override
     public void setList(ArrayList<interfaces.Song> s) throws RemoteException {
-        this.songs2 = s;
+        songs.setAll(s);
     }
 
     /**
-     * returns songlist
+     * returns SongList
      * @return
      * @throws RemoteException
      */
     @Override
     public ArrayList<interfaces.Song> getList() throws RemoteException {
-        return songs2;
+        ArrayList<interfaces.Song> returnSongList = new ArrayList<>();
+        returnSongList.addAll(songs);
+        return returnSongList;
     }
 
     /**
-     * Deletes all songs inside songlist
+     * Deletes all songs inside SongList
      * @throws RemoteException
      */
     @Override
@@ -74,7 +75,7 @@ public class SongList extends ModifiableObservableListBase<interfaces.Song> impl
     }
 
     /**
-     * Returns the dimension of the songlist
+     * Returns the dimension of the SongList
      * @return
      * @throws RemoteException
      */
@@ -111,7 +112,6 @@ public class SongList extends ModifiableObservableListBase<interfaces.Song> impl
      * See sizeOfList
      * @return
      */
-    @Deprecated
     @Override
     public int size() {
         return songs.size();

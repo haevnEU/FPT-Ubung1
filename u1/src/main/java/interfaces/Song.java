@@ -2,8 +2,6 @@ package interfaces;
 
 import javafx.beans.value.ObservableValue;
 
-import java.io.Serializable;
-
 /**
  * This interface provides basic information for every Song
  */

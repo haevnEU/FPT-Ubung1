@@ -1,14 +1,7 @@
 package interfaces;
 
-import java.util.Map;
-
 /**
  * This interface is used as a skeleton for every view
+ * Future usage could be implantation of localization
  */
-public interface IView {
-    /**
-     * Loads localization file
-     * @param locale
-     */
-    void setLocale(Map<String, String> locale);
-}
+public interface IView { }

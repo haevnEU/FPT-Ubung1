@@ -1,142 +1,174 @@
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.geometry.Insets;
+import core.Song;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.event.*;
+import javafx.geometry.*;
 import javafx.scene.control.*;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
-
-import java.io.File;
-import java.util.List;
-import java.util.Map;
+import javafx.util.Duration;
 
 /**
- * This class provides our mainwindow
+ * This class provides our MainWindow
  */
-public class View extends BorderPane implements interfaces.IView{
+class View extends BorderPane implements interfaces.IView{
 
-//     state of mediaplayer
-    private boolean playPause = true;
+    private ListView lvAllSongs;
+	private ListView<interfaces.Song> lvQueue;
 
-//     UI Stuff
-    private ListView lvPlayList, lvQueue;
-
-    private VBox bottomControl;
-    private Label lbRemain;
     private ToggleButton btPlayPause;
-    private Button btNext;
-    private Slider sliderProgress;
+    private Button btNext, btAddAll;
+	private Button btOpenDetails, btOpenFile, btOpenDelete;
 
-    private MenuBar menuBar;
-    private Menu menuGeneral, menuHelp;
-    private MenuItem menuItemOpenDetails, menuItemOpenFile, menuItemOpenDelete, menuItemAbout;
+	private Slider sliderCurrentTime;
 
-//    ctor
-    public View(){
-
+    View(){
         prepareBottomControl();
-        setBottom(bottomControl);
+        prepareSideMenu();
 
-        prepareMenu();
-        setTop(menuBar);
+        lvAllSongs = new ListView();
+        lvAllSongs.setMaxWidth(200);
+        lvAllSongs.setTooltip(new Tooltip("Double click adds to queue"));
+	    lvQueue = new ListView<>();
 
-        lvPlayList = new ListView();
-        lvPlayList.setMaxWidth(200);
-        lvPlayList.setMinWidth(200);
-        setLeft(lvPlayList);
+	    VBox leftBox = new VBox();
+        leftBox.setPadding(new Insets(10));
+        leftBox.setSpacing(10);
+        leftBox.getChildren().addAll(new Label("All Songs"),lvAllSongs);
+        setCenter(leftBox);
 
-        lvQueue = new ListView();
-        lvQueue.getItems().add("Noch nichts vorhanden :(");
-        setCenter(lvQueue);
-    }
+        VBox centerBox = new VBox();
+        centerBox.setPadding(new Insets(10));
+        centerBox.setSpacing(10);
+        centerBox.getChildren().addAll(new Label("Current queue"), lvQueue);
+        setRight(centerBox);
+     }
 
-    /**
+	/**
      * Prepares the bottom control, e.g. Play, position, etc !INTERNAL USAGE!
      */
     private void prepareBottomControl(){
 
-        lbRemain = new Label("Zeit");
-        btPlayPause = new ToggleButton("▶");
-        btNext = new Button("⏭");
+    	sliderCurrentTime = new Slider();
+
+        btPlayPause = new ToggleButton("\u25B6");
+	    btPlayPause.setTooltip(new Tooltip("Toggles play pause"));
+		btPlayPause.setPrefSize(40,40);
+
+        btNext = new Button("\u00BB");
+	    btNext.setTooltip(new Tooltip("Skips current track"));
+		btNext.setPrefSize(40,40);
+
+	    Label lbName = new Label();
+		VBox verticalControl = new VBox();
+		verticalControl.setSpacing(10);
+		verticalControl.setPadding(new Insets(0,10,0,10));
+
+		HBox controls = new HBox();
+	    controls.setPadding(new Insets(0,0,10,0)); // Space to each side
+        controls.setSpacing(10);    // space between each element
+	    controls.getChildren().addAll(btPlayPause, btNext, lbName); // adding
+        controls.setAlignment(Pos.BASELINE_CENTER); // center elements
+
+	    verticalControl.getChildren().addAll(sliderCurrentTime,controls);
 
 
-        sliderProgress = new Slider();
-
-        bottomControl = new VBox();
-        bottomControl.setPadding(new Insets(10));
-        bottomControl.getChildren().add(lbRemain);
-        bottomControl.getChildren().add(sliderProgress);
-        bottomControl.getChildren().add(btPlayPause);
-        //bottomControl.getChildren().add(btNext);
-
+	    setBottom(verticalControl);
     }
 
-    /**
-     * Prepares the menu !INTERNAL USAGE!
-     */
-    private void prepareMenu(){
+	/**
+	 * Prepares the side menu
+	 */
+	private void prepareSideMenu(){
 
-        menuBar = new MenuBar();
+	    btOpenDetails = new Button("\u270E");
+	    btOpenDetails.setPrefSize(40,40);
+	    btOpenDetails.setTooltip(new Tooltip("Open Details"));
 
-        menuItemOpenDetails = new MenuItem("Details");
-        menuItemOpenDetails.setAccelerator(new KeyCodeCombination(KeyCode.D, KeyCombination.CONTROL_DOWN));
-        menuItemOpenFile = new MenuItem("Open File");
-        menuItemOpenFile.setAccelerator(new KeyCodeCombination(KeyCode.L, KeyCombination.CONTROL_DOWN));
-        menuItemOpenDelete = new MenuItem("Open Delete");
-        menuItemOpenDelete.setAccelerator(new KeyCodeCombination(KeyCode.R, KeyCombination.CONTROL_DOWN));
-        menuGeneral = new Menu("General");
-        menuGeneral.getItems().addAll(menuItemOpenFile, menuItemOpenDetails, menuItemOpenDelete);
+	    btOpenFile = new Button("\u23CD");
+	    btOpenFile.setPrefSize(40,40);
+	    btOpenFile.setTooltip(new Tooltip("Open File"));
+
+	    btOpenDelete = new Button("\u20E0");//2672
+	    btOpenDelete.setPrefSize(40,40);
+	    btOpenDelete.setTooltip(new Tooltip("Open Delete"));
+
+		btAddAll = new Button("\u002B");
+		btAddAll.setPrefSize(40,40);
+		btAddAll.setTooltip(new Tooltip("Adds every song to queue"));
 
 
-        menuItemAbout = new MenuItem("About");
-        menuItemAbout.setAccelerator(new KeyCodeCombination(KeyCode.F1, KeyCombination.CONTROL_DOWN));
-        menuHelp = new Menu("Help");
-        menuHelp.getItems().addAll(menuItemAbout);
-
-
-        menuBar.getMenus().addAll(menuGeneral, menuHelp);
-
+	    VBox test = new VBox();
+	    test.setPadding(new Insets(10));
+	    test.setSpacing(10);
+	    test.getChildren().addAll(new Label("Menu"), btOpenFile, btOpenDetails, btOpenDelete, btAddAll);
+	    setLeft(test);
     }
 
 //    NOTE Im note describe the following methods because they just attach events to every object
-    public void addMenuItemOpenDeleteEventHandler(EventHandler<ActionEvent> eventHandler ){
-        menuItemOpenDelete.addEventHandler(ActionEvent.ACTION, eventHandler);
 
+    void addButtonAllEventHandler(EventHandler<ActionEvent> eventHandler){
+        btAddAll.addEventHandler(ActionEvent.ACTION, eventHandler);
     }
 
-    public void addMenuItemDetailEventHandler(EventHandler<ActionEvent> eventHandler ){
-        menuItemOpenDetails.addEventHandler(ActionEvent.ACTION, eventHandler);
+    void addButtonSkipEventHandler(EventHandler<ActionEvent> eventHandler){
+        btNext.addEventHandler(ActionEvent.ACTION, eventHandler);
     }
 
-    public void addButtonPlayPauseEventHandler(EventHandler<ActionEvent> eventHandler) {
+	void addButtonPlayPauseEventHandler(EventHandler<ActionEvent> eventHandler) {
         btPlayPause.addEventHandler(ActionEvent.ACTION, eventHandler);
     }
 
-    public void addMenuItemLoadEventHandler(EventHandler<ActionEvent> eventHandler) {
-        menuItemOpenFile.addEventHandler(ActionEvent.ACTION, eventHandler);
+	void DeleteClickEventHandler(EventHandler<ActionEvent> eventHandler ){
+        btOpenDelete.addEventHandler(ActionEvent.ACTION, eventHandler);
     }
 
-    public void addMenuItemAboutEventHandler(EventHandler<ActionEvent> eventHandler) {
-        menuItemAbout.addEventHandler(ActionEvent.ACTION, eventHandler);
+	void addDetailClickEventHandler(EventHandler<ActionEvent> eventHandler ){
+        btOpenDetails.addEventHandler(ActionEvent.ACTION, eventHandler);
+	}
+
+	void addLoadFilesClickEventHandler(EventHandler<ActionEvent> eventHandler) {
+        btOpenFile.addEventHandler(ActionEvent.ACTION, eventHandler);
     }
 
-    public void setLvPlayList (List<File> s ){
-        for (int i=0;i<s.size();i++){
-            File songPath =  s.get(i);
-            lvPlayList.getItems().add(songPath.getName());
-        }
+	void addListViewAllSongClickEventHandler(EventHandler<MouseEvent> eventHandler) {
+        lvAllSongs.setOnMouseClicked(eventHandler);
     }
 
-    public void togglePlayPause() {
-        if(playPause) btPlayPause.setText("II");
-        else btPlayPause.setText("▶");
-        playPause = !playPause;
+	void setAllSongs (core.SongList allSongs){
+
+		lvAllSongs.setItems(allSongs);
     }
 
-//    From this point Im start again with describing
 
-    @Override
-    public void setLocale(Map<String, String> locale) {
-
-//        TODO LOGIC
+	void setQueue(core.SongList queue){
+        lvQueue.setItems(queue);
     }
+
+	void togglePlayPause(SimpleBooleanProperty playPause) {
+		//btPlayPause.setSelected(playPause.getValue());
+		if(btPlayPause.isSelected()) btPlayPause.setText("II");
+		else btPlayPause.setText("\u25B6");
+	}
+
+	void togglePlayPause() {
+		if(btPlayPause.isSelected()) btPlayPause.setText("II");
+		else btPlayPause.setText("\u25B6");
+	}
+
+	Song getSelectedSong() { return (Song) lvAllSongs.getSelectionModel().getSelectedItem(); }
+
+	int getSelectedQueueIndex(){ return lvQueue.getSelectionModel().getSelectedIndex(); }
+
+
+	public void updateTime(Duration time) {
+		sliderCurrentTime.setValue(time.toSeconds());
+
+		String out = "" + String.format("%02d", (int)(time.toMinutes())) + ":" + String.format("%02d", ((int)(time.toSeconds()) - (60*(int)time.toMinutes())));
+		System.out.println(out);
+	}
+
+	public void setSliderMax(double sliderMax) {
+		System.out.println(sliderMax);
+		this.sliderCurrentTime.setMax(sliderMax);
+	}
 }

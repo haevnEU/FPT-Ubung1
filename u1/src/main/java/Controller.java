@@ -1,182 +1,212 @@
+import com.sun.javafx.geom.Vec2d;
 import core.Model;
-import deleteView.DeleteController;
-import deleteView.DeleteView;
-import detailView.DetailController;
-import detailView.DetailView;
+import core.Song;
+import core.util;
+
+import deleteView.*;
+import detailView.*;
 import interfaces.IView;
-import javafx.event.ActionEvent;
+
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableDoubleValue;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.ObservableListBase;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
 import javafx.scene.input.*;
-import javafx.stage.DirectoryChooser;
-import javafx.stage.FileChooser;
-import javafx.stage.Stage;
+import javafx.stage.*;
+import javafx.util.Duration;
 
 import java.io.*;
-import java.util.HashMap;
+import java.rmi.RemoteException;
 import java.util.List;
-import java.util.Map;
 
-// Here were are the mainview! Im happy!
+// Here were are the MainView! Im happy!
 /**
  * This class is used as a main controller
  */
 public class Controller extends interfaces.IController{
 
-    private Model model;
-    private View view;
 
-    private Map<String, String> locale = new HashMap<>();
+    private View view;
 
     public void link(Model m, IView v){
 
         this.model = m;
-
         this.view = (View)v;
-        this.view.addMenuItemLoadEventHandler(e -> menuItemLoadEventHandler(e));
-        this.view.addMenuItemDetailEventHandler(e -> menuItemDetailEventHandler(e));
-        this.view.addMenuItemOpenDeleteEventHandler(e -> menuItemDeleteEventHandle(e));
 
-        this.view.addMenuItemAboutEventHandler(e -> menuItemAboutEventHandler(e));
+        this.view.addLoadFilesClickEventHandler(e -> menuItemLoadEventHandler());
+        this.view.addDetailClickEventHandler(e -> menuItemDetailEventHandler());
+        this.view.DeleteClickEventHandler(e -> menuItemDeleteEventHandle());
 
-        this.view.addButtonPlayPauseEventHandler(e -> playPause(e));
+        this.view.addButtonAllEventHandler(e -> addAll());
+        this.view.addButtonPlayPauseEventHandler(e -> playPause());
+        this.view.addButtonSkipEventHandler(e-> skipSong());
 
-        locale = core.util.load(getClass().getName());
+        this.view.addListViewAllSongClickEventHandler((e) -> listViewAllSongClicked(e));
 
+        this.view.setAllSongs(model.getAllSongs());
+        this.view.setQueue(model.getQueue());
+
+	    view.togglePlayPause(model.getIsPlaying());
+
+	    model.getIsPlaying().addListener((observable, oldValue, newValue) -> view.togglePlayPause());
+		model.addEndOfMediaListener((observable, oldValue, newValue) ->
+				view.setSliderMax(100));
     }
 
 
+    /**
+     * EventHandler for ListView click
+     * @param e Object which triggered the event
+     */
+    private void listViewAllSongClicked(MouseEvent e){
+        try {
+            if(e.getClickCount() == 2){
+            	model.getQueue().add(view.getSelectedSong());
+				initPlayer();
+            }
+        } catch (Exception ex) {
+            util.showExceptionMessage(ex);
+        }
+    }
 
+    private void initPlayer(){
+	    model.callPlayerInit(model.getQueue());
+	    model.addTimeChangeListener((observable, oldValue, newValue) -> view.updateTime(newValue));
+
+    }
 
     /**
      * Loads any directory
-     * @param e
      */
-    public void menuItemLoadEventHandler(javafx.event.ActionEvent e) {
+    private void menuItemLoadEventHandler() {
         try {
-
             FileChooser fc = new FileChooser();
-            fc.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("MP3 Files","*.mp3"));
+            fc.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("MP3 Files", "*.mp3"));
             List<File> selectedFiles = fc.showOpenMultipleDialog(null);
-            if (selectedFiles != null)
-                view.setLvPlayList(selectedFiles);
-        }
-        catch(Exception ex){
+            if (selectedFiles == null) return;
+            model.loadAllSongs(selectedFiles);
+
+        } catch (Exception ex) {
             core.util.showExceptionMessage(ex);
         }
-
-
-        /* try {
-
-            DirectoryChooser directoryChooser = new DirectoryChooser();
-            File selectedDirectory = directoryChooser.showDialog(Main.getPrimaryStage());
-
-            this.model.load(selectedDirectory.getAbsolutePath());
-            Main.getPrimaryStage().setTitle(selectedDirectory.getName());
-        }
-        catch(Exception ex){
-            core.util.showExceptionMessage(ex);
-        } */
-    }
-
-
-    /**
-     * Eventhandler for DetailView
-     * @param e
-     */
-    public void menuItemDetailEventHandler(javafx.event.ActionEvent e) {
-
-        // In this method im not describe singleton, look at the method above
-        DetailView m =DetailView.getInstance();
-        if(m == null) return;
-        double centerX = Main.getPrimaryStage().getX() + (Main.getPrimaryStage().getWidth() * 0.5);
-        double centerY = Main.getPrimaryStage().getY() + (Main.getPrimaryStage().getHeight() * 0.5);
-        DetailController detailController = new DetailController();
-        detailController.link(model, m);
-        Stage menuStage = new Stage();
-        Scene s = new Scene(m);
-        menuStage.setWidth(250);
-        menuStage.setX(centerX - (menuStage.getWidth() * 0.5));
-        menuStage.setY(centerY - (menuStage.getHeight() * 0.5));
-        menuStage.setTitle("Details");
-        menuStage.setScene(s);
-        menuStage.setResizable(false);
-        menuStage.setAlwaysOnTop(true);
-        // Close with escape key, only difference
-        s.setOnKeyPressed((KeyEvent e2) -> {
-            if(e2.getCode() == KeyCode.ESCAPE) {
-                menuStage.close();
-                DetailView.closeView();
-            }
-        });
-        menuStage.setOnCloseRequest(e3-> DetailView.closeView ());
-        menuStage.show();
     }
 
     /**
-     * Eventhandler for opening Deleteview
-     * @param e
+     * EventHandler for DetailView
      */
-    public void menuItemDeleteEventHandle(ActionEvent e){
-        // Singleton part II access to the object!
-        // here we receive the object from the class, !IMPORTANT! class not object
-        deleteView.DeleteView v = DeleteView.getInstance();
-        // return if view is null
-        if(v == null) return;
-        deleteView.DeleteController deleteController = new DeleteController();
-        deleteController.link(model,v);
-
-        // calculate position on screen
-        double centerX = Main.getPrimaryStage().getX() + (Main.getPrimaryStage().getWidth() * 0.5);
-        double centerY = Main.getPrimaryStage().getY() + (Main.getPrimaryStage().getHeight() * 0.5);
-
-
-        Stage deleteStage = new Stage();
-
-        deleteStage.setHeight(Main.getPrimaryStage().getHeight() * 0.9);
-        deleteStage.setWidth(250);
-        deleteStage.setX(centerX + (deleteStage.getWidth()));
-        deleteStage.setY(centerY - (deleteStage.getHeight() * 0.5));
-        deleteStage.setResizable(false);
-        deleteStage.setTitle("Delete");
-
-        // Singleton part II reset object... if we miss this call we cannot create new objects from this view
-        deleteStage.setOnCloseRequest(e3-> deleteView.DeleteView.closeView ());
-
-        Scene s = new Scene(v);
-        deleteStage.setScene(s);
-        deleteStage.show();
-
+    private void menuItemDetailEventHandler() {
+		if(!createDetailWindow()) {
+			util.showWarningMessage("Could not load detail window!\n\nDid you select something...");
+		}
     }
 
-
     /**
-     * Opens About window
-     * @param e
+     * EventHandler for opening DeleteView
      */
-    public void menuItemAboutEventHandler(javafx.event.ActionEvent e){
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("About");
-        alert.setHeaderText("Musicplayer indev 00.1");
-        alert.setContentText("Keybindings \n" +
-                "alt + F1 : Help menu\n" +
-                "alt + F4 : Close Application\n" +
-                "alt + L  : Load Directory\n" +
-                "alt + D  : Open Song Details\n" +
-                "Space    : Toggle Play / Pause");
-
-        alert.showAndWait();
+    private void menuItemDeleteEventHandle() {
+       if(!createDeleteWindow()) {
+	       util.showWarningMessage("Could not load delete window");
+       }
     }
 
     /**
      * This method toggles play and pause
-     * @param e
      */
-    void playPause(javafx.event.ActionEvent e){
-        // Toggle play pause
-        view.togglePlayPause();
-        // pause player
+    private void playPause(){
+		model.togglePlayPause();
+    }
 
+    private void addAll(){
+        try {
+            model.getQueue().addAll(model.getAllSongs().getList());
+            initPlayer();
+        } catch (RemoteException ex) {
+           util.showExceptionMessage(ex);
+        }
+    }
+
+    private  void skipSong(){
+    	model.skip();
+    }
+
+
+
+
+	private Vec2d windowPosition(){
+		double centerX = Main.getPrimaryStage().getX() + (Main.getPrimaryStage().getWidth() * 0.5);
+		double centerY = Main.getPrimaryStage().getY() + (Main.getPrimaryStage().getHeight() * 0.5);
+		return new Vec2d(centerX,centerY);
+	}
+
+    private boolean createDeleteWindow(){
+	    try {
+
+			Vec2d pos = windowPosition();    // position from window
+
+			// Singleton part II access to the object!
+		    deleteView.DeleteView deleteView = DeleteView.getInstance(model.getQueue());
+		    if (deleteView == null) return false;
+
+		    deleteView.DeleteController deleteController = new DeleteController();
+		    deleteController.link(model, deleteView);
+
+
+		    Stage deleteStage = new Stage();
+		    // Set height and width and position on the right side
+		    deleteStage.setHeight(Main.getPrimaryStage().getHeight() * 0.9);
+		    deleteStage.setWidth(250);
+		    deleteStage.setX(pos.x + (deleteStage.getWidth()));
+		    deleteStage.setY(pos.y - (deleteStage.getHeight() * 0.5));
+		    deleteStage.setResizable(false);
+		    deleteStage.setTitle("Delete");
+
+		    // Singleton part II reset object... if we miss this call we cannot create new objects from this view
+		    deleteStage.setOnCloseRequest(e -> deleteView.closeView());
+
+		    Scene s = new Scene(deleteView);
+		    deleteStage.setScene(s);
+		    deleteStage.show();
+
+	    } catch (Exception ex) { return false; }
+	    return true;
+    }
+
+    private  boolean createDetailWindow(){
+
+	    try {
+		    DetailView detailView = DetailView.getInstance((Song)model.getQueue().get(view.getSelectedQueueIndex()));
+		    if (detailView == null) return false;
+
+		    Vec2d pos = windowPosition();
+
+		    DetailController detailController = new DetailController();
+		    detailController.link(model, detailView);
+
+		    Stage detailStage = new Stage();
+		    detailStage.setWidth(250);
+		    detailStage.setX(pos.x);
+		    detailStage.setY(pos.y);
+		    detailStage.setTitle("Details");
+		    detailStage.setResizable(false);
+		    detailStage.setAlwaysOnTop(true);
+		    detailView.addButtonCommitEventHandler(e2-> detailStage.close());
+			detailStage.setOnCloseRequest(e -> detailView.closeView());
+
+		    Scene s = new Scene(detailView);
+		    s.setOnKeyPressed((KeyEvent e2) -> {
+			    if (e2.getCode() == KeyCode.ESCAPE) {
+				    detailStage.close();
+				    detailView.closeView();
+			    }
+		    });
+		    detailStage.setScene(s);
+		    detailStage.show();
+
+	    } catch (Exception ex) {
+	    	return false;
+	    }
+	    return  true;
     }
 
 }

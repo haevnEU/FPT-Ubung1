@@ -2,9 +2,6 @@ package interfaces;
 
 import core.Model;
 
-import java.util.HashMap;
-import java.util.Map;
-
 
 /**
  * This abstract class is used as a skeleton for every controller
@@ -12,8 +9,6 @@ import java.util.Map;
 public abstract class IController {
 
     protected Model model;
-    protected IView view;
-    protected Map<String, String> locale = new HashMap<>();
 
     /**
      * link model with view

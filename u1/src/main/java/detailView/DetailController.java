@@ -1,38 +1,41 @@
 package detailView;
 
-public class DetailController {
+import interfaces.IView;
+
+public class DetailController extends interfaces.IController {
     private core.Model model;
     private DetailView view;
 
 
+    public boolean init(){
+
+
+
+        return true;
+    }
+
     /**
-     * This method links the application model with the detailview
-     * @param m
-     * @param v
+     * This method links the application model with the DetailView
+     * @param m Model which should be used
+     * @param v View which should be used
      */
-    public void link(core.Model m, DetailView v){
+    @Override
+    public void link(core.Model m, IView v){
 
         this.model = m;
-        this.view = v;
-
-//        view.tbInterpret.setText(model.getQueue().get(0).getInterpret());
-//        view.tbTitle.setText(model.getQueue().get(0).getTitle());
-//        view.tbAlbum.setText(model.getQueue().get(0).getAlbum());
-//        view.lbBase.setText(view.lbBase.getText() + model.getQueue().get(0).getId());
+        this.view = (DetailView)v;
 
         // Apply click event
-        this.view.addButtonCommitEventHandler(e -> buttonCommitClickEventHandler(e));
+        this.view.addButtonCommitEventHandler(e -> buttonCommitClickEventHandler());
     }
 
 
     // This method allows buttonCommit event handling !INTERNAL USAGE!
-    private void buttonCommitClickEventHandler(javafx.event.ActionEvent e){
+    private void buttonCommitClickEventHandler(){
 
-//        TODO Implement functionality
-
-//        model.getQueue().get(0).setAlbum(view.tbAlbum.getText());
-//        model.getQueue().get(0).setInterpret(view.tbInterpret.getText());
-//        model.getQueue().get(0).setTitle(view.tbTitle.getText());
+        model.getQueue().get(0).setTitle(view.getTitle());
+        model.getQueue().get(0).setInterpret(view.getInterpret());
+        model.getQueue().get(0).setAlbum(view.getAlbumName());
 
         // close Detail window
         view.closeView();

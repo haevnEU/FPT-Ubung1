@@ -1,26 +1,19 @@
 package core;
 
-import javafx.scene.control.Alert;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Priority;
+import javafx.scene.control.*;
+import javafx.scene.layout.*;
 
 import java.io.*;
-import java.text.DateFormat;
-import java.util.GregorianCalendar;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * This class provides utility functions
  */
-public class util {
+public final class util {
 
 
     /**
      * Shows an exception message
-      * @param e exception whicht should displayed
+      * @param e exception which should displayed
      */
     public static void showExceptionMessage(Exception e) {
 
@@ -34,7 +27,7 @@ public class util {
         PrintWriter pw = new PrintWriter(sw);
         e.printStackTrace(pw);
 
-        title = "Musikplayer v.01";
+        title = "Music player v.01";
         header = e.getMessage();
         stackTrace = sw.toString();
 
@@ -52,60 +45,63 @@ public class util {
         TextArea textArea = new TextArea("TimeStamp: " +  getUnixTimeStamp() + " \n\nStackTrace\n" +stackTrace);
         textArea.setEditable(false);
 
-//        The grid should grow in both directorys
+//        The grid should grow in both directions
         GridPane.setVgrow(textArea, Priority.ALWAYS);
         GridPane.setHgrow(textArea, Priority.ALWAYS);
 
-        GridPane gridCntent = new GridPane();
-        gridCntent.setMaxWidth(Double.MAX_VALUE);
-        gridCntent.add(label, 0, 0);
-        gridCntent.add(textArea, 0, 1);
+        Label bottomLabel = new Label("......!");
+
+        GridPane gridContent = new GridPane();
+        gridContent.setMaxWidth(Double.MAX_VALUE);
+        gridContent.add(label, 0, 0);
+        gridContent.add(textArea, 0, 1);
+        gridContent.add(bottomLabel,0,2);
 
 //         Set expandable Exception into the dialog pane.
-        alert.getDialogPane().setExpandableContent(gridCntent);
+        alert.getDialogPane().setExpandableContent(gridContent);
 
         alert.showAndWait();
     }
 
+	/**
+	 * Shows a warning message window
+	 * @param s string which should shown to the user
+	 */
+	public static void showWarningMessage(String s) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Warning");
+        alert.setHeaderText("Warning occurred");
+        alert.setContentText(s);
+
+        alert.show();
+
+    }
+
     /**
-     * Returns current timestamp based on unix time
-     * @return
+     * Returns timestamp based on unix time
+     * @return current timestamp
      */
-    public static Long getUnixTimeStamp(){
+    private static Long getUnixTimeStamp(){
         return System.currentTimeMillis() / 1000L;
     }
 
 
     /**
-     * Loads localization className for specific class
-     * <p>File structure: objectname:text where objectname should be a UI element and text the string</p>
-     * @param className name of the class which should be loaded
-     * @return
+     * Reads a file from disk
+     * @param path path to file
+     * @return return file content
+     * @throws IOException ...
      */
-    public static HashMap<String, String>load(String className){
-
-        // Check if file exists
-        if(!(new File(className).exists())) return null;
-
-        HashMap<String, String> map = new HashMap<>();
-
-        // Read file and add qualified lines to our map
-        try(BufferedReader br = new BufferedReader(new FileReader(className))){
-            String line;
-            while((line = br.readLine()) != null)
-                if(line.contains(":"))
-                    map.put(line.split(":")[0],line.split(":")[1]);
-
-        } catch(FileNotFoundException e){
-            showExceptionMessage(e);
-        } catch(IOException e){
-            showExceptionMessage(e);
-        } catch (Exception e){
-            showExceptionMessage(e);
+    public static String readFile(String path) throws IOException{
+        String line = "";
+        if(!new File(path).exists()) throw new FileNotFoundException();
+        try(BufferedReader br = new BufferedReader(new FileReader(path))){
+            String inLine;
+            while((inLine = br.readLine()) != null){
+                line += inLine +" \n";
+            }
         }
-        finally {
-            return map;
-        }
+        return line;
     }
 }
 
@@ -130,10 +126,10 @@ public class util {
 // Well a stacktrace shows the last executed method in a program
 // it can help to locate possible errors, if you look at a stacktrace you now what i mean
 // bellow is a stacktrace, but its modified
-// we can see the first execution, the entrypoint and the last where the exception occurred
+// we can see the first execution, the entry point and the last where the exception occurred
 //java.lang.NullPointerException <-- Description of the exception
 //        at Controller.menuItemLoadEventHandler(Controller.java:118) <-- occurrence of exception
 //        at Controller.lambda$link$0(Controller.java:34)
 //        at com.sun.javafx.event.CompositeEventHandler$NormalEventHandlerRecord.handleBubblingEvent(CompositeEventHandler.java:218)
 //        at ....
-//        at java.lang.Thread.run(Thread.java:748) <-- entrypoint
+//        at java.lang.Thread.run(Thread.java:748) <-- entry point
