@@ -1,9 +1,10 @@
-package detailView;
+package core.controller;
 
-import interfaces.IView;
+import core.view.DetailView;
+import core.interfaces.IView;
 
-public class DetailController extends interfaces.IController {
-    private core.Model model;
+public class DetailController extends core.interfaces.IController {
+    private core.util.Model model;
     private DetailView view;
 
 
@@ -17,10 +18,10 @@ public class DetailController extends interfaces.IController {
     /**
      * This method links the application model with the DetailView
      * @param m Model which should be used
-     * @param v View which should be used
+     * @param v View.View which should be used
      */
     @Override
-    public void link(core.Model m, IView v){
+    public void link(core.util.Model m, IView v){
 
         this.model = m;
         this.view = (DetailView)v;
@@ -33,9 +34,13 @@ public class DetailController extends interfaces.IController {
     // This method allows buttonCommit event handling !INTERNAL USAGE!
     private void buttonCommitClickEventHandler(){
 
-        model.getQueue().get(0).setTitle(view.getTitle());
-        model.getQueue().get(0).setInterpret(view.getInterpret());
-        model.getQueue().get(0).setAlbum(view.getAlbumName());
+        try {
+            model.getQueue().get(0).setTitle(view.getTitle());
+            model.getQueue().get(0).setInterpret(view.getInterpret());
+            model.getQueue().get(0).setAlbum(view.getAlbumName());
+        } catch (IndexOutOfBoundsException ex) {
+            ex.printStackTrace();
+        }
 
         // close Detail window
         view.closeView();

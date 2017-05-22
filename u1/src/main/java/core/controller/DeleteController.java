@@ -1,12 +1,13 @@
-package deleteView;
+package core.controller;
 
-import core.Model;
-import interfaces.*;
+import core.util.Model;
+import core.view.DeleteView;
+import core.interfaces.*;
 
 import java.rmi.RemoteException;
 
 /**
- * This class provides the controller for deleteView
+ * This class provides the core.controller for deleteView
  */
 public class DeleteController extends IController{
 

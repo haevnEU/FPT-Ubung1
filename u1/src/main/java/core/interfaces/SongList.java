@@ -1,4 +1,4 @@
-package interfaces;
+package core.interfaces;
 
 import java.io.Serializable;
 import java.rmi.Remote;

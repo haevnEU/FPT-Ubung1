@@ -1,4 +1,4 @@
-package core;
+package core.util;
 
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
@@ -8,7 +8,7 @@ import java.io.*;
 /**
  * This class provides utility functions
  */
-public final class util {
+public final class Util {
 
 
     /**
@@ -16,9 +16,6 @@ public final class util {
       * @param e exception which should displayed
      */
     public static void showExceptionMessage(Exception e) {
-
-//         well if there no exception what should we display?
-        if(e == null) return;
 
         String title, header, stackTrace;
 
@@ -128,8 +125,8 @@ public final class util {
 // bellow is a stacktrace, but its modified
 // we can see the first execution, the entry point and the last where the exception occurred
 //java.lang.NullPointerException <-- Description of the exception
-//        at Controller.menuItemLoadEventHandler(Controller.java:118) <-- occurrence of exception
-//        at Controller.lambda$link$0(Controller.java:34)
+//        at Controller.Controller.menuItemLoadEventHandler(Controller.Controller.java:118) <-- occurrence of exception
+//        at Controller.Controller.lambda$link$0(Controller.Controller.java:34)
 //        at com.sun.javafx.event.CompositeEventHandler$NormalEventHandlerRecord.handleBubblingEvent(CompositeEventHandler.java:218)
 //        at ....
 //        at java.lang.Thread.run(Thread.java:748) <-- entry point

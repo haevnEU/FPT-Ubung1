@@ -1,4 +1,4 @@
-package core;
+package core.util;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableValue;
@@ -6,9 +6,12 @@ import javafx.beans.value.ObservableValue;
 /**
  * This class provides song information
  */
-public class Song implements interfaces.Song {
+public class Song implements core.interfaces.Song {
 
-    private SimpleStringProperty album, interpret, path, title;
+    private SimpleStringProperty album = new SimpleStringProperty("Unknown album"),
+                                 interpret = new SimpleStringProperty("Unknown interpret"),
+                                 path = new SimpleStringProperty(""),
+                                 title = new SimpleStringProperty("Unknown title");
     private long id;
 
     @Override
@@ -66,12 +69,10 @@ public class Song implements interfaces.Song {
         return interpret;
     }
 
-
     @Override
     public String toString(){
         return getTitle();
     }
-
 }
 
 

@@ -1,6 +1,6 @@
-package deleteView;
+package core.view;
 
-import core.SongList;
+import core.util.SongList;
 import javafx.event.*;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
@@ -11,11 +11,11 @@ import java.util.Map;
 /**
  * This class provides UI for delete action
  */
-public class DeleteView extends BorderPane implements interfaces.IView {
+public class DeleteView extends BorderPane implements core.interfaces.IView {
 
     private Button btDelete;
     private Button btDeleteAll;
-    private ListView<interfaces.Song> lvContent;
+    private ListView<core.interfaces.Song> lvContent;
 
     // this variable tracks the instantiated class objects, normally it should be 0 or 1
     private static int numInstances = 0;
@@ -25,7 +25,7 @@ public class DeleteView extends BorderPane implements interfaces.IView {
         if(v != null && numInstances > 0) return null;
         // update, which excludes future instantiation
         numInstances++;
-        // create new view
+        // create new core.view
         v = new DeleteView(songs);
         return v;
     }
@@ -60,7 +60,7 @@ public class DeleteView extends BorderPane implements interfaces.IView {
      * Attach an event to delete button
      * @param eventHandler method which should handle the button click event
      */
-     void addButtonDeleteEventHandler(EventHandler<ActionEvent> eventHandler ){
+     public void addButtonDeleteEventHandler(EventHandler<ActionEvent> eventHandler ){
         btDelete.addEventHandler(ActionEvent.ACTION, eventHandler);
     }
 
@@ -68,7 +68,7 @@ public class DeleteView extends BorderPane implements interfaces.IView {
      * Attach an event to delete all button
      * @param eventHandler method which should handle the button click event
      */
-     void addButtonDeleteAllEventHandler(EventHandler<ActionEvent> eventHandler){
+     public void addButtonDeleteAllEventHandler(EventHandler<ActionEvent> eventHandler){
         btDeleteAll.addEventHandler(ActionEvent.ACTION, eventHandler);
      }
 
@@ -76,7 +76,7 @@ public class DeleteView extends BorderPane implements interfaces.IView {
      * Returns the selected Index
      * @return selected index inside the deleteView
      */
-    int getSelectedIndex(){ return lvContent.getSelectionModel().getSelectedIndex(); }
+    public int getSelectedIndex(){ return lvContent.getSelectionModel().getSelectedIndex(); }
 
 
     public void setLocale(Map<String, String> locale) {

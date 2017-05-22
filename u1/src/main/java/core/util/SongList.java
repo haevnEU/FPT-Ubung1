@@ -1,4 +1,4 @@
-package core;
+package core.util;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ModifiableObservableListBase;
@@ -12,9 +12,9 @@ import java.util.ArrayList;
 /**
  * This class provides a List of Song objects
  */
-public class SongList extends ModifiableObservableListBase<interfaces.Song> implements interfaces.SongList  {
+public class SongList extends ModifiableObservableListBase<core.interfaces.Song> implements core.interfaces.SongList  {
 
-    private final ObservableList<interfaces.Song> songs;
+    private final ObservableList<core.interfaces.Song> songs;
 
     public SongList() {
         songs = FXCollections.observableArrayList();
@@ -27,7 +27,7 @@ public class SongList extends ModifiableObservableListBase<interfaces.Song> impl
      * @throws RemoteException
      */
     @Override
-    public boolean addSong(interfaces.Song s) throws RemoteException {
+    public boolean addSong(core.interfaces.Song s) throws RemoteException {
         return songs.add(s);
     }
 
@@ -38,7 +38,7 @@ public class SongList extends ModifiableObservableListBase<interfaces.Song> impl
      * @throws RemoteException
      */
     @Override
-    public boolean deleteSong(interfaces.Song s) throws RemoteException {
+    public boolean deleteSong(core.interfaces.Song s) throws RemoteException {
         return songs.remove(s);
     }
 
@@ -49,7 +49,7 @@ public class SongList extends ModifiableObservableListBase<interfaces.Song> impl
      * @throws RemoteException
      */
     @Override
-    public void setList(ArrayList<interfaces.Song> s) throws RemoteException {
+    public void setList(ArrayList<core.interfaces.Song> s) throws RemoteException {
         songs.setAll(s);
     }
 
@@ -59,8 +59,8 @@ public class SongList extends ModifiableObservableListBase<interfaces.Song> impl
      * @throws RemoteException
      */
     @Override
-    public ArrayList<interfaces.Song> getList() throws RemoteException {
-        ArrayList<interfaces.Song> returnSongList = new ArrayList<>();
+    public ArrayList<core.interfaces.Song> getList() throws RemoteException {
+        ArrayList<core.interfaces.Song> returnSongList = new ArrayList<>();
         returnSongList.addAll(songs);
         return returnSongList;
     }
@@ -91,9 +91,9 @@ public class SongList extends ModifiableObservableListBase<interfaces.Song> impl
      * @throws RemoteException
      */
     @Override
-    public interfaces.Song findSongByPath(String name) throws RemoteException {
+    public core.interfaces.Song findSongByPath(String name) throws RemoteException {
 
-        for(interfaces.Song s : songs)
+        for(core.interfaces.Song s : songs)
             if(s.getPath().equals(name)) return s;
         return null;
     }
@@ -104,7 +104,7 @@ public class SongList extends ModifiableObservableListBase<interfaces.Song> impl
      * @return
      */
     @Override
-    public interfaces.Song get(int index) {
+    public core.interfaces.Song get(int index) {
         return songs.get(index);
     }
 
@@ -133,7 +133,7 @@ public class SongList extends ModifiableObservableListBase<interfaces.Song> impl
      *                                   (<tt>index &lt; 0 || index &gt; size()</tt>)
      */
     @Override
-    protected void doAdd(int index, interfaces.Song element) {
+    protected void doAdd(int index, core.interfaces.Song element) {
         songs.add(index, element);
     }
 
@@ -154,7 +154,7 @@ public class SongList extends ModifiableObservableListBase<interfaces.Song> impl
      *                                   (<tt>index &lt; 0 || index &gt;= size()</tt>)
      */
     @Override
-    protected interfaces.Song doSet(int index, interfaces.Song element) {  return songs.set(index, element); }
+    protected core.interfaces.Song doSet(int index, core.interfaces.Song element) {  return songs.set(index, element); }
 
     /**
      * Removes the element at position of {@code index}.
@@ -165,7 +165,7 @@ public class SongList extends ModifiableObservableListBase<interfaces.Song> impl
      *                                   (<tt>index &lt; 0 || index &gt;= size()</tt>)
      */
     @Override
-    protected interfaces.Song doRemove(int index) {
+    protected core.interfaces.Song doRemove(int index) {
         return songs.remove(index);
     }
 }

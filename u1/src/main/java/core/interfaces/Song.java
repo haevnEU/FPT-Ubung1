@@ -1,4 +1,4 @@
-package interfaces;
+package core.interfaces;
 
 import javafx.beans.value.ObservableValue;
 

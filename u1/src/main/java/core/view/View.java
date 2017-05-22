@@ -1,4 +1,6 @@
-import core.Song;
+package core.view;
+
+import core.util.Song;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.event.*;
 import javafx.geometry.*;
@@ -10,19 +12,18 @@ import javafx.util.Duration;
 /**
  * This class provides our MainWindow
  */
-class View extends BorderPane implements interfaces.IView{
+public class View extends BorderPane implements core.interfaces.IView{
 
     private ListView lvAllSongs;
-	private ListView<interfaces.Song> lvQueue;
-
+	private ListView<core.interfaces.Song> lvQueue;
     private ToggleButton btPlayPause;
     private Button btNext, btAddAll;
 	private Button btOpenDetails, btOpenFile, btOpenDelete;
-
 	private Slider sliderCurrentTime;
 
-    View(){
-        prepareBottomControl();
+    public View() {
+
+    	prepareBottomControl();
         prepareSideMenu();
 
         lvAllSongs = new ListView();
@@ -106,58 +107,50 @@ class View extends BorderPane implements interfaces.IView{
 
 //    NOTE Im note describe the following methods because they just attach events to every object
 
-    void addButtonAllEventHandler(EventHandler<ActionEvent> eventHandler){
+    public void addButtonAllEventHandler(EventHandler<ActionEvent> eventHandler){
         btAddAll.addEventHandler(ActionEvent.ACTION, eventHandler);
     }
 
-    void addButtonSkipEventHandler(EventHandler<ActionEvent> eventHandler){
+	public void addButtonSkipEventHandler(EventHandler<ActionEvent> eventHandler){
         btNext.addEventHandler(ActionEvent.ACTION, eventHandler);
     }
 
-	void addButtonPlayPauseEventHandler(EventHandler<ActionEvent> eventHandler) {
+	public void addButtonPlayPauseEventHandler(EventHandler<ActionEvent> eventHandler) {
         btPlayPause.addEventHandler(ActionEvent.ACTION, eventHandler);
     }
 
-	void DeleteClickEventHandler(EventHandler<ActionEvent> eventHandler ){
+	public void DeleteClickEventHandler(EventHandler<ActionEvent> eventHandler ){
         btOpenDelete.addEventHandler(ActionEvent.ACTION, eventHandler);
     }
 
-	void addDetailClickEventHandler(EventHandler<ActionEvent> eventHandler ){
+	public  void addDetailClickEventHandler(EventHandler<ActionEvent> eventHandler ){
         btOpenDetails.addEventHandler(ActionEvent.ACTION, eventHandler);
 	}
 
-	void addLoadFilesClickEventHandler(EventHandler<ActionEvent> eventHandler) {
+	public void addLoadFilesClickEventHandler(EventHandler<ActionEvent> eventHandler) {
         btOpenFile.addEventHandler(ActionEvent.ACTION, eventHandler);
     }
 
-	void addListViewAllSongClickEventHandler(EventHandler<MouseEvent> eventHandler) {
+	public void addListViewAllSongClickEventHandler(EventHandler<MouseEvent> eventHandler) {
         lvAllSongs.setOnMouseClicked(eventHandler);
     }
 
-	void setAllSongs (core.SongList allSongs){
+	public void setAllSongs (core.util.SongList allSongs){ lvAllSongs.setItems(allSongs); }
 
-		lvAllSongs.setItems(allSongs);
-    }
-
-
-	void setQueue(core.SongList queue){
+	public void setQueue(core.util.SongList queue){
         lvQueue.setItems(queue);
     }
 
-	void togglePlayPause(SimpleBooleanProperty playPause) {
-		//btPlayPause.setSelected(playPause.getValue());
+	public void togglePlayPause(SimpleBooleanProperty playPause) {
+		btPlayPause.setSelected(playPause.getValue());
 		if(btPlayPause.isSelected()) btPlayPause.setText("II");
 		else btPlayPause.setText("\u25B6");
 	}
 
-	void togglePlayPause() {
-		if(btPlayPause.isSelected()) btPlayPause.setText("II");
-		else btPlayPause.setText("\u25B6");
-	}
 
-	Song getSelectedSong() { return (Song) lvAllSongs.getSelectionModel().getSelectedItem(); }
+	public Song getSelectedSong() { return (Song) lvAllSongs.getSelectionModel().getSelectedItem(); }
 
-	int getSelectedQueueIndex(){ return lvQueue.getSelectionModel().getSelectedIndex(); }
+	public int getSelectedQueueIndex(){ return lvQueue.getSelectionModel().getSelectedIndex(); }
 
 
 	public void updateTime(Duration time) {

@@ -1,20 +1,17 @@
-import com.sun.javafx.geom.Vec2d;
-import core.Model;
-import core.Song;
-import core.util;
+package core.controller;
 
-import deleteView.*;
-import detailView.*;
-import interfaces.IView;
+import javafx.beans.property.SimpleBooleanProperty;
+import core.view.DeleteView;
+import core.view.DetailView;
+import core.util.Model;
+import core.util.Song;
+import core.util.Util;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableDoubleValue;
-import javafx.beans.value.ObservableValue;
-import javafx.collections.ObservableListBase;
+import core.interfaces.IView;
+
 import javafx.scene.Scene;
 import javafx.scene.input.*;
 import javafx.stage.*;
-import javafx.util.Duration;
 
 import java.io.*;
 import java.rmi.RemoteException;
@@ -22,17 +19,17 @@ import java.util.List;
 
 // Here were are the MainView! Im happy!
 /**
- * This class is used as a main controller
+ * This class is used as a main core.controller
  */
-public class Controller extends interfaces.IController{
+public class Controller extends core.interfaces.IController{
 
 
-    private View view;
+    private core.view.View view;
 
     public void link(Model m, IView v){
 
         this.model = m;
-        this.view = (View)v;
+        this.view = (core.view.View)v;
 
         this.view.addLoadFilesClickEventHandler(e -> menuItemLoadEventHandler());
         this.view.addDetailClickEventHandler(e -> menuItemDetailEventHandler());
@@ -49,7 +46,7 @@ public class Controller extends interfaces.IController{
 
 	    view.togglePlayPause(model.getIsPlaying());
 
-	    model.getIsPlaying().addListener((observable, oldValue, newValue) -> view.togglePlayPause());
+	    model.getIsPlaying().addListener((observable, oldValue, newValue) -> view.togglePlayPause(new SimpleBooleanProperty(newValue)));
 		model.addEndOfMediaListener((observable, oldValue, newValue) ->
 				view.setSliderMax(100));
     }
@@ -66,7 +63,7 @@ public class Controller extends interfaces.IController{
 				initPlayer();
             }
         } catch (Exception ex) {
-            util.showExceptionMessage(ex);
+            Util.showExceptionMessage(ex);
         }
     }
 
@@ -88,7 +85,7 @@ public class Controller extends interfaces.IController{
             model.loadAllSongs(selectedFiles);
 
         } catch (Exception ex) {
-            core.util.showExceptionMessage(ex);
+            Util.showExceptionMessage(ex);
         }
     }
 
@@ -97,7 +94,7 @@ public class Controller extends interfaces.IController{
      */
     private void menuItemDetailEventHandler() {
 		if(!createDetailWindow()) {
-			util.showWarningMessage("Could not load detail window!\n\nDid you select something...");
+			Util.showWarningMessage("Could not load detail window!\n\nDid you select something...");
 		}
     }
 
@@ -106,7 +103,7 @@ public class Controller extends interfaces.IController{
      */
     private void menuItemDeleteEventHandle() {
        if(!createDeleteWindow()) {
-	       util.showWarningMessage("Could not load delete window");
+	       Util.showWarningMessage("Could not load delete window");
        }
     }
 
@@ -122,7 +119,7 @@ public class Controller extends interfaces.IController{
             model.getQueue().addAll(model.getAllSongs().getList());
             initPlayer();
         } catch (RemoteException ex) {
-           util.showExceptionMessage(ex);
+           Util.showExceptionMessage(ex);
         }
     }
 
@@ -133,35 +130,35 @@ public class Controller extends interfaces.IController{
 
 
 
-	private Vec2d windowPosition(){
-		double centerX = Main.getPrimaryStage().getX() + (Main.getPrimaryStage().getWidth() * 0.5);
-		double centerY = Main.getPrimaryStage().getY() + (Main.getPrimaryStage().getHeight() * 0.5);
-		return new Vec2d(centerX,centerY);
-	}
+//	private Vec2d windowPosition(){
+//		double centerX = Main.getPrimaryStage().getX() + (Main.getPrimaryStage().getWidth() * 0.5);
+//		double centerY = Main.getPrimaryStage().getY() + (Main.getPrimaryStage().getHeight() * 0.5);
+//		return new Vec2d(centerX,centerY);
+//	}
 
     private boolean createDeleteWindow(){
 	    try {
 
-			Vec2d pos = windowPosition();    // position from window
+			//Vec2d pos = windowPosition();    // position from window
 
 			// Singleton part II access to the object!
-		    deleteView.DeleteView deleteView = DeleteView.getInstance(model.getQueue());
+		    DeleteView deleteView = DeleteView.getInstance(model.getQueue());
 		    if (deleteView == null) return false;
 
-		    deleteView.DeleteController deleteController = new DeleteController();
+		    core.controller.DeleteController deleteController = new core.controller.DeleteController();
 		    deleteController.link(model, deleteView);
 
 
 		    Stage deleteStage = new Stage();
 		    // Set height and width and position on the right side
-		    deleteStage.setHeight(Main.getPrimaryStage().getHeight() * 0.9);
-		    deleteStage.setWidth(250);
-		    deleteStage.setX(pos.x + (deleteStage.getWidth()));
-		    deleteStage.setY(pos.y - (deleteStage.getHeight() * 0.5));
+//		    deleteStage.setHeight(Main.getPrimaryStage().getHeight() * 0.9);
+//		    deleteStage.setWidth(250);
+//		    deleteStage.setX(pos.x + (deleteStage.getWidth()));
+//		    deleteStage.setY(pos.y - (deleteStage.getHeight() * 0.5));
 		    deleteStage.setResizable(false);
 		    deleteStage.setTitle("Delete");
 
-		    // Singleton part II reset object... if we miss this call we cannot create new objects from this view
+		    // Singleton part II reset object... if we miss this call we cannot create new objects from this core.view
 		    deleteStage.setOnCloseRequest(e -> deleteView.closeView());
 
 		    Scene s = new Scene(deleteView);
@@ -178,15 +175,15 @@ public class Controller extends interfaces.IController{
 		    DetailView detailView = DetailView.getInstance((Song)model.getQueue().get(view.getSelectedQueueIndex()));
 		    if (detailView == null) return false;
 
-		    Vec2d pos = windowPosition();
+		    //Vec2d pos = windowPosition();
 
 		    DetailController detailController = new DetailController();
 		    detailController.link(model, detailView);
 
 		    Stage detailStage = new Stage();
 		    detailStage.setWidth(250);
-		    detailStage.setX(pos.x);
-		    detailStage.setY(pos.y);
+		   // detailStage.setX(pos.x);
+		   // detailStage.setY(pos.y);
 		    detailStage.setTitle("Details");
 		    detailStage.setResizable(false);
 		    detailStage.setAlwaysOnTop(true);

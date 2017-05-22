@@ -1,9 +1,10 @@
-package core;
+package core.util;
 
 // imports btw look at the bottom
 
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
+import javafx.collections.MapChangeListener;
 import javafx.scene.media.Media;
 import javafx.util.Duration;
 
@@ -15,7 +16,11 @@ import java.util.List;
  * This class provides application data and logic
  */
 public class Model {
+
+	private SongList queue;
+	private SongList allSongs;
 	private  Player player;
+
 //     simple singleton skeleton => there is just one Model allowed
     private static Model instance;                                          // look at the imports
     public static Model getInstance(){
@@ -29,8 +34,6 @@ public class Model {
         player = Player.getInstance();
     }
 
-    private SongList queue;
-    private SongList allSongs;
 
     /**
      * Method is used to loadAllSongs music files
@@ -41,18 +44,25 @@ public class Model {
 
 //         iterate over every file inside the directory
         for(File f : files){
-	        core.Song song = new Song();
+	        core.util.Song song = new Song();
 
             Media m = new Media(f.toURI().toString());
 
 	        song.setPath(f.toURI().toString());
             song.setId(counter);
-            song.setTitle(m.getMetadata().getOrDefault("title",f.getName()).toString());
-	        song.setInterpret(m.getMetadata().getOrDefault("artist","Unknown Interpret").toString());
-            song.setAlbum(m.getMetadata().getOrDefault("album","Unknown album").toString());
 
+	        allSongs.add(song);
+	        song.setTitle(f.getName());
 
-            allSongs.add(song);
+	        // Receive metadata from mp3 file
+            m.getMetadata().addListener((MapChangeListener<String, Object>) metaData -> {
+	            if (metaData.wasAdded()) {
+		            if (metaData.getKey().equals("album")) song.setAlbum((metaData.getValueAdded().toString()));
+		            else if (metaData.getKey().equals("artist")) song.setInterpret(metaData.getValueAdded().toString());
+		            else if (metaData.getKey().equals("title"))  song.setTitle(metaData.getValueAdded().toString());
+	            }
+            });
+
             counter++;
         }
     }
@@ -63,7 +73,11 @@ public class Model {
      */
     public SongList getQueue(){ return queue; }
 
-    public void callPlayerInit(SongList queue){
+	/**
+	 * Initialize the media player
+	 * @param queue list of songs
+	 */
+	public void callPlayerInit(SongList queue){
     	player.init(queue);
     }
 
@@ -73,12 +87,24 @@ public class Model {
      */
     public SongList getAllSongs(){ return allSongs; }
 
+	/**
+	 * ...
+	 * @return true if mediaplayer is playing otherwise false
+	 */
 	public SimpleBooleanProperty getIsPlaying(){ return player.getIsPlaying(); }
 
+	/**
+	 * Add event handler for TimeChange events
+	 * @param e method which should be called
+	 */
 	public void addTimeChangeListener(ChangeListener<Duration> e){
 		player.addTimeChangeListener(e);
 	}
 
+	/**
+	 * Add event handler for EOM events
+	 * @param e method which should be called
+	 */
 	public void addEndOfMediaListener(ChangeListener<Boolean> e){
 		player.addEndOfMediaListener(e);
 	}
@@ -87,8 +113,7 @@ public class Model {
 	 * Plays a mp3 file
 	 */
 	public void togglePlayPause(){
-		if(player.getIsPlaying().getValue())
-			player.pause();
+		if(getIsPlaying().getValue()) player.pause();
 		else player.play();
 	}
 

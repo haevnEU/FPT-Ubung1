@@ -1,12 +1,12 @@
-package detailView;
+package core.view;
 
-import core.Song;
+import core.util.Song;
 import javafx.event.*;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 
-public class DetailView extends VBox implements interfaces.IView{
+public class DetailView extends VBox implements core.interfaces.IView{
 
     private Song s;
     // I<3UI
@@ -82,10 +82,10 @@ public class DetailView extends VBox implements interfaces.IView{
         btCommit.addEventHandler(ActionEvent.ACTION, eventHandler);
     }
 
-    String getTitle(){ return tbTitle.getText(); }
+    public String getTitle(){ return tbTitle.getText(); }
 
-    String getInterpret(){ return tbInterpret.getText(); }
+    public String getInterpret(){ return tbInterpret.getText(); }
 
-    String getAlbumName(){ return tbAlbum.getText(); }
+    public String getAlbumName(){ return tbAlbum.getText(); }
 
 }
