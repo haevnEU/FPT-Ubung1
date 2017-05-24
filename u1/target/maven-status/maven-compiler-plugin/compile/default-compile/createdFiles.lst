@@ -1,0 +1,17 @@
+core/controller/Controller.class
+core/interfaces/Song.class
+core/util/SongList.class
+core/view/DeleteView.class
+core/view/DetailView.class
+core/interfaces/SerializableStrategy.class
+core/util/Model.class
+core/util/Player.class
+core/interfaces/IController.class
+core/interfaces/SongList.class
+core/interfaces/IView.class
+Main.class
+core/util/Song.class
+core/controller/DeleteController.class
+core/util/Util.class
+core/controller/DetailController.class
+core/view/View.class
