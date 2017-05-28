@@ -9,35 +9,42 @@ Die Warteschlange zeigt an welche Lieder gespielt werden sollen, an der ersten s
 
 ## Hauptansicht
 
-In der Mitte ist die Ansicht Aller Lieder, diese werden nicht abgespielt.
-Rechts befindet sich die Warteschlange, diese Lieder können abgespielt werden es ist auch möglich von einzelnen Liedern der Warteschlange die Metadaten zu bearbeiten.
+Links befindet sich die Warteschlange, hier ist es möglich mit alt + doppelklick lieder zu entfernen, mit doppelklick und gedrückter strg/ctrl ist es möglich details anzeigen zu lassen.
+Der Button All Songs öffnet sie Liste aller geladenen Lieder
+Im unteren fünftel befinden sich die Play/Pause, Skip und Seek funktionalitäten.
 
+Der Restliche platz ist für die Anzeige des Titel, Artisten, Album und Cover reserviert, es wird immer mittig zentriert.
 
 ## Menü 
+Wurde entfernt und durch Shortcuts ersetzt.
 
-Das Menü befindet sich auf der linken Seite des Fensters
-
-Songs können mit dem ersten Eintrag geladen werden.
-
-Metadaten können temporär modifiziert werden in dem man auf den Stift  drückt, dazu muss ein Lied in der Warteschlange ausgewählt werden.
-Hierzu öffnet sich ein neues Fenster in dem die Metadaten sichtbar und bearbeitbar sind.
-
-Ein Lied kann aus der Warteschlange entfernt werden indem man auf den dritten Eintrag klickt, hierzu öffnet sich ein neues Fenster das die Warteschlange anzeigt.
-In dem "Löschfenster" kann man einzelne Songs aus der Warteschlange löschen aber auch die gesamte Warteschlange löschen.
-Hinweis wird ein Lied abgespielt wird dies is zum Ende abgespielt.
-
-Mit dem letzten Eintrag können alle Lieder der Playlist "Allsongs" zur Warteschlange hinzugefügt werden.
+- Song details werden durc strg/ctrl Doppelklick auf das jeweilige lied geöffnet
+- Alt + Doppelklick entfernt ein Lied aus der Warteschlange
+- Alt + L öffnet den Lade dialog
 
 ## Steuerelemente
 
 Die Steuerelemente befinden sich auf der unteren Seite des Fensters
 
+Zuerst sind zwei Buttons zu sehen.
+- der erste Button dient als Play und Pause gleichzeitig, ein klicken wechselt den zustand des Media Players. Startzustand ist Pause.
+- der Zweite Button dient als skip Button, ein klick bewirkt das überspringen des aktuellen Liedes.
 
-Zuerst wird ein zeit fortschrittsbalken angezeigt, dieser passt sich jedem Song neu an
-Unter diesem zeit fortschrittsbalken befinden sich die Play, Pause, Skip Funktionen
 
-Der erste Button dient als Play und Pause gleichzeitig, ein klicken wechselt den zustand des Media Players. Startzustand ist Pause.
-Der Zweite Button dient als skip Button, ein klick bewirkt das überspringen des aktuellen Liedes.
+- Zeit fortschrittsbalken (unter den Steuerelementen) angezeigt, dieser passt sich jedem Song neu an
+
+## All Song ansicht
+
+Hier befindet sich lediglich eine Anzeige aller geladenen Lieder und die Funktionalität alle hinzuzufügen.
+Einzelne Lieder werden mit doppelklick hinzugefügt.
+
+## Detail ansicht
+
+Wenn ein Cover vorhanden ist wird das Fenster breiter dargestellt da Rechts dann das Cover angezeigt wird.
+
+Links zu sehen sind Titel, Album, Artist, ID, Pfad und Erscheinungsjahr des jeweilig ausgewählten Liedes.
+Diese Metadaten sind bearbeitbar und werden sofort geändert da hier auf die Technik der SimpleObjectProperty gesetzt wurde.
+
 
 ### Aufgabenstellung
 
