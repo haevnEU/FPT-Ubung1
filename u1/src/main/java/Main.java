@@ -1,33 +1,65 @@
-import core.controller.Controller;
-import core.util.Model;
 import javafx.application.*;
+
+import core.Model;
+import view.MainView;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import controller.MainController;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 
+/**
+ * This class provides start up routines
+ */
 public class Main extends Application {
 
+    /**
+     * Entry point for Application
+     * @param args arguments
+     */
     public static void main(String[] args) {
-        Application.launch(args);
+        launch(args);
     }
 
-    // following lines are used to access primaryStage inside other classes
-    private static Stage stage;
-	public static Stage getPrimaryStage(){ return stage;}
+    private Model model;
 
     @Override
     public void start(Stage primaryStage) throws Exception {
+        try{
+            System.out.println("Application start routine");
+            System.out.println("Loading data");
 
-        Model model = Model.getInstance();
-        core.view.View mainView = new core.view.View();
-	    Controller mainController = new Controller();
-        mainController.link(model, mainView);
+            model = new Model();
 
-        Scene scene = new Scene(mainView);
-        primaryStage.setScene(scene);
-        primaryStage.setMinWidth(500);
-        primaryStage.setMinHeight(300);
-        primaryStage.setOnCloseRequest(e -> Platform.exit());
-        primaryStage.show();
-        stage = primaryStage;
+            MainController mainController = new MainController();
+            MainView view = new MainView();
+            view.init();
+
+            mainController.link(model, view);
+
+            Scene s = new Scene(view,750,500);
+            s.setOnKeyPressed(e -> onKeyPressed(e));
+            primaryStage.setResizable(false);
+            primaryStage.setScene(s);
+            primaryStage.setOnCloseRequest(e->System.out.println("Application closed"));
+            primaryStage.show();
+
+            primaryStage.setOnCloseRequest(e -> Platform.exit());
+
+        }
+        catch(Exception ex){
+            System.err.println("Start routine failed!");
+            ex.printStackTrace();
+            Platform.exit();
+        }
+    }
+
+    /**
+     * Handles key pressing
+     * @param e Key event argument
+     */
+    private void onKeyPressed(KeyEvent e) {
+        if(e.isAltDown() && e.getCode() == KeyCode.L) model.loadDirectory();
+        else if(e.isAltDown() && e.getCode() == KeyCode.ESCAPE) Platform.exit();
     }
 }
