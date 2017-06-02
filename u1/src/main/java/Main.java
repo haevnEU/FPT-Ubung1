@@ -11,7 +11,7 @@ import javafx.scene.input.KeyEvent;
 /**
  * This class provides start up routines
  */
-public class Main extends Application {
+public final class Main extends Application {
 
     /**
      * Entry point for Application

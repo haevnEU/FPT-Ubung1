@@ -13,12 +13,12 @@ import javafx.beans.value.ChangeListener;
 /**
  * This class provides playable functionality
  */
-public class Player extends Observable implements interfaces.IPlayer{
+public final class Player extends Observable implements interfaces.IPlayer{
 
     private boolean playing = false;
     private MediaPlayer mediaPlayer;
     private Media media;
-    private Song currentSong;
+    private ISong currentSong;
 
     // Singleton usage because there should never exists two player
     private static Player instance;
@@ -38,7 +38,7 @@ public class Player extends Observable implements interfaces.IPlayer{
      * Initialize the media object
      * @param song the current which should played
      */
-    public void init(Song song) {
+    public void init(ISong song) {
         currentSong = song;
         media = new Media(currentSong.pathProperty().getValue());
         mediaPlayer = new MediaPlayer(media);
@@ -114,7 +114,7 @@ public class Player extends Observable implements interfaces.IPlayer{
     public void skip(ISong nextSong){
         mediaPlayer.pause();
         mediaPlayer.stop();
-        nextSong((Song)nextSong);
+        nextSong(nextSong);
         mediaPlayer.play();
     }
 
@@ -122,7 +122,7 @@ public class Player extends Observable implements interfaces.IPlayer{
      * Sets the next playing song
      * @param nextSong next song which should be played
      */
-    public void nextSong(Song nextSong) {
+    public void nextSong(ISong nextSong) {
         mediaPlayer = null;
         mediaPlayer = new MediaPlayer(new Media(nextSong.pathProperty().getValue()));
     }

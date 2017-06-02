@@ -5,7 +5,7 @@ import javafx.beans.property.SimpleStringProperty;
 /**
  * This class provides localization
  */
-public class Locale {
+public final class Locale {
     private SimpleStringProperty add, addAll, remove, play, skip, delete, detail;
 
     public Locale(){

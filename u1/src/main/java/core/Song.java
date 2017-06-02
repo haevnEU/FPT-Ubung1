@@ -10,7 +10,7 @@ import javafx.scene.image.Image;
 /**
  * This class provides song information
  */
-public class Song implements ISong {
+public final class Song implements ISong {
 
     private SimpleStringProperty album, interpret, path, title;
     private Image cover;

@@ -9,7 +9,7 @@ public interface IPlayer {
      * Initialize the media object
      * @param song the current which should played
      */
-    public void init(core.Song song);
+    public void init(ISong song);
 
     /**
      * Plays a track, required initialization with init call

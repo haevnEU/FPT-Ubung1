@@ -12,7 +12,7 @@ import java.util.ArrayList;
 /**
  * This class provides a List of ISong objects
  */
-public class SongList extends ModifiableObservableListBase<ISong> implements ISongList {
+public final class SongList extends ModifiableObservableListBase<ISong> implements ISongList {
 
     private final ObservableList<ISong> songs;
 
@@ -138,7 +138,7 @@ public class SongList extends ModifiableObservableListBase<ISong> implements ISo
      */
     @Override
     protected void doAdd(int index, ISong element) {
-        songs.add(index, element);
+        songs.add(index, (Song)element);
     }
 
 
@@ -158,7 +158,7 @@ public class SongList extends ModifiableObservableListBase<ISong> implements ISo
      *                                   (<tt>index &lt; 0 || index &gt;= size()</tt>)
      */
     @Override
-    protected ISong doSet(int index, ISong element) {  return songs.set(index, element); }
+    protected ISong doSet(int index, ISong element) {  return songs.set(index, (Song)element); }
 
     /**
      * Removes the element at position of {@code index}.

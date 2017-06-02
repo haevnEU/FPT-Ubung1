@@ -7,7 +7,6 @@ import javafx.beans.property.*;
 
 import java.io.File;
 
-import javafx.beans.value.ObservableValue;
 import javafx.util.Duration;
 import javafx.scene.image.Image;
 import javafx.scene.media.Media;
@@ -18,7 +17,7 @@ import javafx.collections.MapChangeListener;
 /**
  * This class provides fundamental logic
  */
-public class Model extends Observable implements IModel, Observer {
+public final class Model extends Observable implements IModel, Observer {
     private Locale locale;
     private SimpleBooleanProperty state;
     private SongList allSongs, queue;
@@ -110,7 +109,7 @@ public class Model extends Observable implements IModel, Observer {
 
 //         iterate over every file inside the directory
             for(File f : selectedFiles){
-                core.Song song = new Song();
+                Song song = new Song();
                 Media m = new Media(f.toURI().toString());
 
                 song.pathProperty().set(f.toURI().toString());

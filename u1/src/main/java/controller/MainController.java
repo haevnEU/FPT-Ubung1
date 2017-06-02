@@ -1,6 +1,5 @@
 package controller;
 
-import javafx.scene.image.Image;
 import view.*;
 import core.*;
 import interfaces.*;
@@ -46,7 +45,7 @@ public class MainController implements interfaces.IController{
         Song selectedSong = (Song)view.getSelectedQueueItem();
 
         if(e.getClickCount() == 2) model.setNextSong(selectedSong);
-        if(e.isSecondaryButtonDown() && e.getClickCount() == 2) invokeDetailWindow(selectedSong);
+        if(e.isControlDown() && e.getClickCount() == 2 || e.isSecondaryButtonDown() && e.getClickCount() == 2) invokeDetailWindow(selectedSong);
         if(e.isAltDown() && e.getClickCount() >= 2)model.getQueue().remove(selectedSong);
     }
 
