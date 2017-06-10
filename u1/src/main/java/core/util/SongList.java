@@ -1,5 +1,6 @@
 package core.util;
 
+import core.interfaces.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ModifiableObservableListBase;
 import javafx.collections.ObservableList;
@@ -18,6 +19,10 @@ public class SongList extends ModifiableObservableListBase<core.interfaces.Song>
 
     public SongList() {
         songs = FXCollections.observableArrayList();
+    }
+
+    public SongList(ArrayList<core.interfaces.Song> nsongs) {
+        this.songs = FXCollections.observableList(nsongs);
     }
 
     /**

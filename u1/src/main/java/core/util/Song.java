@@ -14,6 +14,14 @@ public class Song implements core.interfaces.Song {
                                  title = new SimpleStringProperty("Unknown title");
     private long id;
 
+    public Song(String path, String title, String interpret, String album, long id) {
+        this.path = new SimpleStringProperty(path);
+        this.title = new SimpleStringProperty(title);
+        this.interpret = new SimpleStringProperty(interpret);
+        this.album = new SimpleStringProperty(album);
+        this.id = id;
+    }
+
     @Override
     public String getAlbum() {
         return album.getValue();
