@@ -18,7 +18,7 @@ public class JDBCStrategy implements interfaces.ISerializableStrategy {
 
 
 
-	public JDBCStrategy(LoginCredentials loginCredentials, SongList songList, String tableName) {
+	public JDBCStrategy(LoginCredentials loginCredentials, String tableName) {
 
 		dbPath = LoadFiles.getFile("SQL Database", "*.db").getPath();
 		System.out.println("[INFO] DB PATH: " + dbPath);

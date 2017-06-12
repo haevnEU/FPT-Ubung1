@@ -79,7 +79,7 @@ public class SaveController implements interfaces.IController {
 	 * Handle Button DB click event
 	 */
 	private void btDbClicked() {
-		JDBCStrategy jdbcStrategy = new JDBCStrategy(view.getLogin(), model.getQueue(), tableName);
+		JDBCStrategy jdbcStrategy = new JDBCStrategy(view.getLogin(), tableName);
 
 		jdbcStrategy.writeSongList(list);
 	}
