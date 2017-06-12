@@ -4,9 +4,14 @@ package controller;
 import core.JDBCStrategy;
 import core.LoginCredentials;
 import core.Model;
+import core.SongList;
 import interfaces.IDatabaseUtils;
 import interfaces.IModel;
 import interfaces.IView;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.scene.control.RadioButton;
+import javafx.scene.control.Toggle;
 import javafx.stage.DirectoryChooser;
 import view.LoadFiles;
 import view.SaveView;
@@ -18,6 +23,8 @@ public class SaveController implements interfaces.IController {
 	SaveView view;
 	Model model;
 
+	SongList list;
+	String tableName;
 	/**
 	 * link model with view
 	 *
@@ -34,6 +41,22 @@ public class SaveController implements interfaces.IController {
 		view.addBtDbClickEventHandler(e -> btDbClicked());
 		view.addBtOpenJPAClickEventHandler(e -> btJPAClicked());
 		view.addCheckBoxDbEnableEventHandler(e -> cbEnabledEvent());
+		view.addToggleSongList((observable, oldValue, newValue) -> onToggle(observable, oldValue, newValue));
+
+		list = model.getQueue();
+		tableName = "Library";
+	}
+
+	private void onToggle(ObservableValue<? extends Toggle> observable, Toggle oldValue, Toggle newValue) {
+		RadioButton rb = (RadioButton) newValue;
+		if(rb.getId().toUpperCase().startsWith("Q")){
+			list = model.getQueue();
+			tableName = "Library";
+		}
+		else{
+			list = model.getAllSongs();
+			tableName = "Playlist";
+		}
 	}
 
 	/**
@@ -56,12 +79,9 @@ public class SaveController implements interfaces.IController {
 	 * Handle Button DB click event
 	 */
 	private void btDbClicked() {
-		JDBCStrategy jdbcStrategy = new JDBCStrategy(view.getLogin(), model.getQueue(), "Playlist");
-		try {
-			jdbcStrategy.writeSong(model.getQueue().get(0));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		JDBCStrategy jdbcStrategy = new JDBCStrategy(view.getLogin(), model.getQueue(), tableName);
+
+		jdbcStrategy.writeSongList(list);
 	}
 
 	/**

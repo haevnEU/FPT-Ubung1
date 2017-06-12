@@ -1,6 +1,8 @@
 package view;
 
 import core.LoginCredentials;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -20,6 +22,8 @@ public class SaveView extends BorderPane implements interfaces.IView {
 	private PasswordField pwUsername;
 	private Button btXml, btBin, btDB, btOpenJPA;
 	private Label lbUserName, lbPW;
+	RadioButton rbplayList, rbQueue;
+	ToggleGroup toggleGroup;
 
 	public static SaveView getInstance() {
 		if(instance != null) return null;
@@ -31,6 +35,7 @@ public class SaveView extends BorderPane implements interfaces.IView {
 	private SaveView(){
 		HBox box1 = new HBox();
 		HBox box2 = new HBox();
+		HBox box3 = new HBox();
 		VBox center = new VBox();
 		VBox left = new VBox();
 
@@ -48,9 +53,19 @@ public class SaveView extends BorderPane implements interfaces.IView {
 		box2.getChildren().addAll(lbPW, pwUsername);
 
 
+		toggleGroup = new ToggleGroup();
+		rbplayList = new RadioButton("Playlist");
+		rbplayList.setId("P");
+		rbQueue = new RadioButton("Queue");
+		rbQueue.setId("Q");
+		rbQueue.setSelected(true);
+		rbplayList.setToggleGroup(toggleGroup);
+		rbQueue.setToggleGroup(toggleGroup);
+		box3.getChildren().addAll(rbplayList,rbQueue);
+
 		box1.setSpacing(10);
 		box2.setSpacing(10);
-
+		box3.setSpacing(10);
 		center.setPadding(new Insets(10));
 		left.setPadding(new Insets(10));
 
@@ -59,7 +74,7 @@ public class SaveView extends BorderPane implements interfaces.IView {
 
 		cbEnableDB = new CheckBox("Enable Database functionality");
 
-		center.getChildren().addAll(box1, box2, cbEnableDB);
+		center.getChildren().addAll(box3, box1, box2, cbEnableDB);
 
 		btXml = new Button("XML");
 		btXml.setPrefWidth(150);
@@ -131,6 +146,14 @@ public class SaveView extends BorderPane implements interfaces.IView {
 		pw = pwUsername.getText();
 
 		return new LoginCredentials(username, pw);
+	}
+
+	/**
+	 * Adds event handling for toggle group
+	 * @param e method which should be invoked
+	 */
+	public void addToggleSongList(ChangeListener<Toggle> e){
+		toggleGroup.selectedToggleProperty().addListener(e);
 	}
 
 	public void toggleDbView(){

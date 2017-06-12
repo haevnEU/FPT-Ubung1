@@ -29,15 +29,19 @@ public class JDBCStrategy implements interfaces.ISerializableStrategy {
 		System.out.println("[INFO] User: " + this.loginCredentials.getUsername() + " connected at " + Util.getUnixTimeStamp());
 	}
 
+	@Deprecated
 	@Override
 	public void openWriteableSongs() throws IOException {}
 
+	@Deprecated
 	@Override
 	public void openReadableSongs() throws IOException {}
 
+	@Deprecated
 	@Override
 	public void openWriteablePlaylist() throws IOException {}
 
+	@Deprecated
 	@Override
 	public void openReadablePlaylist() throws IOException {}
 
@@ -61,7 +65,7 @@ public class JDBCStrategy implements interfaces.ISerializableStrategy {
 
 				System.out.println("[INFO] Values added");
 
-				if(((Song)s).getCover() != null) {
+				if(s instanceof core.Song && ((Song)s).getCover() != null) {
 					System.out.println("[INFO] found cover prepare cover for db");
 					// Load the Image into a Java FX Image Object //
 
@@ -101,12 +105,54 @@ public class JDBCStrategy implements interfaces.ISerializableStrategy {
 
 	@Override
 	public ISong readSong() throws IOException, ClassNotFoundException {
-		return null;
+		core.Song s = null;
+		try (Connection con = DriverManager.getConnection("jdbc:sqlite:" + dbPath, loginCredentials.getUsername(), loginCredentials.getPw())) {
+			System.out.println("[INFO] Connection opened at " + Util.getUnixTimeStamp());
+			try (PreparedStatement pstmt = con.prepareStatement("SELECT * FROM " + tableName)) {
+				System.out.println("[INFO] executed query");
+			} catch (SQLException ex) {
+				System.err.println("[EXCEPTION] SQL Exception thrown at " + Util.getUnixTimeStamp());
+				System.err.println("\tStatement: " + ex.getSQLState());
+				System.err.println("\tMessage: " + ex.getMessage());
+				ex.printStackTrace();
+			}
+		} catch (SQLException ex) {
+			System.err.println("[EXCEPTION] SQL Exception thrown at " + Util.getUnixTimeStamp());
+			System.err.println("\tStatement: " + ex.getSQLState());
+			System.err.println("\tMessage: " + ex.getMessage());
+			ex.printStackTrace();
+		}
+		System.out.println("[INFO] Finished query at " +Util.getUnixTimeStamp() );
+		return s;
 	}
 
+	@Deprecated
 	@Override
 	public void closeReadable() {}
 
+	@Deprecated
 	@Override
 	public void closeWriteable() {}
+
+	/**
+	 * Saves a song list
+	 * @param songList song list which should be saved
+	 */
+	public void writeSongList(SongList songList){
+		for(interfaces.ISong s : songList){
+			try {
+				System.out.println(s.getId() +  " " + s.getTitle() + " " + s.getInterpret() + " "+ s.getAlbum() + " " + s.getPath());
+				writeSong(s);
+			} catch (IOException e) {
+				e.printStackTrace(System.err);
+			}
+		}
+		try {
+			readSong();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+	}
 }
