@@ -1,5 +1,7 @@
-package core.util;
+package core;
 
+import interfaces.ISong;
+import interfaces.ISongList;
 import javafx.collections.FXCollections;
 import javafx.collections.ModifiableObservableListBase;
 import javafx.collections.ObservableList;
@@ -10,63 +12,63 @@ import java.util.ArrayList;
 // TODO Rewrite comments
 
 /**
- * This class provides a List of Song objects
+ * This class provides a List of ISong objects
  */
-public class SongList extends ModifiableObservableListBase<core.interfaces.Song> implements core.interfaces.SongList  {
+public class SongList extends ModifiableObservableListBase<ISong> implements ISongList {
 
-    private final ObservableList<core.interfaces.Song> songs;
+    private final ObservableList<ISong> songs;
 
     public SongList() {
         songs = FXCollections.observableArrayList();
     }
 
     /**
-     * Adds a song into SongList
+     * Adds a song into ISongList
      * @param s
      * @return
      * @throws RemoteException
      */
     @Override
-    public boolean addSong(core.interfaces.Song s) throws RemoteException {
+    public boolean addSong(ISong s) throws RemoteException {
         return songs.add(s);
     }
 
     /**
-     * Deletes a song from the SongList
+     * Deletes a song from the ISongList
      * @param s
      * @return
      * @throws RemoteException
      */
     @Override
-    public boolean deleteSong(core.interfaces.Song s) throws RemoteException {
+    public boolean deleteSong(ISong s) throws RemoteException {
         return songs.remove(s);
     }
 
     /**
-     * set current SongList
-     * <p><i>if there is a SongList this will be overwritten </i></p>
-     * @param s new SongList
+     * set current ISongList
+     * <p><i>if there is a ISongList this will be overwritten </i></p>
+     * @param s new ISongList
      * @throws RemoteException
      */
     @Override
-    public void setList(ArrayList<core.interfaces.Song> s) throws RemoteException {
+    public void setList(ArrayList<ISong> s) throws RemoteException {
         songs.setAll(s);
     }
 
     /**
-     * returns SongList
+     * returns ISongList
      * @return
      * @throws RemoteException
      */
     @Override
-    public ArrayList<core.interfaces.Song> getList() throws RemoteException {
-        ArrayList<core.interfaces.Song> returnSongList = new ArrayList<>();
+    public ArrayList<ISong> getList() throws RemoteException {
+        ArrayList<ISong> returnSongList = new ArrayList<>();
         returnSongList.addAll(songs);
         return returnSongList;
     }
 
     /**
-     * Deletes all songs inside SongList
+     * Deletes all songs inside ISongList
      * @throws RemoteException
      */
     @Override
@@ -75,7 +77,7 @@ public class SongList extends ModifiableObservableListBase<core.interfaces.Song>
     }
 
     /**
-     * Returns the dimension of the SongList
+     * Returns the dimension of the ISongList
      * @return
      * @throws RemoteException
      */
@@ -91,10 +93,21 @@ public class SongList extends ModifiableObservableListBase<core.interfaces.Song>
      * @throws RemoteException
      */
     @Override
-    public core.interfaces.Song findSongByPath(String name) throws RemoteException {
+    public ISong findSongByPath(String name) throws RemoteException {
 
-        for(core.interfaces.Song s : songs)
+        for(ISong s : songs)
             if(s.getPath().equals(name)) return s;
+        return null;
+    }
+
+    /**
+     * Search for a song using id
+     * @param id id
+     * @return Song if there is a match otherwise null
+     */
+    public ISong findSongById(long id){
+        for(ISong s : songs)
+            if(s.getId() == id) return s;
         return null;
     }
 
@@ -104,7 +117,7 @@ public class SongList extends ModifiableObservableListBase<core.interfaces.Song>
      * @return
      */
     @Override
-    public core.interfaces.Song get(int index) {
+    public ISong get(int index) {
         return songs.get(index);
     }
 
@@ -133,7 +146,7 @@ public class SongList extends ModifiableObservableListBase<core.interfaces.Song>
      *                                   (<tt>index &lt; 0 || index &gt; size()</tt>)
      */
     @Override
-    protected void doAdd(int index, core.interfaces.Song element) {
+    protected void doAdd(int index, ISong element) {
         songs.add(index, element);
     }
 
@@ -154,7 +167,7 @@ public class SongList extends ModifiableObservableListBase<core.interfaces.Song>
      *                                   (<tt>index &lt; 0 || index &gt;= size()</tt>)
      */
     @Override
-    protected core.interfaces.Song doSet(int index, core.interfaces.Song element) {  return songs.set(index, element); }
+    protected ISong doSet(int index, ISong element) {  return songs.set(index, element); }
 
     /**
      * Removes the element at position of {@code index}.
@@ -165,7 +178,7 @@ public class SongList extends ModifiableObservableListBase<core.interfaces.Song>
      *                                   (<tt>index &lt; 0 || index &gt;= size()</tt>)
      */
     @Override
-    protected core.interfaces.Song doRemove(int index) {
+    protected ISong doRemove(int index) {
         return songs.remove(index);
     }
 }

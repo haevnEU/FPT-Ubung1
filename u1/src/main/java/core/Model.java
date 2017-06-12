@@ -1,21 +1,22 @@
-package core.util;
+package core;
 
 // imports btw look at the bottom
 
-import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.collections.MapChangeListener;
-import javafx.scene.media.Media;
-import javafx.util.Duration;
 
 import java.io.File;
 import java.util.List;
-
+import javafx.util.Duration;
+import javafx.scene.image.Image;
+import javafx.scene.media.Media;
+import javafx.beans.value.ChangeListener;
+import javafx.collections.MapChangeListener;
+import ApplicationException.IDOverFlowException;
+import javafx.beans.property.SimpleBooleanProperty;
 
 /**
  * This class provides application data and logic
  */
-public class Model {
+public final class Model implements interfaces.IModel {
 
 	private SongList queue;
 	private SongList allSongs;
@@ -40,31 +41,35 @@ public class Model {
      * @param files files which should be loaded
      */
     public void loadAllSongs(List<File> files) {
-        int counter = 0;
+	    try {
 
 //         iterate over every file inside the directory
-        for(File f : files){
-	        core.util.Song song = new Song();
+		    for (File f : files) {
+			    core.Song song = new Song(IDGenerator.getNextID());
+			    Media m = new Media(f.toURI().toString());
 
-            Media m = new Media(f.toURI().toString());
+			    song.setPath(f.toURI().toString());
 
-	        song.setPath(f.toURI().toString());
-            song.setId(counter);
+			    song.setId(IDGenerator.getNextID());
 
-	        allSongs.add(song);
-	        song.setTitle(f.getName());
+			    allSongs.add(song);
+			    song.setTitle(f.getName());
 
-	        // Receive metadata from mp3 file
-            m.getMetadata().addListener((MapChangeListener<String, Object>) metaData -> {
-	            if (metaData.wasAdded()) {
-		            if (metaData.getKey().equals("album")) song.setAlbum((metaData.getValueAdded().toString()));
-		            else if (metaData.getKey().equals("artist")) song.setInterpret(metaData.getValueAdded().toString());
-		            else if (metaData.getKey().equals("title"))  song.setTitle(metaData.getValueAdded().toString());
-	            }
-            });
+			    // Receive metadata from mp3 file
+			    m.getMetadata().addListener((MapChangeListener<String, Object>) metaData -> {
+				    if (metaData.wasAdded()) {
+					    if (metaData.getKey().equals("album")) song.setAlbum((metaData.getValueAdded().toString()));
+					    else if (metaData.getKey().equals("artist"))
+						    song.setInterpret(metaData.getValueAdded().toString());
+					    else if (metaData.getKey().equals("title")) song.setTitle(metaData.getValueAdded().toString());
+					    else if (metaData.getKey().equals("image")) song.setCover((Image) metaData.getValueAdded());
+				    }
+			    });
 
-            counter++;
-        }
+		    }
+	    } catch (IDOverFlowException e) {
+		    System.err.println(e.getMessage());
+	    }
     }
 
     /**

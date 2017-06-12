@@ -1,4 +1,4 @@
-package core.util;
+package core;
 
 import javafx.beans.property.*;
 import javafx.beans.value.ChangeListener;
@@ -19,7 +19,7 @@ class Player {
 	private SimpleBooleanProperty isPlaying = new SimpleBooleanProperty(false);
 	private SimpleBooleanProperty endOfTrack = new SimpleBooleanProperty(false);
 	private ChangeListener mediaPlayerChangeTime;
-
+	private Song nextSong;
 	// Singleton usage because there should never exists two player
 	private static Player instance;
 	private Player(){}
@@ -35,7 +35,7 @@ class Player {
 
 	/**
 	 * Initialize the MediaPlayer
-	 * @param s Song which should be played
+	 * @param s ISong which should be played
 	 */
 	private void initPlayer(Song s){
 		// Set or change media
@@ -58,6 +58,7 @@ class Player {
 		if(isInitialized) return;
 		queue = songs;
 		initPlayer((Song)songs.get(0));
+
 		isInitialized = true;
 		System.out.println("Initialized new state: " + isInitialized);
 	}
@@ -98,7 +99,7 @@ class Player {
 			System.out.println("Successfully leaved EndOfMedia");
 		}
 		catch (RemoteException e) {
-			System.out.println("Exception occurred");
+			System.out.println("ApplicationException occurred");
 			e.printStackTrace();
 		}
 	}

@@ -1,30 +1,32 @@
-package core.view;
+package view;
 
-import core.util.Song;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.event.*;
 import javafx.geometry.*;
-import javafx.scene.control.*;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
+import javafx.scene.control.*;
+
+import core.Song;
+import interfaces.ISong;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import javafx.beans.property.SimpleBooleanProperty;
 
 /**
  * This class provides our MainWindow
  */
-public class View extends BorderPane implements core.interfaces.IView{
+public class MainView extends BorderPane implements interfaces.IView{
 
 	// Updates with every new song, contains the length of song
 	private String preTitle = "NaN";
     private ListView lvAllSongs;
-	private ListView<core.interfaces.Song> lvQueue;
+	private ListView<ISong> lvQueue;
     private ToggleButton btPlayPause;
     private Button btNext, btAddAll;
-	private Button btOpenDetails, btOpenFile, btOpenDelete;
+	private Button btOpenDetails, btOpenFile, btOpenDelete, btOpenSave;
 	private Slider sliderCurrentTime;
 
-    public View() {
+    public MainView() {
 
     	prepareBottomControl();
         prepareSideMenu();
@@ -99,11 +101,14 @@ public class View extends BorderPane implements core.interfaces.IView{
 		btAddAll.setPrefSize(40,40);
 		btAddAll.setTooltip(new Tooltip("Adds every song to queue"));
 
+		btOpenSave = new Button("\u2399");
+		btOpenSave.setPrefSize(40,40);
+		btOpenSave.setTooltip(new Tooltip("Saves an object"));
 
 	    VBox test = new VBox();
 	    test.setPadding(new Insets(10));
 	    test.setSpacing(10);
-	    test.getChildren().addAll(new Label("Menu"), btOpenFile, btOpenDetails, btOpenDelete, btAddAll);
+	    test.getChildren().addAll(new Label("Menu"), btOpenFile, btOpenDetails, btOpenDelete, btAddAll, btOpenSave);
 	    setLeft(test);
     }
 
@@ -111,13 +116,13 @@ public class View extends BorderPane implements core.interfaces.IView{
 	 * Set the AllSong listView
 	 * @param allSongs SongsList which represent all songs
 	 */
-	public void setAllSongs (core.util.SongList allSongs){ lvAllSongs.setItems(allSongs); }
+	public void setAllSongs (core.SongList allSongs){ lvAllSongs.setItems(allSongs); }
 
 	/**
 	 * Set the queueView
-	 * @param queue SongList which represent the queue
+	 * @param queue ISongList which represent the queue
 	 */
-	public void setQueue(core.util.SongList queue){
+	public void setQueue(core.SongList queue){
         lvQueue.setItems(queue);
     }
 
@@ -158,7 +163,7 @@ public class View extends BorderPane implements core.interfaces.IView{
 
 	/**
 	 * Set the new maximum of the slider
-	 * @param songLength new maximum => Song length as seconds
+	 * @param songLength new maximum => ISong length as seconds
 	 */
 	public void setSongLength(double songLength) {
 		System.out.println(songLength);
@@ -168,12 +173,17 @@ public class View extends BorderPane implements core.interfaces.IView{
 		sec = (int) (songLength - (min * 60));
 		preTitle = min + ":" + sec;
 		System.out.println(preTitle);
+
 	}
 
 
 
 
 	// From here we just add event handler
+
+	public void addButtonSaveEventHandler(EventHandler<ActionEvent> eventEventHandler){
+		btOpenSave.addEventHandler(ActionEvent.ACTION, eventEventHandler);
+	}
 
 	public void addButtonAllEventHandler(EventHandler<ActionEvent> eventHandler){
 		btAddAll.addEventHandler(ActionEvent.ACTION, eventHandler);
@@ -202,4 +212,7 @@ public class View extends BorderPane implements core.interfaces.IView{
 	public void addListViewAllSongClickEventHandler(EventHandler<MouseEvent> eventHandler) {
 		lvAllSongs.setOnMouseClicked(eventHandler);
 	}
+
+	@Override
+	public void destroy() {}
 }

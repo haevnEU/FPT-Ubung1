@@ -1,21 +1,22 @@
-package core.controller;
+package controller;
 
-import core.util.Model;
-import core.view.DeleteView;
-import core.interfaces.*;
+import interfaces.*;
 
-import java.rmi.RemoteException;
+import core.Model;
+import view.DeleteView;
 
 /**
  * This class provides the core.controller for deleteView
  */
-public class DeleteController extends IController{
+public class DeleteController implements IController{
 
 
     private DeleteView view;
-    public void link(Model m, IView v){
+    private Model model;
+    @Override
+    public void link(IModel m, IView v){
 
-        this.model = m;
+        this.model = (Model)m;
         this.view = (DeleteView)v;
 
         this.view.addButtonDeleteEventHandler(e -> btRemoveClickEventHandler());
@@ -26,12 +27,8 @@ public class DeleteController extends IController{
 	 * Removes every entry in queue
 	 */
 	private void btRemoveAllEventHandler() {
-	    try {
-		    model.getQueue().remove(0, model.getQueue().sizeOfList());
-	    } catch (RemoteException ex) {
-	    	ex.printStackTrace();
-	    }
-    }
+		model.getQueue().removeAll(model.getQueue());
+	}
 
     /**
      * Removes selected entry in queue

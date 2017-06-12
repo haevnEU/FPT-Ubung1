@@ -1,12 +1,8 @@
-package core.interfaces;
+package interfaces;
 
 import java.io.IOException;
 
-/**
- * This interface ist used uhm yeah idk wtf is going?!
- * #hordeFTW #mercyForYou
- */
-public interface SerializableStrategy {
+public interface ISerializableStrategy {
 
     /*
       Setup Serializing the library
@@ -31,12 +27,12 @@ public interface SerializableStrategy {
     /*
       Write a song
      */
-    void writeSong(Song s) throws IOException;
+    void writeSong(ISong s) throws IOException;
 
     /*
      Read a song
      */
-    Song readSong() throws IOException, ClassNotFoundException;
+    ISong readSong() throws IOException, ClassNotFoundException;
 
     /*
      Finish writing/reading by closing all Streams

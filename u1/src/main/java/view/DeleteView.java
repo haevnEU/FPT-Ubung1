@@ -1,20 +1,21 @@
-package core.view;
+package view;
 
-import core.util.SongList;
 import javafx.event.*;
-import javafx.geometry.Insets;
-import javafx.scene.control.*;
 import javafx.scene.layout.*;
+import javafx.scene.control.*;
 
+import core.SongList;
+import interfaces.ISong;
+import javafx.geometry.Insets;
 
 /**
  * This class provides UI for delete action
  */
-public class DeleteView extends BorderPane implements core.interfaces.IView {
+public class DeleteView extends BorderPane implements interfaces.IView {
 
     private Button btDelete;
     private Button btDeleteAll;
-    private ListView<core.interfaces.Song> lvContent;
+    private ListView<ISong> lvContent;
 
     // this variable tracks the instantiated class objects, normally it should be 0 or 1
     private static int numInstances = 0;
@@ -24,7 +25,7 @@ public class DeleteView extends BorderPane implements core.interfaces.IView {
         if(v != null && numInstances > 0) return null;
         // update, which excludes future instantiation
         numInstances++;
-        // create new core.view
+        // create new view
         v = new DeleteView(songs);
         return v;
     }
@@ -45,14 +46,6 @@ public class DeleteView extends BorderPane implements core.interfaces.IView {
         setCenter(lvContent);
 
         setBottom(btBox);
-    }
-
-    /**
-     * Resets the number of instances => new instantiation is allowed
-     */
-    public void closeView(){
-        v = null;
-        numInstances = 0;
     }
 
     /**
@@ -77,4 +70,9 @@ public class DeleteView extends BorderPane implements core.interfaces.IView {
      */
     public int getSelectedIndex(){ return lvContent.getSelectionModel().getSelectedIndex(); }
 
+    @Override
+    public void destroy() {
+        numInstances--;
+        v = null;
+    }
 }

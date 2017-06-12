@@ -1,18 +1,25 @@
-package core.util;
+package core;
 
+import interfaces.ISong;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableValue;
+import javafx.scene.image.Image;
 
 /**
  * This class provides song information
  */
-public class Song implements core.interfaces.Song {
+public class Song implements ISong {
 
     private SimpleStringProperty album = new SimpleStringProperty("Unknown album"),
                                  interpret = new SimpleStringProperty("Unknown interpret"),
                                  path = new SimpleStringProperty(""),
                                  title = new SimpleStringProperty("Unknown title");
     private long id;
+    private Image cover;
+
+    public Song(long id){
+        this.id = id;
+    }
 
     @Override
     public String getAlbum() {
@@ -49,6 +56,7 @@ public class Song implements core.interfaces.Song {
         return id;
     }
 
+    @Deprecated
     @Override
     public void setId(long id) {
         this.id = id;
@@ -72,6 +80,18 @@ public class Song implements core.interfaces.Song {
     @Override
     public String toString(){
         return getTitle();
+    }
+
+    public ObservableValue<String> titleProperty() {
+        return title;
+    }
+
+    public Image getCover() {
+        return cover;
+    }
+
+    public void setCover(Image cover) {
+        this.cover = cover;
     }
 }
 
