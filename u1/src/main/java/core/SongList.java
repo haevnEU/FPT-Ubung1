@@ -22,6 +22,10 @@ public class SongList extends ModifiableObservableListBase<ISong> implements ISo
         songs = FXCollections.observableArrayList();
     }
 
+    public SongList(ArrayList<interfaces.ISong> nsongs) {
+        this.songs = FXCollections.observableList(nsongs);
+    }
+
     /**
      * Adds a song into ISongList
      * @param s
