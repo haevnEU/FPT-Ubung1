@@ -1,8 +1,8 @@
 package controller;
 
-import core.Song;
 import interfaces.*;
 
+import core.Song;
 import view.DetailView;
 
 public class DetailController implements interfaces.IController {
@@ -21,7 +21,6 @@ public class DetailController implements interfaces.IController {
 
         this.model = (core.Model)m;
         this.view = (DetailView)v;
-        // Apply click event
       }
 
 

@@ -2,31 +2,152 @@ package core;
 
 import java.io.*;
 import java.sql.*;
+import javafx.scene.image.*;
+import ApplicationException.*;
 
+import view.EmptyView;
 import interfaces.ISong;
-import javafx.scene.image.Image;
-import javafx.scene.image.PixelFormat;
-import view.LoadFiles;
+import com.sun.javafx.geom.Vec2d;
 
-import javax.imageio.ImageIO;
+/**
+ * This class provides database access
+ *
+ * written by Nils Milewski (nimile)
+ */
+public class JDBCStrategy implements interfaces.IDatabaseUtils {
 
-public class JDBCStrategy implements interfaces.ISerializableStrategy {
-
-	private SongList songList;
 	private LoginCredentials loginCredentials;
 	private String tableName, dbPath;
 
+	public JDBCStrategy(LoginCredentials loginCredentials, SelectedSongList tableName) {
 
-
-	public JDBCStrategy(LoginCredentials loginCredentials, String tableName) {
-
-		dbPath = LoadFiles.getFile("SQL Database", "*.db").getPath();
+		dbPath = EmptyView.getFile("SQL Database", "*.db").getPath();
 		System.out.println("[INFO] DB PATH: " + dbPath);
-		this.songList = songList;
 		this.loginCredentials = loginCredentials;
-		this.tableName = tableName;
+		this.tableName = tableName.name();
 		System.out.println("[INFO] Working on table: " + this.tableName);
 		System.out.println("[INFO] User: " + this.loginCredentials.getUsername() + " connected at " + Util.getUnixTimeStamp());
+	}
+
+
+	/**
+	 * Saves a Song List from database
+	 * @throws SQLException if there exist any problems with the database
+	 * @throws DatabaseException General database exception => not specified
+	 * @throws IOException General IO exception => not specified
+	 */
+	public void writeSongList(SongList songList) throws SQLException, DatabaseException, IOException {
+		for (interfaces.ISong s : songList) {
+			writeSong(s);
+		}
+	}
+
+	@Override
+	public void writeSong(ISong s) throws IOException {
+
+		try (Connection con = DriverManager.getConnection("jdbc:sqlite:" + dbPath, loginCredentials.getUsername(), loginCredentials.getPw())) {
+			System.out.println("[INFO] Connection opened at " + Util.getUnixTimeStamp());
+			try (PreparedStatement pstmt = con.prepareStatement("INSERT INTO " + tableName + " (ID, Title, Artist, Album, Path, Cover) VALUES(?, ?, ?, ?, ?, ?)")) {
+				System.out.println("[INFO] Created prepared statement \"INSERT INTO \"" + tableName + "\" (ID, Title, Artist, Album, Path, Cover) VALUES(?, ?, ?, ?, ?, ?)\"");
+
+				pstmt.setLong(1, s.getId());
+				pstmt.setString(2, s.getTitle());
+				pstmt.setString(3, s.getInterpret());
+				pstmt.setString(4, s.getAlbum());
+				pstmt.setString(5, s.getPath());
+
+				System.out.println("[INFO] Values added");
+
+				// saving images to db
+				if (s instanceof core.Song && ((Song) s).getCover() != null) {
+					System.out.println("[INFO] found cover prepare cover for db");
+					// Load the Image into a Java FX Image Object //
+
+					// load cover
+					Image img = ((Song) s).getCover();
+
+					// Cache Width and Height to 'int's (because getWidth/getHeight return Double) and getPixels needs 'int's //
+
+					// get width and height
+					Vec2d dim = new Vec2d(img.getWidth(), img.getHeight());
+
+					// Create a new Byte Buffer, but we'll use BGRA (1 byte for each channel) //
+					byte[] buf = new byte[(int)dim.x * (int)dim.y * 4];
+
+					// Write pixels into buf array
+					img.getPixelReader().getPixels(0, 0, (int)dim.x, (int)dim.y, PixelFormat.getByteBgraInstance(), buf, 0, (int)dim.x * 4);
+
+					// Set stream for buf
+					InputStream inputStream = new ByteArrayInputStream(buf);
+
+					pstmt.setBinaryStream(6, inputStream, buf.length);
+					System.out.println("[INFO] Cover added to db");
+				}
+				pstmt.executeUpdate();
+				System.out.println("[INFO] executed query");
+			} catch (SQLException ex) {
+				try (PreparedStatement pstmt = con.prepareStatement("UPDATE " + tableName + " SET ID = ?, Title = ?, Artist = ?, Album = ?, Path = ? WHERE ID=" + s.getId())) {
+					System.out.println("[INFO] Created prepared statement \"UPDATE " + tableName + "SET ID = ?, Title = ?, Artist = ?, Album = ?, Path = ? WHERE ID = " + s.getId() + "\"");
+
+					pstmt.setLong(1, s.getId());
+					pstmt.setString(2, s.getTitle());
+					pstmt.setString(3, s.getInterpret());
+					pstmt.setString(4, s.getAlbum());
+					pstmt.setString(5, s.getPath());
+
+					pstmt.executeUpdate();
+					System.out.println("[INFO] Values updated");
+				} catch (SQLException ex2) {
+					System.err.println("[EXCEPTION] SQL Exception thrown at " + Util.getUnixTimeStamp());
+					System.err.println("\tStatement: " + ex2.getSQLState());
+					System.err.println("\tMessage: " + ex2.getMessage());
+					ex.printStackTrace();
+				}
+			}
+		} catch (SQLException ex) {
+			System.err.println("[EXCEPTION] SQL Exception thrown at " + Util.getUnixTimeStamp());
+			System.err.println("\tStatement: " + ex.getSQLState());
+			System.err.println("\tMessage: " + ex.getMessage());
+			ex.printStackTrace();
+		}
+		System.out.println("[INFO] Finished query at " + Util.getUnixTimeStamp());
+	}
+
+	/**
+	 * Reads a Song List from database
+	 * @return Song list
+	 * @throws SQLException if there exist any problems with the database
+	 * @throws DatabaseException General database exception => not specified
+	 */
+	public SongList readTable() throws SQLException, DatabaseException {
+		SongList ret = new SongList();
+		try (Connection con = DriverManager.getConnection("jdbc:sqlite:" + dbPath, loginCredentials.getUsername(), loginCredentials.getPw())) {
+			System.out.println("[INFO] Connection opened at " + Util.getUnixTimeStamp());
+
+			try (PreparedStatement stmt = con.prepareStatement("SELECT ID , Title , Artist, Album, Path FROM " + tableName)) {
+				System.out.println("[INFO] Reading data from db");
+				ResultSet rs = stmt.executeQuery();
+				while (rs.next()) {
+					Long id = rs.getLong("ID");
+					String title = rs.getString("Title");
+					String interpret = rs.getString("Artist");
+					String album = rs.getString("Album");
+					String path = rs.getString("Path");
+
+					Song s = new Song(path, title, interpret, album, id);
+					System.out.println("[INFO] Found: " + s.toString());
+					ret.add(s);
+					try {
+						IDGenerator.addId(id);
+					} catch (UnknownApplicationException ex) {
+						System.err.println("[CRIT][JDBCStrategy] Exception occurred: " + ex.getMessage());
+						ex.printStackTrace(System.err);
+					}
+				}
+				System.out.println("[INFO] Finished query at " + Util.getUnixTimeStamp());
+				return ret;
+			}
+		}
 	}
 
 	@Deprecated
@@ -45,87 +166,6 @@ public class JDBCStrategy implements interfaces.ISerializableStrategy {
 	@Override
 	public void openReadablePlaylist() throws IOException {}
 
-	@Override
-	public void writeSong(ISong s) throws IOException {
-
-		try (Connection con = DriverManager.getConnection("jdbc:sqlite:" + dbPath, loginCredentials.getUsername(), loginCredentials.getPw())) {
-			System.out.println("[INFO] Connection opened at " + Util.getUnixTimeStamp());
-			try (PreparedStatement pstmt = con.prepareStatement("INSERT INTO " + tableName + " (ID, Title, Artist, Album, Path, Cover) VALUES(?, ?, ?, ?, ?, ?)")) {
-				System.out.println("[INFO] Created prepared statement \"INSERT INTO \"" + tableName + "\" (ID, Title, Artist, Album, Path, Cover) VALUES(?, ?, ?, ?, ?, ?)\"");
-				String title = s.getTitle();
-				String artist = s.getInterpret();
-				String album = s.getAlbum();
-				String path = s.getPath();
-
-				pstmt.setLong(1, s.getId());
-				pstmt.setString(2, title);
-				pstmt.setString(3, artist);
-				pstmt.setString(4, album);
-				pstmt.setString(5, path);
-
-				System.out.println("[INFO] Values added");
-
-				if(s instanceof core.Song && ((Song)s).getCover() != null) {
-					System.out.println("[INFO] found cover prepare cover for db");
-					// Load the Image into a Java FX Image Object //
-
-					Image img = ((Song)s).getCover();
-
-					// Cache Width and Height to 'int's (because getWidth/getHeight return Double) and getPixels needs 'int's //
-
-					int w = (int)img.getWidth();
-					int h = (int)img.getHeight();
-
-					// Create a new Byte Buffer, but we'll use BGRA (1 byte for each channel) //
-
-					byte[] buf = new byte[w * h * 4];
-
-					img.getPixelReader().getPixels(0, 0, w, h, PixelFormat.getByteBgraInstance(), buf, 0, w * 4);
-
-					InputStream inputStream = new ByteArrayInputStream(buf);
-					pstmt.setBinaryStream(6, (InputStream) inputStream, (int) (buf.length));
-					System.out.println("[INFO] Cover added to db");
-				}
-				pstmt.executeUpdate();
-				System.out.println("[INFO] executed query");
-			} catch (SQLException ex) {
-				System.err.println("[EXCEPTION] SQL Exception thrown at " + Util.getUnixTimeStamp());
-				System.err.println("\tStatement: " + ex.getSQLState());
-				System.err.println("\tMessage: " + ex.getMessage());
-				ex.printStackTrace();
-			}
-		} catch (SQLException ex) {
-			System.err.println("[EXCEPTION] SQL Exception thrown at " + Util.getUnixTimeStamp());
-			System.err.println("\tStatement: " + ex.getSQLState());
-			System.err.println("\tMessage: " + ex.getMessage());
-			ex.printStackTrace();
-		}
-		System.out.println("[INFO] Finished query at " +Util.getUnixTimeStamp() );
-	}
-
-	@Override
-	public ISong readSong() throws IOException, ClassNotFoundException {
-		core.Song s = null;
-		try (Connection con = DriverManager.getConnection("jdbc:sqlite:" + dbPath, loginCredentials.getUsername(), loginCredentials.getPw())) {
-			System.out.println("[INFO] Connection opened at " + Util.getUnixTimeStamp());
-			try (PreparedStatement pstmt = con.prepareStatement("SELECT * FROM " + tableName)) {
-				System.out.println("[INFO] executed query");
-			} catch (SQLException ex) {
-				System.err.println("[EXCEPTION] SQL Exception thrown at " + Util.getUnixTimeStamp());
-				System.err.println("\tStatement: " + ex.getSQLState());
-				System.err.println("\tMessage: " + ex.getMessage());
-				ex.printStackTrace();
-			}
-		} catch (SQLException ex) {
-			System.err.println("[EXCEPTION] SQL Exception thrown at " + Util.getUnixTimeStamp());
-			System.err.println("\tStatement: " + ex.getSQLState());
-			System.err.println("\tMessage: " + ex.getMessage());
-			ex.printStackTrace();
-		}
-		System.out.println("[INFO] Finished query at " +Util.getUnixTimeStamp() );
-		return s;
-	}
-
 	@Deprecated
 	@Override
 	public void closeReadable() {}
@@ -134,25 +174,10 @@ public class JDBCStrategy implements interfaces.ISerializableStrategy {
 	@Override
 	public void closeWriteable() {}
 
-	/**
-	 * Saves a song list
-	 * @param songList song list which should be saved
-	 */
-	public void writeSongList(SongList songList){
-		for(interfaces.ISong s : songList){
-			try {
-				System.out.println(s.getId() +  " " + s.getTitle() + " " + s.getInterpret() + " "+ s.getAlbum() + " " + s.getPath());
-				writeSong(s);
-			} catch (IOException e) {
-				e.printStackTrace(System.err);
-			}
-		}
-		try {
-			readSong();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		}
+	@Deprecated
+	@Override
+	public ISong readSong() throws IOException, ClassNotFoundException {
+		throw new IOException();
 	}
+
 }

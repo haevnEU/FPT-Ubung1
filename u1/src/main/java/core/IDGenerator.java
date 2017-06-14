@@ -1,12 +1,11 @@
 package core;
 
 import ApplicationException.IDOverFlowException;
+import ApplicationException.UnknownApplicationException;
 
-/**
- * This class provides unique IDs
- */
 public final class IDGenerator {
 
+	// No instances allowed
 	private IDGenerator(){}
 
 	// Dynamic maximum
@@ -22,15 +21,26 @@ public final class IDGenerator {
 	 */
 	public static long getNextID() throws IDOverFlowException {
 		idPointer++;
-		if(idPointer > MAX) throw new IDOverFlowException("next id would exceed the current maximum from " + MAX);
+		if(idPointer > MAX) throw new IDOverFlowException("Next id would exceed the current maximum from " + MAX);
+		System.out.println("[WARN][IDGenerator] Increased idPointer value: " + idPointer);
 		return idPointer;
 	}
 
 	/**
-	 *
 	 * @return true if there is any free id
 	 */
 	public static boolean hasNextID(){
 		return idPointer < MAX;
+	}
+
+	/**
+	 * Set the current maximum
+	 * @param id new maximum
+	 * @throws UnknownApplicationException if id is doubled
+	 */
+	public static void addId(long id) throws UnknownApplicationException{
+		if(idPointer > id) throw new UnknownApplicationException("ID already exists");
+		idPointer = id;
+		System.out.println("[WARN][IDGenerator] maximum set to " + id);
 	}
 }

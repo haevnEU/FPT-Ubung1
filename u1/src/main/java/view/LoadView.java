@@ -13,26 +13,26 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
-public class SaveView extends BorderPane implements interfaces.IView {
+public class LoadView extends BorderPane implements interfaces.IView {
 
-	private static SaveView instance;
+	private static LoadView instance;
 
 	private CheckBox cbEnableDB;
 	private TextField tbUsername;
 	private PasswordField pwUsername;
-	private Button btXml, btBin, btDB, btOpenJPA;
+	private Button btXml, btBin, btDB, btOpenJPA, btFileDialog;
 	private Label lbUserName, lbPW;
 	RadioButton rbplayList, rbQueue;
 	ToggleGroup toggleGroup;
 
-	public static SaveView getInstance() {
+	public static LoadView getInstance() {
 		if(instance != null) return null;
 
-		instance = new SaveView();
+		instance = new LoadView();
 		return instance;
 	}
 
-	private SaveView(){
+	private LoadView(){
 		HBox box1 = new HBox();
 		HBox box2 = new HBox();
 		HBox box3 = new HBox();
@@ -54,9 +54,9 @@ public class SaveView extends BorderPane implements interfaces.IView {
 
 
 		toggleGroup = new ToggleGroup();
-		rbplayList = new RadioButton(SelectedSongList.Library.name());
+		rbplayList = new RadioButton(SelectedSongList.Library.toString());
 		rbplayList.setId(SelectedSongList.Library.toString());
-		rbQueue = new RadioButton(SelectedSongList.Playlist.name());
+		rbQueue = new RadioButton(SelectedSongList.Playlist.toString());
 		rbQueue.setId(SelectedSongList.Playlist.toString());
 		rbQueue.setSelected(true);
 		rbplayList.setToggleGroup(toggleGroup);
@@ -76,6 +76,9 @@ public class SaveView extends BorderPane implements interfaces.IView {
 
 		center.getChildren().addAll(box3, box1, box2, cbEnableDB);
 
+		btFileDialog = new Button("Local Files");
+		btFileDialog.setPrefWidth(150);
+
 		btXml = new Button("XML");
 		btXml.setPrefWidth(150);
 
@@ -90,7 +93,7 @@ public class SaveView extends BorderPane implements interfaces.IView {
 		btOpenJPA.setPrefWidth(150);
 		btOpenJPA.setDisable(true);
 
-		left.getChildren().addAll(btXml, btBin, btDB, btOpenJPA);
+		left.getChildren().addAll(btFileDialog, btXml, btBin, btDB, btOpenJPA);
 
 		setLeft(left);
 		setCenter(center);
@@ -101,11 +104,18 @@ public class SaveView extends BorderPane implements interfaces.IView {
 	public void addCheckBoxDbEnableEventHandler(EventHandler<ActionEvent> eventHandler) {
 		cbEnableDB.addEventHandler(ActionEvent.ACTION, eventHandler);
 	}
-
 	/**
-	 * Adds event handling for bt xml click
+	 * Adds event handling for bt local click
 	 * @param eventEventHandler Event which should be fired
 	 */
+	public void addBtLocalClickEventHandler(EventHandler<ActionEvent> eventEventHandler) {
+		btFileDialog.addEventHandler(ActionEvent.ACTION, eventEventHandler);
+	}
+
+		/**
+		 * Adds event handling for bt xml click
+		 * @param eventEventHandler Event which should be fired
+		 */
 	public void addBtXmlClickEventHandler(EventHandler<ActionEvent> eventEventHandler){
 		btXml.addEventHandler(ActionEvent.ACTION, eventEventHandler);
 	}

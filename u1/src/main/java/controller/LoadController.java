@@ -1,32 +1,38 @@
 package controller;
 
-import core.*;
-import interfaces.*;
-import javafx.scene.control.*;
 
-import view.SaveView;
-import java.io.IOException;
-import java.sql.SQLException;
-import javafx.stage.DirectoryChooser;
-import javafx.beans.value.ObservableValue;
 import ApplicationException.DatabaseException;
+import core.JDBCStrategy;
+import core.Model;
+import core.SelectedSongList;
+import interfaces.IModel;
+import interfaces.ISong;
+import interfaces.IView;
+import javafx.scene.control.RadioButton;
+import javafx.scene.control.Toggle;
+import view.EmptyView;
+import view.LoadView;
+
+import java.io.File;
+import java.sql.SQLException;
+import java.util.List;
 
 import static core.SelectedSongList.Library;
 import static core.SelectedSongList.Playlist;
 
-
 /**
- * This class provides functionality for saving
+ * This class provides loading functionality
  *
  * Written by Nils Milewski (nimile)
  */
-public class SaveController implements interfaces.IController {
+public class LoadController implements interfaces.IController {
 
-	SaveView view;
-	Model model;
+	private LoadView view;
+	private Model model;
 
-	SongList list;
-	SelectedSongList tableName;
+	// Used to differ between different tables
+	private SelectedSongList tableName;
+
 	/**
 	 * link model with view
 	 *
@@ -36,8 +42,9 @@ public class SaveController implements interfaces.IController {
 	@Override
 	public void link(IModel m, IView v) {
 		model = (Model)m;
-		view = (SaveView)v;
+		view = (LoadView)v;
 
+		view.addBtLocalClickEventHandler(e -> btLocalClicked());
 		view.addBtXmlClickEventHandler(e -> btXmlClicked());
 		view.addBtBinClickEventHandler(e -> btBinClicked());
 		view.addBtDbClickEventHandler(e -> btDbClicked());
@@ -45,11 +52,25 @@ public class SaveController implements interfaces.IController {
 		view.addCheckBoxDbEnableEventHandler(e -> cbEnabledEvent());
 		view.addToggleSongList((observable, oldValue, newValue) -> onToggle(newValue));
 
-		list = model.getQueue();
-		tableName = SelectedSongList.Library;
 	}
 
+	/**
+	 * Handles button "local" click event
+	 */
+	private void btLocalClicked() {
+
+		List<File> files = EmptyView.getFiles();
+
+		// check if any file are selected
+		if(files != null) model.loadAllSongsFromFile(files);
+	}
+
+	/**
+	 * Toggles between SongList selection
+	 * @param newValue New value which represent a SongList selected by a RadioButton
+	 */
 	private void onToggle(Toggle newValue) {
+		// Creates a local copy of the selected RadioButton
 		RadioButton rb = (RadioButton) newValue;
 		if(rb.getId() == Library.toString())tableName = Library;
 		else tableName = SelectedSongList.Playlist;
@@ -59,17 +80,12 @@ public class SaveController implements interfaces.IController {
 	 * Handle button XML click event
 	 */
 	private void btXmlClicked() {
-		String path = (new DirectoryChooser()).showDialog(null).getAbsolutePath();
-		System.out.println(path);
 	}
 
 	/**
 	 * Handle button binary click event
 	 */
-	private void btBinClicked() {
-		String path = (new DirectoryChooser()).showDialog(null).getAbsolutePath();
-		System.out.println(path);
-	}
+	private void btBinClicked() {	}
 
 	/**
 	 * Handle Button DB click event
@@ -78,10 +94,15 @@ public class SaveController implements interfaces.IController {
 		JDBCStrategy jdbcStrategy = new JDBCStrategy(view.getLogin(), tableName);
 
 		try {
-			if(Playlist == tableName) jdbcStrategy.writeSongList(model.getQueue());
-			else jdbcStrategy.writeSongList(model.getAllSongs());
-		} catch (SQLException | DatabaseException | IOException e) {
-			e.printStackTrace(System.err);
+			// Adding songs
+			if(Playlist == tableName)
+				for(ISong s : jdbcStrategy.readTable())
+					model.getQueue().add(s);
+			else
+				for(ISong s : jdbcStrategy.readTable())
+					model.getAllSongs().add(s);
+		} catch (SQLException | DatabaseException ex) {
+			ex.printStackTrace(System.err);
 		}
 	}
 
@@ -97,7 +118,5 @@ public class SaveController implements interfaces.IController {
 	private void cbEnabledEvent() {
 		view.toggleDbView();
 	}
-
-
 
 }

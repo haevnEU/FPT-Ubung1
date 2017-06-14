@@ -7,6 +7,7 @@ import javafx.scene.image.Image;
 
 /**
  * This class provides song information
+ *
  */
 public class Song implements ISong {
 

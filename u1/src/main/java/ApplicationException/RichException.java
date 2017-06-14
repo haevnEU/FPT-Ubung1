@@ -9,6 +9,8 @@ import javafx.scene.layout.Priority;
 
 /**
  * This class provides a GUI for exception
+ *
+ * Written by Nils Milewski (nimile)
  */
 public final class RichException extends Exception implements interfaces.IApplicationException {
 
@@ -65,7 +67,7 @@ public final class RichException extends Exception implements interfaces.IApplic
 	 * Creates a new RichException using simple String => Warn message
 	 * @param msg String which should be displayed
 	 */
-	public  RichException(String msg){
+	public RichException(String msg){
 		super(msg);
 		Alert alert = new Alert(Alert.AlertType.INFORMATION);
 		alert.setTitle("Warning");

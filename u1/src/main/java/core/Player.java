@@ -1,5 +1,6 @@
 package core;
 
+import interfaces.ISong;
 import javafx.beans.property.*;
 import javafx.beans.value.ChangeListener;
 import javafx.scene.media.*;
@@ -10,7 +11,7 @@ import java.rmi.RemoteException;
 /**
  * This class provides playable logic
  */
-class Player {
+class Player implements interfaces.IPlayer {
 
 	private MediaPlayer mediaPlayer;
 	private Media media;
@@ -119,34 +120,35 @@ class Player {
 	}
 
 
+
 	/**
 	 * Plays a track, required initialization with init call
 	 */
-	void play(){
+	public void play(){
 		// test if player is initialized
-		if(!isInitialized) return;
-		mediaPlayer.play();
+		if(isInitialized) mediaPlayer.play();
 	}
 
 	/**
 	 * Stops the current track, required initialization with init call
 	 */
-	void stop(){
+	public void stop(){
 		if(isInitialized) mediaPlayer.stop();
 	}
 
 	/**
 	 * Pauses the current track, required initialization with init call
 	 */
-	void pause(){
+	public void pause(){
 		if(isInitialized) mediaPlayer.pause();
 	}
+
 
 	/**
 	 * Plays the next track, required initialization with init call
 	 * Skip forces end of current track
 	 */
-	void skip(){
+	public void skip(){
 		if(isInitialized) endOfMedia();
 	}
 
@@ -161,6 +163,11 @@ class Player {
 	 * @return song length as seconds
 	 */
 	public double getSongLength() {
-		return media.getDuration().toSeconds();
+		if(isInitialized) return media.getDuration().toSeconds();
+		return 0;
+	}
+
+	public boolean getInitialized() {
+		return isInitialized;
 	}
 }

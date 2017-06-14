@@ -13,24 +13,10 @@ import javafx.stage.FileChooser;
 /**
  * THis class is used to open a single instance of loading file window
  */
-public class LoadFiles implements interfaces.IView {
-
-	// used singleton pattern
-	private LoadFiles(){};
-	private static boolean instanced = false;
-	private static LoadFiles instance;
-	public static LoadFiles getInstance() {
-		if(instanced && instance != null) return null;
-		instanced = true;
-		instance = new LoadFiles();
-		return instance;
-	}
+public class EmptyView implements interfaces.IView {
 
 	@Override
-	public void destroy() {
-		instanced = false;
-		instance = null;
-	}
+	public void destroy() {}
 
 	/**
 	 * Returns selected file

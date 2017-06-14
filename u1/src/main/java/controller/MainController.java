@@ -1,21 +1,16 @@
 package controller;
 
-import javafx.event.EventHandler;
+import javafx.scene.layout.BorderPane;
 import view.*;
 import core.*;
-import java.io.*;
 import interfaces.*;
 import javafx.stage.*;
 import javafx.scene.input.*;
 
-import java.util.List;
 import javafx.scene.Scene;
 import java.rmi.RemoteException;
 import javafx.beans.property.SimpleBooleanProperty;
 
-/**
- * This class is used as a main core.controller
- */
 public class MainController implements interfaces.IController{
 
 
@@ -74,13 +69,7 @@ public class MainController implements interfaces.IController{
      * Loads any directory
      */
     private void menuItemLoadEventHandler() {
-        LoadFiles fileLoader = LoadFiles.getInstance();
-        if(fileLoader == null) return;
-        List<File> files = fileLoader.getFiles();
-
-        // check if any file are selected
-        if(files != null) model.loadAllSongs(files);
-        fileLoader.destroy();
+		invokeNewWindow(SceneType.LoadView);
     }
 
     /**
@@ -130,56 +119,57 @@ public class MainController implements interfaces.IController{
 	 */
 	private void invokeNewWindow(SceneType t){
 
-		Scene tmpScene;
+		Scene tmpScene = new Scene(new BorderPane());
 		Stage tmpStage = new Stage();
 		IController tmpController;
-		IView tmpView;
+		IView tmpView = new EmptyView();
+		switch(t){
+			case DeleteView:
+				tmpController = new DeleteController();
+				tmpView = DeleteView.getInstance(model.getQueue());
+				if(tmpView == null) return;
+				tmpScene = new Scene((DeleteView)tmpView);
 
-		if(t == SceneType.DeleteView) {
+				tmpController.link(model, tmpView);
 
-			tmpController = new DeleteController();
-			tmpView = DeleteView.getInstance(model.getQueue());
-			if(tmpView == null) return;
-			tmpScene = new Scene((DeleteView)tmpView);
+				tmpStage.setWidth(250);
+				tmpScene.setOnKeyPressed(e -> tmpStage.close());
+				break;
 
-			tmpController.link(model, tmpView);
+			case DetailView:
+				Song s = this.view.getSelectedSong();
+				tmpController = new DetailController();
+				tmpView = new DetailView();
+				tmpScene = new Scene((DetailView)tmpView);
 
-			tmpStage.setWidth(250);
-			tmpStage.setScene(tmpScene);
-			tmpScene.setOnKeyPressed(e -> tmpStage.close());
+				tmpController.link(model, tmpView);
+				((DetailController)tmpController).init(s);
 
-			tmpStage.setResizable(false);
-			tmpStage.showAndWait();
-			tmpView.destroy();
+				tmpStage.setTitle(s.getTitle());
+				tmpScene.setOnKeyPressed(e -> tmpStage.close());
+				break;
 
-		} else if(t == SceneType.DetailView){
-			Song s = this.view.getSelectedSong();
-			tmpController = new DetailController();
-			tmpView = new DetailView();
-			tmpScene = new Scene((DetailView)tmpView);
+			case SaveView:
+				tmpController = new SaveController();
+				tmpView = SaveView.getInstance();
+				if(tmpView == null) return;
+				tmpScene = new Scene((SaveView)tmpView);
 
-			tmpController.link(model, tmpView);
-			((DetailController)tmpController).init(s);
+				tmpController.link(model, tmpView);
+				break;
 
-			tmpStage.setTitle(s.getTitle());
-			tmpStage.setScene(tmpScene);
-			tmpScene.setOnKeyPressed(e -> tmpStage.close());
-			tmpStage.show();
-			invokeNewWindow(SceneType.SaveView);
-		} else if(t == SceneType.SaveView){
+			case LoadView:
+				tmpController = new LoadController();
+				tmpView = LoadView.getInstance();
+				if(tmpView == null) return;
+				tmpScene = new Scene((LoadView)tmpView);
 
-			tmpController = new SaveController();
-			tmpView = SaveView.getInstance();
-			if(tmpView == null) return;
-			tmpScene = new Scene((SaveView)tmpView);
-
-			tmpController.link(model, tmpView);
-
-			tmpStage.setScene(tmpScene);
-
-			tmpStage.setResizable(false);
-			tmpStage.showAndWait();
-			tmpView.destroy();
+				tmpController.link(model, tmpView);
+				break;
 		}
+		tmpStage.setScene(tmpScene);
+		tmpStage.setResizable(false);
+		tmpStage.showAndWait();
+		tmpView.destroy();
 	}
 }

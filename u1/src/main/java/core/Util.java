@@ -1,13 +1,7 @@
 package core;
 
-import javafx.scene.control.*;
-import javafx.scene.layout.*;
-
 import java.io.*;
 
-/**
- * This class provides utility functions
- */
 public final class Util {
 
     /**

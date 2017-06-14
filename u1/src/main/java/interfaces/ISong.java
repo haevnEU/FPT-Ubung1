@@ -2,9 +2,6 @@ package interfaces;
 
 import javafx.beans.value.ObservableValue;
 
-/**
- * This interface provides basic information for every ISong
- */
 public interface ISong {
 
     String getAlbum() ;

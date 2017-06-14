@@ -5,14 +5,11 @@ import interfaces.*;
 import core.Model;
 import view.DeleteView;
 
-/**
- * This class provides the core.controller for deleteView
- */
 public class DeleteController implements IController{
-
 
     private DeleteView view;
     private Model model;
+
     @Override
     public void link(IModel m, IView v){
 

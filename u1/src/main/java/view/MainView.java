@@ -143,7 +143,7 @@ public class MainView extends BorderPane implements interfaces.IView{
 	public Song getSelectedSong() { return (Song) lvAllSongs.getSelectionModel().getSelectedItem(); }
 
 	/**
-	 * Get the current selected song from Queue listView
+	 * Get the current selected song from Playlist listView
 	 * @return zero based index
 	 */
 	public int getSelectedQueueIndex(){ return lvQueue.getSelectionModel().getSelectedIndex(); }

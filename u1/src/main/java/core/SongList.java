@@ -1,5 +1,6 @@
 package core;
 
+import ApplicationException.UnknownApplicationException;
 import interfaces.ISong;
 import interfaces.ISongList;
 import javafx.collections.FXCollections;
@@ -34,6 +35,13 @@ public class SongList extends ModifiableObservableListBase<ISong> implements ISo
      */
     @Override
     public boolean addSong(ISong s) throws RemoteException {
+        //TODO set new max?!
+        try {
+            IDGenerator.addId(s.getId());
+        } catch (UnknownApplicationException ex) {
+            System.err.println("[CRIT] Exception occured: " + ex.getMessage());
+            ex.printStackTrace(System.err);
+        }
         return songs.add(s);
     }
 
