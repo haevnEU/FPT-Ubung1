@@ -1,5 +1,7 @@
 package core;
 
+import javafx.scene.control.Alert;
+
 import java.io.*;
 
 public final class Util {
@@ -44,10 +46,12 @@ public final class Util {
      * @return converted hex string
      */
     public static String convertToHex(String text){
-        System.out.println("[INFO] Encode to hexadecimal string");
+        System.out.println("[INFO] Encode to hexadecimal string \"" + text + "\"");
         StringBuilder out = new StringBuilder();
-        for(char c : text.toCharArray()) out.append(String.format("%02x", (int)c));
-        System.out.println("[INFO] Encoded");
+        for(char c : text.toCharArray()) {
+            if(out.length() > 0)out.append(' ');
+            out.append(String.format("%04x", (int)c));
+        }
         return out.toString();
     }
 
@@ -57,19 +61,26 @@ public final class Util {
      * @return decoded hex string
      */
     public static String convertToString(String text){
-        System.out.println("[INFO] Decode to hexadecimal string");
+        System.out.println("[INFO] Decode to hexadecimal string \"" + text + "\"");
         StringBuilder out = new StringBuilder();
-        for(int i = 0; i < text.length(); i+=2){
-
+        for(int i = 0; i < text.length(); i++){
+            System.out.print(text.charAt(i));
+         if(text.charAt(i) != ' ')
             try {
-                String tmp = text.substring(i, i+2);
+                String tmp = text.substring(i, i+4);
                 out.append((char)Integer.parseInt(tmp, 16));
             } catch (NumberFormatException | IndexOutOfBoundsException e) {}
         }
-        System.out.println("[INFO] Decoded");
         return out.toString();
     }
 
+
+    public static void showAlert(String text, Alert.AlertType type){
+        Alert alert = new Alert(type);
+        alert.setTitle(type.name());
+        alert.setContentText(text);
+        alert.showAndWait();
+    }
 }
 
 

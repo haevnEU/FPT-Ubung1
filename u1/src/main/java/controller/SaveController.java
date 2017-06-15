@@ -8,7 +8,6 @@ import view.SaveView;
 import java.io.IOException;
 import java.sql.SQLException;
 import javafx.stage.DirectoryChooser;
-import javafx.beans.value.ObservableValue;
 import ApplicationException.DatabaseException;
 
 import static core.SelectedSongList.Library;
@@ -79,6 +78,7 @@ public class SaveController implements interfaces.IController {
 			JDBCStrategy jdbcStrategy = JDBCStrategy.getInstance(view.getLogin(), tableName);
 			if(Playlist == tableName) jdbcStrategy.writeSongList(model.getQueue());
 			else jdbcStrategy.writeSongList(model.getAllSongs());
+			view.close();
 		} catch (DatabaseException e) {
 			System.err.println("[SYS][CRIT] SQL INJECTION DETECTED! at " + Util.getUnixTimeStamp());
 			e.printStackTrace(System.err);

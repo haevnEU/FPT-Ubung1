@@ -18,9 +18,10 @@ public final class RichException extends Exception implements interfaces.IApplic
 
 	/**
 	 * Creates a new RichException window using ApplicationException details
+	 *
 	 * @param ex ApplicationException details
 	 */
-	public RichException(Exception ex){
+	public RichException(Exception ex) {
 		super(ex);
 		String title, header, stackTrace;
 		System.err.println("[NOTE] Richexception thrown at " + Util.getUnixTimeStamp());
@@ -44,7 +45,7 @@ public final class RichException extends Exception implements interfaces.IApplic
 		Label label = new Label("ApplicationException stacktrace:");
 
 //        A non editable TextArea is used do display the stacktrace
-		TextArea textArea = new TextArea("TimeStamp: " +  core.Util.getUnixTimeStamp() + " \n\nStackTrace\n" +stackTrace);
+		TextArea textArea = new TextArea("TimeStamp: " + core.Util.getUnixTimeStamp() + " \n\nStackTrace\n" + stackTrace);
 		textArea.setEditable(false);
 
 //        The grid should grow in both directions
@@ -57,28 +58,11 @@ public final class RichException extends Exception implements interfaces.IApplic
 		gridContent.setMaxWidth(Double.MAX_VALUE);
 		gridContent.add(label, 0, 0);
 		gridContent.add(textArea, 0, 1);
-		gridContent.add(bottomLabel,0,2);
+		gridContent.add(bottomLabel, 0, 2);
 
 //         Set expandable ApplicationException into the dialog pane.
 		alert.getDialogPane().setExpandableContent(gridContent);
 
 		alert.showAndWait();
 	}
-
-	/**
-	 * Creates a new RichException using simple String => Warn message
-	 * @param msg String which should be displayed
-	 */
-	public RichException(String msg){
-		super(msg);
-		System.err.println("[NOTE] Richexception thrown at " + Util.getUnixTimeStamp());
-		Alert alert = new Alert(Alert.AlertType.INFORMATION);
-		alert.setTitle("Warning");
-		alert.setHeaderText("Warning occurred");
-		alert.setContentText(msg);
-
-		alert.show();
-
-	}
-
 }

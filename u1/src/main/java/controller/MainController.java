@@ -132,9 +132,11 @@ public class MainController implements interfaces.IController{
 				tmpScene = new Scene((DeleteView)tmpView);
 
 				tmpController.link(model, tmpView);
-
+				tmpStage.setTitle("Delete...");
 				tmpStage.setWidth(250);
-				tmpScene.setOnKeyPressed(e -> tmpStage.close());
+				tmpScene.setOnKeyPressed(e -> {
+					if(e.getCode() == KeyCode.ESCAPE) tmpStage.close();
+				});
 				break;
 
 			case DetailView:
@@ -147,7 +149,9 @@ public class MainController implements interfaces.IController{
 				((DetailController)tmpController).init(s);
 
 				tmpStage.setTitle(s.getTitle());
-				tmpScene.setOnKeyPressed(e -> tmpStage.close());
+				tmpScene.setOnKeyPressed(e -> {
+					if(e.getCode() == KeyCode.ESCAPE) tmpStage.close();
+				});
 				break;
 
 			case SaveView:
@@ -155,7 +159,7 @@ public class MainController implements interfaces.IController{
 				tmpView = SaveView.getInstance();
 				if(tmpView == null) return;
 				tmpScene = new Scene((SaveView)tmpView);
-
+				tmpStage.setTitle("Save...");
 				tmpController.link(model, tmpView);
 				break;
 
@@ -164,7 +168,7 @@ public class MainController implements interfaces.IController{
 				tmpView = LoadView.getInstance();
 				if(tmpView == null) return;
 				tmpScene = new Scene((LoadView)tmpView);
-
+				tmpStage.setTitle("Load...");
 				tmpController.link(model, tmpView);
 				break;
 		}

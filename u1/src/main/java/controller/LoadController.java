@@ -102,6 +102,7 @@ public class LoadController implements interfaces.IController {
 			else
 				for(ISong s : jdbcStrategy.readTable())
 					model.getAllSongs().add(s);
+			view.close();
 		} catch (DatabaseException e) {
 			System.err.println("[SYS][CRIT] SQL INJECTION DETECTED! at " + Util.getUnixTimeStamp());
 			e.printStackTrace(System.err);

@@ -12,6 +12,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 
 public class LoadView extends BorderPane implements interfaces.IView {
 
@@ -187,5 +188,12 @@ public class LoadView extends BorderPane implements interfaces.IView {
 	@Override
 	public void destroy() {
 		instance = null;
+	}
+
+	/**
+	 * closes this view
+	 */
+	public void close() {
+		((Stage) this.getScene().getWindow()).close();
 	}
 }
