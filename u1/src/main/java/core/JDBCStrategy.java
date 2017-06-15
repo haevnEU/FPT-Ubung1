@@ -19,9 +19,15 @@ public class JDBCStrategy implements interfaces.IDatabaseUtils {
 	private LoginCredentials loginCredentials;
 	private String tableName, dbPath;
 
-	public JDBCStrategy(LoginCredentials loginCredentials, SelectedSongList tableName) {
+	public static JDBCStrategy getInstance(LoginCredentials loginCredentials, SelectedSongList tableName) throws DatabaseException{
+		if(loginCredentials.getUsername().contains(";") || loginCredentials.getPw().contains(";")) throw new DatabaseException("SQL INJECTION DETECTED");
+		return new JDBCStrategy(loginCredentials,  tableName);
+	}
 
+	private JDBCStrategy(){}
+	private JDBCStrategy(LoginCredentials loginCredentials, SelectedSongList tableName) throws DatabaseException {
 		dbPath = EmptyView.getFile("SQL Database", "*.db").getPath();
+		if(dbPath.contains(";"))throw new DatabaseException("SQL INJECTION DETECTED");
 		System.out.println("[INFO] DB PATH: " + dbPath);
 		this.loginCredentials = loginCredentials;
 		this.tableName = tableName.name();
@@ -45,16 +51,20 @@ public class JDBCStrategy implements interfaces.IDatabaseUtils {
 	@Override
 	public void writeSong(ISong s) throws IOException {
 
+		// try-resource is used to minimize access problems => not closing after executing
 		try (Connection con = DriverManager.getConnection("jdbc:sqlite:" + dbPath, loginCredentials.getUsername(), loginCredentials.getPw())) {
 			System.out.println("[INFO] Connection opened at " + Util.getUnixTimeStamp());
+			// same as above try-resource is used to minimize problems
 			try (PreparedStatement pstmt = con.prepareStatement("INSERT INTO " + tableName + " (ID, Title, Artist, Album, Path, Cover) VALUES(?, ?, ?, ?, ?, ?)")) {
 				System.out.println("[INFO] Created prepared statement \"INSERT INTO \"" + tableName + "\" (ID, Title, Artist, Album, Path, Cover) VALUES(?, ?, ?, ?, ?, ?)\"");
 
+
+
 				pstmt.setLong(1, s.getId());
-				pstmt.setString(2, s.getTitle());
-				pstmt.setString(3, s.getInterpret());
-				pstmt.setString(4, s.getAlbum());
-				pstmt.setString(5, s.getPath());
+				pstmt.setString(2, Util.convertToHex(s.getTitle()));
+				pstmt.setString(3, Util.convertToHex(s.getInterpret()));
+				pstmt.setString(4, Util.convertToHex(s.getAlbum()));
+				pstmt.setString(5, Util.convertToHex(s.getPath()));
 
 				System.out.println("[INFO] Values added");
 
@@ -86,29 +96,32 @@ public class JDBCStrategy implements interfaces.IDatabaseUtils {
 				pstmt.executeUpdate();
 				System.out.println("[INFO] executed query");
 			} catch (SQLException ex) {
+				// insert has failed => maybe values changed
 				try (PreparedStatement pstmt = con.prepareStatement("UPDATE " + tableName + " SET ID = ?, Title = ?, Artist = ?, Album = ?, Path = ? WHERE ID=" + s.getId())) {
 					System.out.println("[INFO] Created prepared statement \"UPDATE " + tableName + "SET ID = ?, Title = ?, Artist = ?, Album = ?, Path = ? WHERE ID = " + s.getId() + "\"");
 
 					pstmt.setLong(1, s.getId());
-					pstmt.setString(2, s.getTitle());
-					pstmt.setString(3, s.getInterpret());
-					pstmt.setString(4, s.getAlbum());
-					pstmt.setString(5, s.getPath());
+					pstmt.setString(2, Util.convertToHex(s.getTitle()));
+					pstmt.setString(3, Util.convertToHex(s.getInterpret()));
+					pstmt.setString(4, Util.convertToHex(s.getAlbum()));
+					pstmt.setString(5, Util.convertToHex(s.getPath()));
 
 					pstmt.executeUpdate();
 					System.out.println("[INFO] Values updated");
 				} catch (SQLException ex2) {
+					// nope ==> another db exception which must be thrown
 					System.err.println("[EXCEPTION] SQL Exception thrown at " + Util.getUnixTimeStamp());
 					System.err.println("\tStatement: " + ex2.getSQLState());
 					System.err.println("\tMessage: " + ex2.getMessage());
-					ex.printStackTrace();
+					ex.printStackTrace(System.err);
 				}
 			}
 		} catch (SQLException ex) {
+			// ==> this is a connection error
 			System.err.println("[EXCEPTION] SQL Exception thrown at " + Util.getUnixTimeStamp());
 			System.err.println("\tStatement: " + ex.getSQLState());
 			System.err.println("\tMessage: " + ex.getMessage());
-			ex.printStackTrace();
+			ex.printStackTrace(System.err);
 		}
 		System.out.println("[INFO] Finished query at " + Util.getUnixTimeStamp());
 	}
@@ -120,6 +133,7 @@ public class JDBCStrategy implements interfaces.IDatabaseUtils {
 	 * @throws DatabaseException General database exception => not specified
 	 */
 	public SongList readTable() throws SQLException, DatabaseException {
+		// documentation above inside writeSong
 		SongList ret = new SongList();
 		try (Connection con = DriverManager.getConnection("jdbc:sqlite:" + dbPath, loginCredentials.getUsername(), loginCredentials.getPw())) {
 			System.out.println("[INFO] Connection opened at " + Util.getUnixTimeStamp());
@@ -129,10 +143,10 @@ public class JDBCStrategy implements interfaces.IDatabaseUtils {
 				ResultSet rs = stmt.executeQuery();
 				while (rs.next()) {
 					Long id = rs.getLong("ID");
-					String title = rs.getString("Title");
-					String interpret = rs.getString("Artist");
-					String album = rs.getString("Album");
-					String path = rs.getString("Path");
+					String title = Util.convertToString(rs.getString("Title"));
+					String interpret = Util.convertToString(rs.getString("Artist"));
+					String album = Util.convertToString(rs.getString("Album"));
+					String path = Util.convertToString(rs.getString("Path"));
 
 					Song s = new Song(path, title, interpret, album, id);
 					System.out.println("[INFO] Found: " + s.toString());

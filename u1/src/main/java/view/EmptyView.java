@@ -23,15 +23,14 @@ public class EmptyView implements interfaces.IView {
 	 * @return selected files as a List
 	 */
 	public static List<File> getFiles(){
-		List<File> selectedFiles = new ArrayList<>();
+		List<File> selectedFiles = null;
 		try {
 			FileChooser fc = new FileChooser();
 			fc.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("MP3 Files", "*.mp3"));
 			selectedFiles = fc.showOpenMultipleDialog(null);
-			if (selectedFiles == null) return null;
 
 		} catch (Exception ex) {
-			Util.showExceptionMessage(ex);
+			new ApplicationException.RichException(ex);
 		}
 
 		return selectedFiles;

@@ -75,13 +75,16 @@ public class SaveController implements interfaces.IController {
 	 * Handle Button DB click event
 	 */
 	private void btDbClicked() {
-		JDBCStrategy jdbcStrategy = new JDBCStrategy(view.getLogin(), tableName);
-
 		try {
+			JDBCStrategy jdbcStrategy = JDBCStrategy.getInstance(view.getLogin(), tableName);
 			if(Playlist == tableName) jdbcStrategy.writeSongList(model.getQueue());
 			else jdbcStrategy.writeSongList(model.getAllSongs());
-		} catch (SQLException | DatabaseException | IOException e) {
+		} catch (DatabaseException e) {
+			System.err.println("[SYS][CRIT] SQL INJECTION DETECTED! at " + Util.getUnixTimeStamp());
 			e.printStackTrace(System.err);
+		}catch(SQLException | IOException ex) {
+			System.err.println("[CRIT] Exception thrown at " + Util.getUnixTimeStamp());
+			ex.printStackTrace(System.err);
 		}
 	}
 

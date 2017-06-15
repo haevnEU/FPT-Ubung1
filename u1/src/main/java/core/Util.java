@@ -8,6 +8,7 @@ public final class Util {
      * new instances are forbidden
      */
     private Util(){}
+
     /**
      * Returns timestamp based on unix time
      * @return current timestamp
@@ -36,14 +37,39 @@ public final class Util {
         return line;
     }
 
+
     /**
-     * Invoke a new RichException
-     * @param ex exception details
+     * Convert any string into a equivalent hex string
+     * @param text String which should be converted
+     * @return converted hex string
      */
-    // TODO replace with direct throwing
-    public static void showExceptionMessage(Exception ex) {
-       new ApplicationException.RichException(ex);
+    public static String convertToHex(String text){
+        System.out.println("[INFO] Encode to hexadecimal string");
+        StringBuilder out = new StringBuilder();
+        for(char c : text.toCharArray()) out.append(String.format("%02x", (int)c));
+        System.out.println("[INFO] Encoded");
+        return out.toString();
     }
+
+    /**
+     * Convert a Hex coded string into a JAVA string
+     * @param text Hex string which should be decoded
+     * @return decoded hex string
+     */
+    public static String convertToString(String text){
+        System.out.println("[INFO] Decode to hexadecimal string");
+        StringBuilder out = new StringBuilder();
+        for(int i = 0; i < text.length(); i+=2){
+
+            try {
+                String tmp = text.substring(i, i+2);
+                out.append((char)Integer.parseInt(tmp, 16));
+            } catch (NumberFormatException | IndexOutOfBoundsException e) {}
+        }
+        System.out.println("[INFO] Decoded");
+        return out.toString();
+    }
+
 }
 
 

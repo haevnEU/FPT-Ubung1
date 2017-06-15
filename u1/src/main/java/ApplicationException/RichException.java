@@ -1,6 +1,8 @@
 package ApplicationException;
 
 import java.io.*;
+
+import core.Util;
 import javafx.scene.control.*;
 
 import javafx.scene.layout.GridPane;
@@ -19,9 +21,9 @@ public final class RichException extends Exception implements interfaces.IApplic
 	 * @param ex ApplicationException details
 	 */
 	public RichException(Exception ex){
-		super();
+		super(ex);
 		String title, header, stackTrace;
-
+		System.err.println("[NOTE] Richexception thrown at " + Util.getUnixTimeStamp());
 //        used to format the exception stacktrace
 		StringWriter sw = new StringWriter();
 		PrintWriter pw = new PrintWriter(sw);
@@ -69,6 +71,7 @@ public final class RichException extends Exception implements interfaces.IApplic
 	 */
 	public RichException(String msg){
 		super(msg);
+		System.err.println("[NOTE] Richexception thrown at " + Util.getUnixTimeStamp());
 		Alert alert = new Alert(Alert.AlertType.INFORMATION);
 		alert.setTitle("Warning");
 		alert.setHeaderText("Warning occurred");

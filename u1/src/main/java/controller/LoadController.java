@@ -5,6 +5,7 @@ import ApplicationException.DatabaseException;
 import core.JDBCStrategy;
 import core.Model;
 import core.SelectedSongList;
+import core.Util;
 import interfaces.IModel;
 import interfaces.ISong;
 import interfaces.IView;
@@ -91,9 +92,9 @@ public class LoadController implements interfaces.IController {
 	 * Handle Button DB click event
 	 */
 	private void btDbClicked() {
-		JDBCStrategy jdbcStrategy = new JDBCStrategy(view.getLogin(), tableName);
-
 		try {
+			JDBCStrategy jdbcStrategy = JDBCStrategy.getInstance(view.getLogin(), tableName);
+
 			// Adding songs
 			if(Playlist == tableName)
 				for(ISong s : jdbcStrategy.readTable())
@@ -101,7 +102,10 @@ public class LoadController implements interfaces.IController {
 			else
 				for(ISong s : jdbcStrategy.readTable())
 					model.getAllSongs().add(s);
-		} catch (SQLException | DatabaseException ex) {
+		} catch (DatabaseException e) {
+			System.err.println("[SYS][CRIT] SQL INJECTION DETECTED! at " + Util.getUnixTimeStamp());
+			e.printStackTrace(System.err);
+		}catch (SQLException ex) {
 			ex.printStackTrace(System.err);
 		}
 	}

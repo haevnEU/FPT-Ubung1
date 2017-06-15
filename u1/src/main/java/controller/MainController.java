@@ -1,5 +1,6 @@
 package controller;
 
+import ApplicationException.RichException;
 import javafx.scene.layout.BorderPane;
 import view.*;
 import core.*;
@@ -103,7 +104,7 @@ public class MainController implements interfaces.IController{
             model.getQueue().addAll(model.getAllSongs().getList());
             initPlayer();
         } catch (RemoteException ex) {
-           Util.showExceptionMessage(ex);
+        	new RichException(ex);
         }
     }
 
