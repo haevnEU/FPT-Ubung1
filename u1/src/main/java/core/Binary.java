@@ -1,10 +1,9 @@
 package core;
 
-import interfaces.ISerializableStrategy;
-import interfaces.ISong;
-import interfaces.ISongList;
 
 import java.io.*;
+import interfaces.*;
+
 import java.rmi.RemoteException;
 
 /**
@@ -37,8 +36,7 @@ public class Binary implements interfaces.ISerializableStrategy {
 	 * @throws RemoteException
 	 */
 	public Binary(String songDatei, String plDatei, SongList songList, SongList plList) throws RemoteException {
-		// Handlen, dass nix leeres abgespeichert werden kann! Muss eigentlich woanders passieren
-
+		
 		this.dateinameSongs = songDatei;
 		this.dateinamePl = plDatei;
 
@@ -50,6 +48,7 @@ public class Binary implements interfaces.ISerializableStrategy {
 	}
 
 
+	@Deprecated
 	@Override
 	/**
 	 * Passiert am Anfang, es werden die Songs-Datei geöffnet, zum lesen oder schreiben
@@ -64,6 +63,7 @@ public class Binary implements interfaces.ISerializableStrategy {
 		}
 	}
 
+	@Deprecated
 	@Override
 	public void openReadableSongs() throws IOException {
 		try {
@@ -74,6 +74,7 @@ public class Binary implements interfaces.ISerializableStrategy {
 		}
 	}
 
+	@Deprecated
 	@Override
 	/**
 	 * Passiert am Anfang, es werden die Playlist-Datei geöffnet, zum lesen oder schreiben
@@ -88,6 +89,7 @@ public class Binary implements interfaces.ISerializableStrategy {
 		}
 	}
 
+	@Deprecated
 	@Override
 	public void openReadablePlaylist() throws IOException {
 		try {
@@ -106,10 +108,12 @@ public class Binary implements interfaces.ISerializableStrategy {
 		// Entweder so, d.h. 2 Klassen greifen auf gleiche Datei zu!
 		//  => oder datei schliessen, dann löschen, dann neuöffnen
 		//  => Problem: this.closeWritable() schliesst einfach alle -> danke Interface!
-		PrintWriter datenLoescher = new PrintWriter(this.dateinameSongs);
-		datenLoescher.write("");
-		datenLoescher.close();
+		// PrintWriter datenLoescher = new PrintWriter(this.dateinameSongs);
+		// datenLoescher.write("");
+		// datenLoescher.close();
+		openWriteableSongs();
 		this.osSongs.writeObject(this.bsonglist);
+		closeWriteable();
 	}
 
 	public SongList readSongs() throws IOException {
@@ -124,7 +128,7 @@ public class Binary implements interfaces.ISerializableStrategy {
 		openReadableSongs();
 		bsonglist = null;
 		// Added to test if the stream is open or closed
-		if(!openSongsIn)return bsonglist.getSongList();
+		if(!openSongsIn)return null;
 		try {
 			this.bsonglist = (BinarySongList) this.isSongs.readObject();
 		} catch (ClassNotFoundException ex) {
@@ -140,7 +144,9 @@ public class Binary implements interfaces.ISerializableStrategy {
 	 * @throws IOException
 	 */
 	public void writePl() throws IOException {
+		openWriteablePlaylist();
 		this.osPl.writeObject(this.bplaylist);
+		closeWriteable();
 	}
 
 	public SongList readPl() throws IOException {
@@ -155,7 +161,7 @@ public class Binary implements interfaces.ISerializableStrategy {
 		openReadablePlaylist();
 		bplaylist = null;                       // HOTCHANGE
 		// Added to test if the stream is open or closed
-		if(!openPlIn) return bplaylist.getSongList();
+		if(!openPlIn) return null;
 		try {
 			this.bplaylist = (BinarySongList) this.isPl.readObject();
 			// return this.bplaylist.getSongList();                     // HOTCHANE
@@ -171,6 +177,7 @@ public class Binary implements interfaces.ISerializableStrategy {
 	}
 
 
+	@Deprecated
 	@Override
 	/**
 	 * Das wird am Ende gemacht!
@@ -179,7 +186,7 @@ public class Binary implements interfaces.ISerializableStrategy {
 		// NOTE
 		// split closing into two different parts
 		// reason could be found in the method below (closeWriteable())
-		if (this.openSongsIn && isSongs != null) ;
+		if (this.openSongsIn && isSongs != null)
 		try { isSongs.close(); }
 		catch (IOException ex) { ex.printStackTrace(System.err); }
 
@@ -188,6 +195,7 @@ public class Binary implements interfaces.ISerializableStrategy {
 		catch (IOException ex) {ex.printStackTrace(System.err);}
 	}
 
+	@Deprecated
 	@Override
 	public void closeWriteable() {  // REWORKED
 		// NOTE
@@ -206,18 +214,14 @@ public class Binary implements interfaces.ISerializableStrategy {
 	}
 
 
+	@Deprecated
 	private void loescheDateiInhalt(String dateiname) throws IOException {
 		PrintWriter l = new PrintWriter(dateiname);
 		l.write("");
 		l.close();
 	}
 
-
-
-
-
-
-
+	@Deprecated
 	@Override
 	/**
 	 * UNNÖTIG!
@@ -228,6 +232,7 @@ public class Binary implements interfaces.ISerializableStrategy {
 		throw new IOException();
 	}
 
+	@Deprecated
 	@Override
 	/**
 	 * UNNÖTIG!

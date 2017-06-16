@@ -51,7 +51,7 @@ public class SaveController implements interfaces.IController {
 		view.addToggleSongList((observable, oldValue, newValue) -> onToggle(newValue));
 
 		list = model.getQueue();
-		tableName = SelectedSongList.Library;
+		tableName = SelectedSongList.Playlist;
 	}
 
 	private void onToggle(Toggle newValue) {
@@ -64,32 +64,52 @@ public class SaveController implements interfaces.IController {
 	 * Handle button XML click event
 	 */
 	private void btXmlClicked() {
-		String path = (new DirectoryChooser()).showDialog(null).getAbsolutePath();
-		System.out.println(path);
-	}
+		FileChooser chooser = new FileChooser();
+		chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("*(*.xml)","*.xml"));
+		chooser.setTitle("Load file...");
+		File file = chooser.showSaveDialog(null);
+
+		try {
+
+			if(Playlist == tableName){
+				strategy = new XMLStrategy(file.getPath(),"");
+
+				list = model.getQueue();
+
+				strategy.openWriteablePlaylist();
+				for(ISong s : list) strategy.writeSong(s);
+				strategy.closeWriteable();
+			}
+			else {
+				strategy = new XMLStrategy("", file.getPath());
+
+				list = model.getAllSongs();
+				strategy.openWriteableSongs();
+				for(ISong s : list) strategy.writeSong(s);
+				strategy.closeWriteable();
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}	}
 
 	/**
 	 * Handle button binary click event
 	 */
 	private void btBinClicked() {
 		FileChooser chooser = new FileChooser();
-		chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Library(*.libSer)","*.libSer"));
-		chooser.setTitle("Save Library...");
-
-		// Clearing extension for new one
-		chooser.getExtensionFilters().clear();
-		chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("PlayList(*.plSer)",".plSer"));
-		File fileLib = chooser.showSaveDialog(null);
-		chooser.setTitle("Save PlayList...");
-		File filePlaylist = chooser.showSaveDialog(null);
+		chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("*(*.bin)","*.bin"));
+		chooser.setTitle("Save...");
+		File file = chooser.showSaveDialog(null);
 
 		try {
-			Binary bin = new Binary(fileLib.getAbsolutePath(), filePlaylist.getPath(),model.getAllSongs(), model.getQueue());
-			bin.openWriteableSongs();
-			bin.writeSongs();
-			bin.openWriteablePlaylist();
-			bin.writePl();
-			bin.closeWriteable();
+			if(Playlist == tableName){
+				strategy = new Binary("", file.getPath(),model.getAllSongs(), model.getQueue());
+				((Binary)strategy).writePl();
+			}
+			else {
+				strategy = new Binary(file.getAbsolutePath(), "", model.getAllSongs(), model.getQueue());
+				((Binary) strategy).writeSongs();
+			}
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
