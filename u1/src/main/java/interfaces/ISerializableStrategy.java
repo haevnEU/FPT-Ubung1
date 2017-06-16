@@ -8,7 +8,6 @@ public interface ISerializableStrategy {
       Setup Serializing the library
      */
     void openWriteableSongs() throws IOException;
-
     /*
       Setup Deserializing the library
      */

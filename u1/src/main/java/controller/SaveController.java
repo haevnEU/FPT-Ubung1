@@ -5,10 +5,11 @@ import interfaces.*;
 import javafx.scene.control.*;
 
 import view.SaveView;
+
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.sql.SQLException;
 import javafx.stage.DirectoryChooser;
-import javafx.beans.value.ObservableValue;
 import ApplicationException.DatabaseException;
 
 import static core.SelectedSongList.Library;
@@ -59,8 +60,14 @@ public class SaveController implements interfaces.IController {
 	 * Handle button XML click event
 	 */
 	private void btXmlClicked() {
-		String path = (new DirectoryChooser()).showDialog(null).getAbsolutePath();
-		System.out.println(path);
+		XMLStrategy xmlStrategy = new XMLStrategy();
+		try {
+			xmlStrategy.openWriteableSongs();
+			xmlStrategy.openWriteablePlaylist();
+			for(ISong s : list) xmlStrategy.writeSong(s);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	/**

@@ -5,8 +5,10 @@ import ApplicationException.DatabaseException;
 import core.JDBCStrategy;
 import core.Model;
 import core.SelectedSongList;
+import core.XMLStrategy;
 import interfaces.IModel;
 import interfaces.ISong;
+import interfaces.ISongList;
 import interfaces.IView;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.Toggle;
@@ -14,6 +16,7 @@ import view.EmptyView;
 import view.LoadView;
 
 import java.io.File;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -80,6 +83,14 @@ public class LoadController implements interfaces.IController {
 	 * Handle button XML click event
 	 */
 	private void btXmlClicked() {
+		XMLStrategy xmlStrategy = new XMLStrategy();
+		try {
+			xmlStrategy.openReadableSongs();
+			xmlStrategy.openReadablePlaylist();
+			xmlStrategy.readSong(); //as long as list is not empty read songs
+		} catch (IOException | ClassNotFoundException | ArrayIndexOutOfBoundsException e) {
+			e.printStackTrace();
+		}
 	}
 
 	/**
