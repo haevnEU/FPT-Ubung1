@@ -105,6 +105,8 @@ public class MainController implements interfaces.IController{
             initPlayer();
         } catch (RemoteException ex) {
         	new RichException(ex);
+	        System.err.println("[CRIT] RemoteException occurred at " + Util.getUnixTimeStamp());
+            ex.printStackTrace(System.err);
         }
     }
 

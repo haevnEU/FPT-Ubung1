@@ -1,5 +1,6 @@
 package controller;
 
+import core.Util;
 import interfaces.*;
 
 import core.Song;
@@ -40,7 +41,8 @@ public class DetailController implements interfaces.IController {
             song.setInterpret(view.getInterpret());
             song.setAlbum(view.getAlbumName());
         } catch (IndexOutOfBoundsException ex) {
-            ex.printStackTrace();
+            System.err.println("[WARN] Index out of bound occurred at " + Util.getUnixTimeStamp());
+            ex.printStackTrace(System.out);
         }
     }
 }

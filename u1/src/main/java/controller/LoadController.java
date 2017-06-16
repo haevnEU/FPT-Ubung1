@@ -12,7 +12,6 @@ import java.io.File;
 import java.util.List;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.rmi.RemoteException;
 
 import static core.SelectedSongList.Library;
 import static core.SelectedSongList.Playlist;
@@ -83,7 +82,7 @@ public class LoadController implements interfaces.IController {
 		chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("*(*.xml)","*.xml"));
 		chooser.setTitle("Load file...");
 		File file = chooser.showOpenDialog(null);
-
+		if(file == null) return;
 		try {
 			if(Playlist == tableName){
 				XMLStrategy xmlStrategy = new XMLStrategy(file.getPath(), "");
@@ -97,9 +96,9 @@ public class LoadController implements interfaces.IController {
 				for (ISong s : xmlStrategy.getLibrary())
 					model.getAllSongs().add(s);
 			}
-		} catch (IOException |  ArrayIndexOutOfBoundsException e) {
-			System.out.println("BLA");
-			e.printStackTrace();
+		} catch (IOException |  ArrayIndexOutOfBoundsException ex) {
+			System.out.println("IOException or ArrayIndexOutOfBounds occurred at " + Util.getUnixTimeStamp());
+			ex.printStackTrace(System.err);
 		}
 	}
 
@@ -111,6 +110,7 @@ public class LoadController implements interfaces.IController {
 		chooser.setTitle("Load file...");
 		File file = chooser.showOpenDialog(null);
 
+		if(file == null) return;
 		try {
 			if(Playlist == tableName) {
 				strategy = new Binary("", file.getAbsolutePath(), model.getAllSongs(), model.getQueue());
@@ -128,7 +128,10 @@ public class LoadController implements interfaces.IController {
 				model.getAllSongs().add(s);
 			}
 			}
-		}catch (IOException ex){}
+		}catch (IOException |  ArrayIndexOutOfBoundsException ex) {
+			System.out.println("IOException or ArrayIndexOutOfBounds occurred at " + Util.getUnixTimeStamp());
+			ex.printStackTrace(System.err);
+		}
 	}
 
 	/**
@@ -154,6 +157,7 @@ public class LoadController implements interfaces.IController {
 			System.err.println("[SYS][CRIT] SQL INJECTION DETECTED! at " + Util.getUnixTimeStamp());
 			ex.printStackTrace(System.err);
 		}catch (SQLException ex) {
+			System.err.println("[CRIT] SQLException occurred at " + Util.getUnixTimeStamp());
 			ex.printStackTrace(System.err);
 		}
 	}
@@ -162,6 +166,12 @@ public class LoadController implements interfaces.IController {
 	 * Handle button JPA click event
 	 */
 	private void btJPAClicked() {
+		try{
+
+		} catch (Exception ex){
+			System.err.println("[CRIT] Exception occurred at " + Util.getUnixTimeStamp());
+			ex.printStackTrace(System.err);
+		}
 	}
 
 	/**

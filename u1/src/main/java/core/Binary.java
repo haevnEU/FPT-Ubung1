@@ -132,6 +132,7 @@ public class Binary implements interfaces.ISerializableStrategy {
 		try {
 			this.bsonglist = (BinarySongList) this.isSongs.readObject();
 		} catch (ClassNotFoundException ex) {
+			System.err.println("[CRIT] ClassNotFound at " + Util.getUnixTimeStamp());
 			ex.printStackTrace(System.err);
 		}finally {
 			closeReadable();
@@ -167,6 +168,7 @@ public class Binary implements interfaces.ISerializableStrategy {
 			// return this.bplaylist.getSongList();                     // HOTCHANE
 		} catch (ClassNotFoundException ex) {
 			// this.closeReadable();                                    // HOTCHANE
+			System.err.println("[CRIT] ClassNotFound at " + Util.getUnixTimeStamp());
 			ex.printStackTrace(System.err);
 			// return null;                                             // HOTCHANGE
 		}
@@ -187,12 +189,21 @@ public class Binary implements interfaces.ISerializableStrategy {
 		// split closing into two different parts
 		// reason could be found in the method below (closeWriteable())
 		if (this.openSongsIn && isSongs != null)
-		try { isSongs.close(); }
-		catch (IOException ex) { ex.printStackTrace(System.err); }
+			try {
+				isSongs.close();
+			} catch (IOException ex) {
 
-		if(openPlIn && isPl != null)
-		try { isPl.close(); }
-		catch (IOException ex) {ex.printStackTrace(System.err);}
+				System.err.println("[CRIT] IOException occurred at " + Util.getUnixTimeStamp());
+				ex.printStackTrace(System.err);
+			}
+
+		if (openPlIn && isPl != null)
+			try {
+				isPl.close();
+			} catch (IOException ex) {
+				System.err.println("[CRIT] IOException occurred at " + Util.getUnixTimeStamp());
+				ex.printStackTrace(System.err);
+			}
 	}
 
 	@Deprecated
@@ -204,12 +215,16 @@ public class Binary implements interfaces.ISerializableStrategy {
 		// First it is detecting if the Playlist is open and the writer exist
 		if (this.openPlOut && osPl != null) {
 			try { this.osPl.close(); }
-			catch (Exception ex) { ex.printStackTrace(System.err); }
+			catch (Exception ex) {
+				System.err.println("[CRIT] IOException occurred at " + Util.getUnixTimeStamp());
+				ex.printStackTrace(System.err); }
 		}
 		// after this it does the same thing with the library (songs)
 		if(openSongsOut && osSongs != null)
 			try { this.osSongs.close(); }
-			catch (Exception ex) { ex.printStackTrace(System.err); }
+			catch (Exception ex) {
+				System.err.println("[CRIT] IOException occurred at " + Util.getUnixTimeStamp());
+				ex.printStackTrace(System.err);}
 
 	}
 

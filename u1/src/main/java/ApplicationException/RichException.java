@@ -29,6 +29,8 @@ public final class RichException extends Exception implements interfaces.IApplic
 		StringWriter sw = new StringWriter();
 		PrintWriter pw = new PrintWriter(sw);
 		ex.printStackTrace(pw);
+		System.err.println("[CRIT] Exception occurred at " + Util.getUnixTimeStamp());
+		ex.printStackTrace(System.err);
 
 		title = "Music player v.01";
 		header = ex.getMessage();

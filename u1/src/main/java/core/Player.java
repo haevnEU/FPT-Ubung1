@@ -99,9 +99,9 @@ class Player implements interfaces.IPlayer {
 			play();
 			System.out.println("Successfully leaved EndOfMedia");
 		}
-		catch (RemoteException e) {
-			System.out.println("ApplicationException occurred");
-			e.printStackTrace();
+		catch (RemoteException ex) {
+			System.err.println("[CRIT] ApplicationException occurred at " + Util.getUnixTimeStamp());
+			ex.printStackTrace();
 		}
 	}
 

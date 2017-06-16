@@ -46,9 +46,10 @@ public class XMLStrategy implements ISerializableStrategy { // you did not imple
 		fis = new FileInputStream(libraryPath); //"XMLBeansSerSongs");
 		decoder = new XMLDecoder(fis);
 	}
+
 	@Override
 	public void openWriteablePlaylist() throws IOException {
-		fos =  new FileOutputStream(playListPath); //"XMLBeansSerPlayList");
+		fos = new FileOutputStream(playListPath); //"XMLBeansSerPlayList");
 		encoder = new XMLEncoder(fos);
 	}
 
@@ -66,7 +67,7 @@ public class XMLStrategy implements ISerializableStrategy { // you did not imple
 	@Override
 	public ISong readSong() throws IOException, ClassNotFoundException {
 		SongWrapper s = (SongWrapper) decoder.readObject();
-		return new Song(s.getPath(), s.getTitle(),s.getArtist(), s.getAlbum(), s.getId());
+		return new Song(s.getPath(), s.getTitle(), s.getArtist(), s.getAlbum(), s.getId());
 	}
 
 	@Override
@@ -83,15 +84,17 @@ public class XMLStrategy implements ISerializableStrategy { // you did not imple
 
 	/**
 	 * Get the deserialized playlist
+	 *
 	 * @return playlist
 	 */
-	public ISongList getPlayList(){
+	public ISongList getPlayList() {
 		try {
 			playList = new SongList();
 			// Theoretical this loop is leaved if there occurred an exception
-			while(true) playList.add(readSong());
-		} catch (IndexOutOfBoundsException ex) {}
-		catch (IOException | ClassNotFoundException ex) {
+			while (true) playList.add(readSong());
+		} catch (IndexOutOfBoundsException ex) {
+		} catch (IOException | ClassNotFoundException ex) {
+			System.err.println("[CRIT] IOException or Class not found occurred at " + Util.getUnixTimeStamp());
 			ex.printStackTrace(System.err);
 		}
 		return playList;
@@ -99,17 +102,19 @@ public class XMLStrategy implements ISerializableStrategy { // you did not imple
 
 	/**
 	 * Get the deserialized library
+	 *
 	 * @return library
 	 */
-	public ISongList getLibrary(){try {
-		songList = new SongList();
-		// Theoretical this loop is leaved if there occurred an exception
-		while(true) songList.add(readSong());
-	} catch (IndexOutOfBoundsException ex) {}
-	catch (IOException | ClassNotFoundException ex) {
-		ex.printStackTrace(System.err);
-	}
+	public ISongList getLibrary() {
+		try {
+			songList = new SongList();
+			// Theoretical this loop is leaved if there occurred an exception
+			while (true) songList.add(readSong());
+		} catch (IndexOutOfBoundsException ex) {
+		} catch (IOException | ClassNotFoundException ex) {
+			System.err.println("[CRIT] IOException or Class not found occurred at " + Util.getUnixTimeStamp());
+			ex.printStackTrace(System.err);
+		}
 		return songList;
 	}
-
 }

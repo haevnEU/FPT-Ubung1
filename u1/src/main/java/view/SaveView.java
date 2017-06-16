@@ -148,8 +148,9 @@ public class SaveView extends BorderPane implements interfaces.IView {
 
 		try {
 			return new LoginCredentials(username, pw);
-		} catch (DatabaseException e) {
-			e.printStackTrace(System.err);
+		} catch (DatabaseException ex) {
+			System.err.println("[CRIT] Database exception occurred at " + Util.getUnixTimeStamp());
+			ex.printStackTrace(System.err);
 		}
 		return null;
 	}

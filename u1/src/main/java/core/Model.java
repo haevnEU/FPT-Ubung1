@@ -69,7 +69,7 @@ public final class Model implements interfaces.IModel {
 
 		    }
 	    } catch (IDOverFlowException e) {
-		    System.err.println(e.getMessage());
+		    System.err.println("[SYS CRIT] IDOverflow exception occurred at " + e.getMessage());
 	    }
     }
 
@@ -80,8 +80,9 @@ public final class Model implements interfaces.IModel {
 	public void setQueue(SongList queue){
 		try {
 			this.queue.setList(queue.getList());
-		} catch (RemoteException e) {
-			e.printStackTrace();
+		} catch (RemoteException ex) {
+			System.err.println("[CRIT] RemoteException occurred at " + Util.getUnixTimeStamp());
+			ex.printStackTrace(System.err);
 		}
 	}
 
@@ -92,8 +93,9 @@ public final class Model implements interfaces.IModel {
 	public void setAllSongs(SongList allSongs){
 		try {
 			this.allSongs.setList(allSongs.getList());
-		} catch (RemoteException e) {
-			e.printStackTrace();
+		} catch (RemoteException ex) {
+			System.err.println("[CRIT] RemoteException occurred at " + Util.getUnixTimeStamp());
+			ex.printStackTrace(System.err);
 		}
     }
 

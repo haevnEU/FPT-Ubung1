@@ -14,6 +14,8 @@ import java.sql.SQLException;
 import javafx.stage.DirectoryChooser;
 import ApplicationException.DatabaseException;
 
+import javax.sql.rowset.serial.SerialRef;
+
 import static core.SelectedSongList.Library;
 import static core.SelectedSongList.Playlist;
 
@@ -69,6 +71,7 @@ public class SaveController implements interfaces.IController {
 		chooser.setTitle("Load file...");
 		File file = chooser.showSaveDialog(null);
 
+		if(file == null) return;
 		try {
 
 			if(Playlist == tableName){
@@ -88,9 +91,11 @@ public class SaveController implements interfaces.IController {
 				for(ISong s : list) strategy.writeSong(s);
 				strategy.closeWriteable();
 			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}	}
+		} catch (IOException ex) {
+			System.err.println("[CRIT] IOException occurred at " + Util.getUnixTimeStamp());
+			ex.printStackTrace(System.err);
+		}
+	}
 
 	/**
 	 * Handle button binary click event
@@ -101,6 +106,7 @@ public class SaveController implements interfaces.IController {
 		chooser.setTitle("Save...");
 		File file = chooser.showSaveDialog(null);
 
+		if(file == null) return;
 		try {
 			if(Playlist == tableName){
 				strategy = new Binary("", file.getPath(),model.getAllSongs(), model.getQueue());
@@ -110,11 +116,15 @@ public class SaveController implements interfaces.IController {
 				strategy = new Binary(file.getAbsolutePath(), "", model.getAllSongs(), model.getQueue());
 				((Binary) strategy).writeSongs();
 			}
-		} catch (RemoteException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
+		} catch (RemoteException ex) {
+			System.err.println("[CRIT] RemoteException occurred at " + Util.getUnixTimeStamp());
+			ex.printStackTrace(System.err);
 		}
+		catch (IOException ex) {
+			System.err.println("[CRIT] IOException occurred at " + Util.getUnixTimeStamp());
+			ex.printStackTrace(System.err);
+		}
+
 	}
 
 	/**
