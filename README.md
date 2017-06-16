@@ -51,7 +51,19 @@ Wenn ein Cover vorhanden ist wird das Fenster breiter dargestellt da Rechts dann
 Links zu sehen sind Titel, Album, Artist, ID, Pfad und Erscheinungsjahr des jeweilig ausgewählten Liedes.
 Diese Metadaten sind bearbeitbar und werden sofort geändert da hier auf die Technik der SimpleObjectProperty gesetzt wurde.
 
-
+## Sonstiges
+- Main.java ermöglicht wurde ein parametisierter Start
+      <br/>-R:/Users/user/Desktop/logfile.log => Umleitung alle System.err und System.out ausgaben in eine logdatei
+      <br/>-RWARN:/Users/user/Desktop/logfile.log => Umleitung von System.out ausgaben in eine logdatei
+      <br>-RCRIT:/Users/user/Desktop/logfile.log => Umleitung von System.err ausgaben in eine logdatei
+- Util: 
+      <br/> -Hex/String konverter
+      <br/> convertToHex(String) => Konvertiert einen String in ein hexadezimalen string mit einem offset von 4
+      <br/>       d.H: 0000 0001 0002 .... 00FF 00100 ... FFFF
+      <br/> - Anzeige von Hinweisen
+      <br/>     Es gibt zwei verschiedene einmal 
+      <br/>       showAlert(String) zeigt ein hinweis fenster
+      <br/>       showAlert(String, AlertType) zeigt ein hinweis mit entsprechenden Icon
 ### Aufgabenstellung 1
 
 In unserer FPT Übung 1 sollen wir in Gruppen einen Mediaplayer erstellen dazu wurde ein Projekt mit 3 Interface zur verfügung gestellt
