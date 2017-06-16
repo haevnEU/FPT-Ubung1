@@ -2,6 +2,8 @@ package core;
 
 import java.io.*;
 import java.sql.*;
+
+import javafx.scene.control.Alert;
 import javafx.scene.image.*;
 import ApplicationException.*;
 
@@ -25,12 +27,19 @@ public class JDBCStrategy implements interfaces.IDatabaseUtils {
 	}
 
 	private JDBCStrategy(){}
+
+	/**
+	 * Internal usage
+	 * @param loginCredentials user infos
+	 * @param tableName table name which should be used as worling table
+	 * @throws DatabaseException
+	 */
 	private JDBCStrategy(LoginCredentials loginCredentials, SelectedSongList tableName) throws DatabaseException {
 		dbPath = EmptyView.getFile("SQL Database", "*.db").getPath();
 		if(dbPath.contains(";"))throw new DatabaseException("SQL INJECTION DETECTED");
 		System.out.println("[INFO] DB PATH: " + dbPath);
 		this.loginCredentials = loginCredentials;
-		this.tableName = tableName.name();
+		this.tableName = tableName.toString();
 		System.out.println("[INFO] Working on table: " + this.tableName);
 		System.out.println("[INFO] User: " + this.loginCredentials.getUsername() + " connected at " + Util.getUnixTimeStamp());
 	}
@@ -57,8 +66,6 @@ public class JDBCStrategy implements interfaces.IDatabaseUtils {
 			// same as above try-resource is used to minimize problems
 			try (PreparedStatement pstmt = con.prepareStatement("INSERT INTO " + tableName + " (ID, Title, Artist, Album, Path, Cover) VALUES(?, ?, ?, ?, ?, ?)")) {
 				System.out.println("[INFO] Created prepared statement \"INSERT INTO \"" + tableName + "\" (ID, Title, Artist, Album, Path, Cover) VALUES(?, ?, ?, ?, ?, ?)\"");
-
-
 
 				pstmt.setLong(1, s.getId());
 				pstmt.setString(2, Util.convertToHex(s.getTitle()));
@@ -114,6 +121,7 @@ public class JDBCStrategy implements interfaces.IDatabaseUtils {
 					System.err.println("\tStatement: " + ex2.getSQLState());
 					System.err.println("\tMessage: " + ex2.getMessage());
 					ex.printStackTrace(System.err);
+					Util.showAlert("Database exception occurred.", Alert.AlertType.INFORMATION);
 				}
 			}
 		} catch (SQLException ex) {
@@ -122,6 +130,7 @@ public class JDBCStrategy implements interfaces.IDatabaseUtils {
 			System.err.println("\tStatement: " + ex.getSQLState());
 			System.err.println("\tMessage: " + ex.getMessage());
 			ex.printStackTrace(System.err);
+			Util.showAlert("Database exception occurred.", Alert.AlertType.INFORMATION);
 		}
 		System.out.println("[INFO] Finished query at " + Util.getUnixTimeStamp());
 	}

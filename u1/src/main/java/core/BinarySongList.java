@@ -2,6 +2,7 @@ package core;
 
 import interfaces.ISong;
 
+import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 
@@ -11,7 +12,8 @@ import java.util.ArrayList;
  *  => dazu müssen SongList/ Song -Klassen umgewandelt werden
  *  => mal gucken
  */
-public class BinarySongList {
+public class BinarySongList implements Serializable {
+
 	private ArrayList<BinarySong> songs;
 
 
@@ -31,16 +33,16 @@ public class BinarySongList {
 		ArrayList<interfaces.ISong> nsongs = new ArrayList<>();
 		for (BinarySong item : this.songs) {
 			nsongs.add(
-					new core.Song(item.getPath(), item.getTitle(), item.getInterpret(), item.getPath(), item.getId())
+					new core.Song(item.getPath(), item.getTitle(), item.getInterpret(), item.getAlbum(), item.getId())
 			);
 		}
 		return new SongList(nsongs);
 	}
 
-	class BinarySong {
+	class BinarySong implements Serializable{
 
-		String path, album, interpret, title;
-		long id;
+		private String path, album, interpret, title;
+		private long id;
 
 
 		/**

@@ -149,8 +149,6 @@ public class SaveView extends BorderPane implements interfaces.IView {
 		try {
 			return new LoginCredentials(username, pw);
 		} catch (DatabaseException e) {
-			System.err.println("[SYS][CRIT] SQL INJECTION DETECTED! at " + Util.getUnixTimeStamp());
-			System.err.println("[SYS][CRIT] DETAILS: Username: " + username + " Password: " + pw);
 			e.printStackTrace(System.err);
 		}
 		return null;

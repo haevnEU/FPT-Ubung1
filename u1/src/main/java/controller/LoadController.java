@@ -1,22 +1,18 @@
 package controller;
 
 
+import view.*;
+import core.*;
+import interfaces.*;
+import javafx.scene.control.*;
+import javafx.stage.FileChooser;
 import ApplicationException.DatabaseException;
-import core.JDBCStrategy;
-import core.Model;
-import core.SelectedSongList;
-import core.Util;
-import interfaces.IModel;
-import interfaces.ISong;
-import interfaces.IView;
-import javafx.scene.control.RadioButton;
-import javafx.scene.control.Toggle;
-import view.EmptyView;
-import view.LoadView;
 
 import java.io.File;
-import java.sql.SQLException;
 import java.util.List;
+import java.io.IOException;
+import java.sql.SQLException;
+import java.rmi.RemoteException;
 
 import static core.SelectedSongList.Library;
 import static core.SelectedSongList.Playlist;
@@ -30,6 +26,7 @@ public class LoadController implements interfaces.IController {
 
 	private LoadView view;
 	private Model model;
+	private ISerializableStrategy strategy;
 
 	// Used to differ between different tables
 	private SelectedSongList tableName;
@@ -53,6 +50,7 @@ public class LoadController implements interfaces.IController {
 		view.addCheckBoxDbEnableEventHandler(e -> cbEnabledEvent());
 		view.addToggleSongList((observable, oldValue, newValue) -> onToggle(newValue));
 
+		tableName = SelectedSongList.Playlist;
 	}
 
 	/**
@@ -81,31 +79,80 @@ public class LoadController implements interfaces.IController {
 	 * Handle button XML click event
 	 */
 	private void btXmlClicked() {
+		FileChooser chooser = new FileChooser();
+		chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("*(*.xml)","*.xml"));
+		chooser.setTitle("Load file...");
+		File file = chooser.showOpenDialog(null);
+
+		try {
+			if(Playlist == tableName){
+				XMLStrategy xmlStrategy = new XMLStrategy(file.getPath(), "");
+				xmlStrategy.openReadablePlaylist();
+				for(ISong s : xmlStrategy.getPlayList())
+					model.getQueue().add(s);
+			}
+			else {
+				XMLStrategy xmlStrategy = new XMLStrategy("", file.getPath());
+				xmlStrategy.openReadableSongs();
+				for (ISong s : xmlStrategy.getLibrary())
+					model.getAllSongs().add(s);
+			}
+		} catch (IOException |  ArrayIndexOutOfBoundsException e) {
+			System.out.println("BLA");
+			e.printStackTrace();
+		}
 	}
 
 	/**
 	 * Handle button binary click event
 	 */
-	private void btBinClicked() {	}
+	private void btBinClicked() {FileChooser chooser = new FileChooser();
+		chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("*(*.bin)","*.bin"));
+		chooser.setTitle("Load file...");
+		File file = chooser.showOpenDialog(null);
+
+		try {
+			if(Playlist == tableName) {
+				strategy = new Binary("", file.getAbsolutePath(), model.getAllSongs(), model.getQueue());
+				ISongList tmp = ((Binary) strategy).readPl();
+				for (ISong s : tmp) {
+					System.out.println("ADDED " + s.toString() + "TO PL");
+					model.getQueue().add(s);
+				}
+			}
+			else{
+			strategy = new Binary( file.getPath(), "", model.getAllSongs(), model.getQueue());
+			ISongList tmp = ((Binary) strategy).readSongs();
+			for (ISong s : tmp) {
+				System.out.println("ADDED " + s.toString() + "TO LIB");
+				model.getAllSongs().add(s);
+			}
+			}
+		}catch (IOException ex){}
+	}
 
 	/**
 	 * Handle Button DB click event
 	 */
 	private void btDbClicked() {
 		try {
-			JDBCStrategy jdbcStrategy = JDBCStrategy.getInstance(view.getLogin(), tableName);
+			 strategy = JDBCStrategy.getInstance(view.getLogin(), tableName);
 
+			// NOTE i mus cast the strategy to the specific class to use every method from the class
+			// Im using try-resource for DB access
+			// => nasty cleanup is not required with this method
+			// => less potential exception
 			// Adding songs
-			if(Playlist == tableName)
-				for(ISong s : jdbcStrategy.readTable())
+			if(Playlist.equals(tableName))
+				for(ISong s : ((JDBCStrategy)strategy).readTable())
 					model.getQueue().add(s);
 			else
-				for(ISong s : jdbcStrategy.readTable())
+				for(ISong s : ((JDBCStrategy)strategy).readTable())
 					model.getAllSongs().add(s);
 			view.close();
-		} catch (DatabaseException e) {
+		} catch (DatabaseException ex) {
 			System.err.println("[SYS][CRIT] SQL INJECTION DETECTED! at " + Util.getUnixTimeStamp());
-			e.printStackTrace(System.err);
+			ex.printStackTrace(System.err);
 		}catch (SQLException ex) {
 			ex.printStackTrace(System.err);
 		}

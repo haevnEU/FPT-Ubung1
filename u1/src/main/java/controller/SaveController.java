@@ -4,8 +4,12 @@ import core.*;
 import interfaces.*;
 import javafx.scene.control.*;
 
+import javafx.stage.FileChooser;
 import view.SaveView;
+
+import java.io.File;
 import java.io.IOException;
+import java.rmi.RemoteException;
 import java.sql.SQLException;
 import javafx.stage.DirectoryChooser;
 import ApplicationException.DatabaseException;
@@ -21,11 +25,13 @@ import static core.SelectedSongList.Playlist;
  */
 public class SaveController implements interfaces.IController {
 
-	SaveView view;
-	Model model;
+	private SaveView view;
+	private Model model;
 
-	SongList list;
-	SelectedSongList tableName;
+	private SongList list;
+	private SelectedSongList tableName;
+
+	private ISerializableStrategy strategy;
 	/**
 	 * link model with view
 	 *
@@ -50,7 +56,7 @@ public class SaveController implements interfaces.IController {
 
 	private void onToggle(Toggle newValue) {
 		RadioButton rb = (RadioButton) newValue;
-		if(rb.getId() == Library.toString())tableName = Library;
+		if(rb.getId().equals(Library.toString()))tableName = Library;
 		else tableName = SelectedSongList.Playlist;
 	}
 
@@ -66,8 +72,29 @@ public class SaveController implements interfaces.IController {
 	 * Handle button binary click event
 	 */
 	private void btBinClicked() {
-		String path = (new DirectoryChooser()).showDialog(null).getAbsolutePath();
-		System.out.println(path);
+		FileChooser chooser = new FileChooser();
+		chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Library(*.libSer)","*.libSer"));
+		chooser.setTitle("Save Library...");
+
+		// Clearing extension for new one
+		chooser.getExtensionFilters().clear();
+		chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("PlayList(*.plSer)",".plSer"));
+		File fileLib = chooser.showSaveDialog(null);
+		chooser.setTitle("Save PlayList...");
+		File filePlaylist = chooser.showSaveDialog(null);
+
+		try {
+			Binary bin = new Binary(fileLib.getAbsolutePath(), filePlaylist.getPath(),model.getAllSongs(), model.getQueue());
+			bin.openWriteableSongs();
+			bin.writeSongs();
+			bin.openWriteablePlaylist();
+			bin.writePl();
+			bin.closeWriteable();
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	/**
@@ -75,9 +102,13 @@ public class SaveController implements interfaces.IController {
 	 */
 	private void btDbClicked() {
 		try {
-			JDBCStrategy jdbcStrategy = JDBCStrategy.getInstance(view.getLogin(), tableName);
-			if(Playlist == tableName) jdbcStrategy.writeSongList(model.getQueue());
-			else jdbcStrategy.writeSongList(model.getAllSongs());
+			strategy = JDBCStrategy.getInstance(view.getLogin(), tableName);
+			// NOTE i mus cast the strategy to the specific class to use every method from the class
+			// Im using try-resource for DB access
+			// => nasty cleanup is not required with this method
+			// => less potential exception
+			if(Playlist == tableName) ((JDBCStrategy)strategy).writeSongList(model.getQueue());
+			else ((JDBCStrategy)strategy).writeSongList(model.getAllSongs());
 			view.close();
 		} catch (DatabaseException e) {
 			System.err.println("[SYS][CRIT] SQL INJECTION DETECTED! at " + Util.getUnixTimeStamp());

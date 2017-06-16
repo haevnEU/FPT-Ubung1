@@ -1,5 +1,6 @@
 package core;
 
+import interfaces.ISerializableStrategy;
 import interfaces.ISong;
 import interfaces.ISongList;
 
@@ -11,15 +12,15 @@ import java.rmi.RemoteException;
  */
 public class Binary implements interfaces.ISerializableStrategy {
 
-	ObjectOutputStream osSongs;
-	ObjectOutputStream osPl;
-	ObjectInputStream isSongs;
-	ObjectInputStream isPl;
+	private ObjectOutputStream osSongs;
+	private ObjectOutputStream osPl;
+	private ObjectInputStream isSongs;
+	private ObjectInputStream isPl;
 
-	String dateinameSongs, dateinamePl;
+	private String dateinameSongs, dateinamePl;
 
-	BinarySongList bsonglist;
-	BinarySongList bplaylist;
+	private BinarySongList bsonglist;
+	private BinarySongList bplaylist;
 
 	boolean openSongsOut = false;
 	boolean openSongsIn = false;
@@ -41,13 +42,15 @@ public class Binary implements interfaces.ISerializableStrategy {
 		this.dateinameSongs = songDatei;
 		this.dateinamePl = plDatei;
 
-		if (songList != null) { this.bsonglist = new BinarySongList(songList);
-		} else { this.bsonglist = null; }
-		if (plList != null) { this.bplaylist = new BinarySongList(plList);
-		} else { this.bplaylist = null; }
+		if (songList != null) this.bsonglist = new BinarySongList(songList);
+		else this.bsonglist = null;
+
+		if (plList != null)  this.bplaylist = new BinarySongList(plList);
+		else  this.bplaylist = null;
 	}
 
 
+	@Override
 	/**
 	 * Passiert am Anfang, es werden die Songs-Datei geöffnet, zum lesen oder schreiben
 	 * @throws IOException
@@ -61,6 +64,7 @@ public class Binary implements interfaces.ISerializableStrategy {
 		}
 	}
 
+	@Override
 	public void openReadableSongs() throws IOException {
 		try {
 			this.isSongs = new ObjectInputStream(new FileInputStream(this.dateinameSongs));
@@ -70,6 +74,7 @@ public class Binary implements interfaces.ISerializableStrategy {
 		}
 	}
 
+	@Override
 	/**
 	 * Passiert am Anfang, es werden die Playlist-Datei geöffnet, zum lesen oder schreiben
 	 * @throws IOException
@@ -83,6 +88,7 @@ public class Binary implements interfaces.ISerializableStrategy {
 		}
 	}
 
+	@Override
 	public void openReadablePlaylist() throws IOException {
 		try {
 			this.isPl = new ObjectInputStream(new FileInputStream(this.dateinamePl));
@@ -91,7 +97,6 @@ public class Binary implements interfaces.ISerializableStrategy {
 			this.openPlIn = false;
 		}
 	}
-
 
 	/**
 	 * Wird aufgerufen, um etwas mit der Song-Datei zu tun, lesen oder schreiben
@@ -109,13 +114,24 @@ public class Binary implements interfaces.ISerializableStrategy {
 
 	public SongList readSongs() throws IOException {
 		// Aus Datei in bsongList einlesen
+
+		// NOTE
+		// Change a little bit
+		// first change is the returning object, ive set bplaylist to null
+		//      reason is that we can return it in the finally clause
+		//      if there is something malicious with the class the object bplaylsit is never set to an actual value
+		//      otherwise it will set to the input value
+		openReadableSongs();
+		bsonglist = null;
+		// Added to test if the stream is open or closed
+		if(!openSongsIn)return bsonglist.getSongList();
 		try {
 			this.bsonglist = (BinarySongList) this.isSongs.readObject();
-			return this.bsonglist.getSongList();
-		} catch (ClassNotFoundException e) {
-			this.closeReadable();
-			e.printStackTrace();
-			return null;
+		} catch (ClassNotFoundException ex) {
+			ex.printStackTrace(System.err);
+		}finally {
+			closeReadable();
+			return bsonglist.getSongList();
 		}
 	}
 
@@ -129,40 +145,64 @@ public class Binary implements interfaces.ISerializableStrategy {
 
 	public SongList readPl() throws IOException {
 		// Aus Datei in blaylist einlesen
+
+		// NOTE
+		// Change a little bit
+		// first change is the returning object, ive set bplaylist to null
+		//      reason is that we can return it in the finally clause
+		//      if there is something malicious with the class the object bplaylsit is never set to an actual value
+		//      otherwise it will set to the input value
+		openReadablePlaylist();
+		bplaylist = null;                       // HOTCHANGE
+		// Added to test if the stream is open or closed
+		if(!openPlIn) return bplaylist.getSongList();
 		try {
 			this.bplaylist = (BinarySongList) this.isPl.readObject();
-			return this.bplaylist.getSongList();
-		} catch (ClassNotFoundException e) {
-			this.closeReadable();
-			e.printStackTrace();
-			return null;
+			// return this.bplaylist.getSongList();                     // HOTCHANE
+		} catch (ClassNotFoundException ex) {
+			// this.closeReadable();                                    // HOTCHANE
+			ex.printStackTrace(System.err);
+			// return null;                                             // HOTCHANGE
 		}
+		finally {                                                       // HOTCHANGE
+			closeReadable();                                            // HOTCHANGE
+			return bplaylist.getSongList();                             // HOTCHANGE
+		}                                                               // HOTCHANGE
 	}
 
 
+	@Override
 	/**
 	 * Das wird am Ende gemacht!
 	 */
 	public void closeReadable() {
-		if (this.openSongsIn || this.openPlIn) {
-			try {
-				osSongs.close();
-				osPl.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
+		// NOTE
+		// split closing into two different parts
+		// reason could be found in the method below (closeWriteable())
+		if (this.openSongsIn && isSongs != null) ;
+		try { isSongs.close(); }
+		catch (IOException ex) { ex.printStackTrace(System.err); }
+
+		if(openPlIn && isPl != null)
+		try { isPl.close(); }
+		catch (IOException ex) {ex.printStackTrace(System.err);}
 	}
 
-	public void closeWriteable() {
-		if (this.openSongsOut || this.openPlOut) {
-			try {
-				isSongs.close();
-				isPl.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+	@Override
+	public void closeWriteable() {  // REWORKED
+		// NOTE
+		// split closing into two different parts
+		// closeReadable and closeWriteable were switched i have corrected it
+		// First it is detecting if the Playlist is open and the writer exist
+		if (this.openPlOut && osPl != null) {
+			try { this.osPl.close(); }
+			catch (Exception ex) { ex.printStackTrace(System.err); }
 		}
+		// after this it does the same thing with the library (songs)
+		if(openSongsOut && osSongs != null)
+			try { this.osSongs.close(); }
+			catch (Exception ex) { ex.printStackTrace(System.err); }
+
 	}
 
 
@@ -173,6 +213,12 @@ public class Binary implements interfaces.ISerializableStrategy {
 	}
 
 
+
+
+
+
+
+	@Override
 	/**
 	 * UNNÖTIG!
 	 * @param s Ist der Song, der in die BinarySongList geschrieben wird
@@ -182,6 +228,7 @@ public class Binary implements interfaces.ISerializableStrategy {
 		throw new IOException();
 	}
 
+	@Override
 	/**
 	 * UNNÖTIG!
 	 * @return Song aus der BinarySongList

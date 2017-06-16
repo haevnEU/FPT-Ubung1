@@ -4,6 +4,7 @@ import java.io.IOException;
 
 public interface ISerializableStrategy {
 
+
     /*
       Setup Serializing the library
      */
