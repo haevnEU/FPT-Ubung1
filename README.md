@@ -64,6 +64,9 @@ Diese Metadaten sind bearbeitbar und werden sofort geändert da hier auf die Tec
       <br/>     Es gibt zwei verschiedene einmal 
       <br/>       showAlert(String) zeigt ein hinweis fenster
       <br/>       showAlert(String, AlertType) zeigt ein hinweis mit entsprechenden Icon
+      
+      
+## Aufgabenstellungen
 ### Aufgabenstellung 1
 
 In unserer FPT Übung 1 sollen wir in Gruppen einen Mediaplayer erstellen dazu wurde ein Projekt mit 3 Interface zur verfügung gestellt
