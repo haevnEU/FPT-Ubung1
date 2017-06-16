@@ -2,12 +2,14 @@ package core;
 
 import interfaces.ISong;
 
+import java.io.Serializable;
+
 /**
  * This class is used as a serialization wrapper for Song objects
  * <p>
  * Created by Nils Milewsi (nimile) on 16.06.17
  */
-public class SongWrapper {
+public class SongWrapper implements Serializable{
 	private String title, path, artist, album;
 	private Long id;
 

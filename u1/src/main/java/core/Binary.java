@@ -36,7 +36,7 @@ public class Binary implements interfaces.ISerializableStrategy {
 	 * @throws RemoteException
 	 */
 	public Binary(String songDatei, String plDatei, SongList songList, SongList plList) throws RemoteException {
-		
+
 		this.dateinameSongs = songDatei;
 		this.dateinamePl = plDatei;
 
