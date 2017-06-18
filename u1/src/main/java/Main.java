@@ -1,5 +1,6 @@
 
 import controller.SaveController;
+import core.Util;
 import javafx.scene.input.*;
 import javafx.application.*;
 
@@ -46,16 +47,24 @@ public class Main extends Application {
 					    System.setOut(new PrintStream(fos));
 				    }catch (IOException ex){}
 			    }
+			    else if(s.toUpperCase().contains("-R:")){
+				    try {
+					    String file = s.substring(s.indexOf(":") + 1, s.length());
+					    File f = new File(file);
+					    if (!f.exists()) f.createNewFile();
+					    FileOutputStream fos = new FileOutputStream(f);
+					    System.setErr(new PrintStream(fos));
+					    System.setOut(new PrintStream(fos));
+				    }catch (IOException ex){}
+			    }
 		    }
 	    }
 
-	    System.out.println("TEST");
-	    System.err.println("TEST");
+	    System.out.println("[NONE] Application started at " + Util.getUnixTimeStamp());
 	    Application.launch(args);
 
+
     }
-
-
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -82,6 +91,7 @@ public class Main extends Application {
 	}
 
     private void onClose() {
+	    System.out.println("[NONE] Application quited at " + Util.getUnixTimeStamp());
 	    Platform.exit();
 	    System.exit(0);
     }

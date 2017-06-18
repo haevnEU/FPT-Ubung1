@@ -3,13 +3,11 @@ package core;
 import java.io.*;
 import java.sql.*;
 
-import javafx.scene.control.Alert;
-import javafx.scene.image.*;
 import ApplicationException.*;
 
 import view.EmptyView;
 import interfaces.ISong;
-import com.sun.javafx.geom.Vec2d;
+import javafx.scene.control.Alert;
 
 /**
  * This class provides database access
@@ -64,8 +62,8 @@ public class JDBCStrategy implements interfaces.IDatabaseUtils {
 		try (Connection con = DriverManager.getConnection("jdbc:sqlite:" + dbPath, loginCredentials.getUsername(), loginCredentials.getPw())) {
 			System.out.println("[INFO] Connection opened at " + Util.getUnixTimeStamp());
 			// same as above try-resource is used to minimize problems
-			try (PreparedStatement pstmt = con.prepareStatement("INSERT INTO " + tableName + " (ID, Title, Artist, Album, Path, Cover) VALUES(?, ?, ?, ?, ?, ?)")) {
-				System.out.println("[INFO] Created prepared statement \"INSERT INTO \"" + tableName + "\" (ID, Title, Artist, Album, Path, Cover) VALUES(?, ?, ?, ?, ?, ?)\"");
+			try (PreparedStatement pstmt = con.prepareStatement("INSERT INTO " + tableName + " (ID, Title, Artist, Album, Path) VALUES(?, ?, ?, ?, ?)")) {
+				System.out.println("[INFO] Created prepared statement \"INSERT INTO \"" + tableName + "\" (ID, Title, Artist, Album, Path) VALUES(?, ?, ?, ?, ?)\"");
 
 				pstmt.setLong(1, s.getId());
 				pstmt.setString(2, Util.convertToHex(s.getTitle()));
@@ -74,32 +72,6 @@ public class JDBCStrategy implements interfaces.IDatabaseUtils {
 				pstmt.setString(5, Util.convertToHex(s.getPath()));
 
 				System.out.println("[INFO] Values added");
-
-				// saving images to db
-				if (s instanceof core.Song && ((Song) s).getCover() != null) {
-					System.out.println("[INFO] found cover prepare cover for db");
-					// Load the Image into a Java FX Image Object //
-
-					// load cover
-					Image img = ((Song) s).getCover();
-
-					// Cache Width and Height to 'int's (because getWidth/getHeight return Double) and getPixels needs 'int's //
-
-					// get width and height
-					Vec2d dim = new Vec2d(img.getWidth(), img.getHeight());
-
-					// Create a new Byte Buffer, but we'll use BGRA (1 byte for each channel) //
-					byte[] buf = new byte[(int)dim.x * (int)dim.y * 4];
-
-					// Write pixels into buf array
-					img.getPixelReader().getPixels(0, 0, (int)dim.x, (int)dim.y, PixelFormat.getByteBgraInstance(), buf, 0, (int)dim.x * 4);
-
-					// Set stream for buf
-					InputStream inputStream = new ByteArrayInputStream(buf);
-
-					pstmt.setBinaryStream(6, inputStream, buf.length);
-					System.out.println("[INFO] Cover added to db");
-				}
 				pstmt.executeUpdate();
 				System.out.println("[INFO] executed query");
 			} catch (SQLException ex) {
@@ -176,6 +148,7 @@ public class JDBCStrategy implements interfaces.IDatabaseUtils {
 	@Deprecated
 	@Override
 	public void openWriteableSongs() throws IOException {}
+
 
 	@Deprecated
 	@Override

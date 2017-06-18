@@ -35,7 +35,6 @@ public class SongList extends ModifiableObservableListBase<ISong> implements ISo
      */
     @Override
     public boolean addSong(ISong s) throws RemoteException {
-        //TODO set new max?!
         try {
             IDGenerator.addId(s.getId());
         } catch (UnknownApplicationException ex) {

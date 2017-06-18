@@ -75,9 +75,24 @@ public final class Util {
     }
 
 
+    /**
+     * Shows an alert window
+     * @param text text which should be shown
+     * @param type alert type
+     */
     public static void showAlert(String text, Alert.AlertType type){
         Alert alert = new Alert(type);
         alert.setTitle(type.name());
+        alert.setContentText(text);
+        alert.showAndWait();
+    }
+
+    /**
+     * Shows an alert window
+     * @param text text which should be shown
+     */
+    public static void showAlert(String text){
+        Alert alert = new Alert(Alert.AlertType.NONE);
         alert.setContentText(text);
         alert.showAndWait();
     }
