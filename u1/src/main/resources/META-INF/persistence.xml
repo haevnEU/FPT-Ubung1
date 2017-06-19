@@ -9,7 +9,7 @@
         <class>core.PlayList</class>
         <class>core.Library</class>
         <properties>
-            <property name="openjpa.ConnectionURL" value="jdbc:sqlite:/Users/nilsmilewski/Desktop/music.db/" />
+            <property name="openjpa.ConnectionURL" value="jdbc:sqlite:src/main/resources/music.db" />
             <property name="openjpa.ConnectionDriverName" value="org.sqlite.JDBC" />
             <property name="openjpa.ConnectionUserName" value="" />
             <property name="openjpa.ConnectionPassword" value="" />
