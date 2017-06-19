@@ -19,6 +19,7 @@ public final class IDGenerator {
 	 * @return next possible id in range form 0 to 9999
 	 * @throws IDOverFlowException occurred if the next id exceed the maximum value of 9999
 	 */
+	@SuppressWarnings("WeakerAccess")
 	public static long getNextID() throws IDOverFlowException {
 		idPointer++;
 		if(idPointer > MAX) throw new IDOverFlowException("Next id would exceed the current maximum from " + MAX);
@@ -29,6 +30,7 @@ public final class IDGenerator {
 	/**
 	 * @return true if there is any free id
 	 */
+	@SuppressWarnings("unused")
 	public static boolean hasNextID(){
 		return idPointer < MAX;
 	}
@@ -38,6 +40,7 @@ public final class IDGenerator {
 	 * @param id new maximum
 	 * @throws UnknownApplicationException if id is doubled
 	 */
+	@SuppressWarnings("WeakerAccess")
 	public static void addId(long id) throws UnknownApplicationException{
 		if(idPointer > id) throw new UnknownApplicationException("ID already exists");
 		idPointer = id;

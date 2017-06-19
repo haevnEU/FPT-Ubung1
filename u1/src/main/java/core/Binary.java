@@ -9,6 +9,7 @@ import java.rmi.RemoteException;
 /**
  * Created by thahnen on 10.06.17.
  */
+@SuppressWarnings("ALL")
 public class Binary implements interfaces.ISerializableStrategy {
 
 	private ObjectOutputStream osSongs;
@@ -21,10 +22,10 @@ public class Binary implements interfaces.ISerializableStrategy {
 	private BinarySongList bsonglist;
 	private BinarySongList bplaylist;
 
-	boolean openSongsOut = false;
-	boolean openSongsIn = false;
-	boolean openPlOut = false;
-	boolean openPlIn = false;
+	private boolean openSongsOut = false;
+	private boolean openSongsIn = false;
+	private boolean openPlOut = false;
+	private boolean openPlIn = false;
 
 
 	/**

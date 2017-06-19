@@ -1,7 +1,5 @@
 package controller;
 
-import ApplicationException.RichException;
-import javafx.scene.layout.BorderPane;
 import view.*;
 import core.*;
 import interfaces.*;
@@ -10,6 +8,8 @@ import javafx.scene.input.*;
 
 import javafx.scene.Scene;
 import java.rmi.RemoteException;
+import javafx.scene.layout.BorderPane;
+import ApplicationException.RichException;
 import javafx.beans.property.SimpleBooleanProperty;
 
 public class MainController implements interfaces.IController{
@@ -104,9 +104,11 @@ public class MainController implements interfaces.IController{
             model.getQueue().addAll(model.getAllSongs().getList());
             initPlayer();
         } catch (RemoteException ex) {
-        	new RichException(ex);
 	        System.err.println("[CRIT] RemoteException occurred at " + Util.getUnixTimeStamp());
             ex.printStackTrace(System.err);
+
+	        //noinspection ThrowableNotThrown
+	        new RichException(ex);
         }
     }
 

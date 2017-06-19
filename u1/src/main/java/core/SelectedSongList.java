@@ -6,7 +6,5 @@ package core;
  * Written by Nils Milewsi (nimile)
  */
 public enum SelectedSongList {
-	Playlist, Library;
-
-
+	PlayList, Library
 }

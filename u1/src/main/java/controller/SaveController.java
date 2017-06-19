@@ -5,19 +5,18 @@ import interfaces.*;
 import javafx.scene.control.*;
 
 import javafx.stage.FileChooser;
+import view.EmptyView;
 import view.SaveView;
 
 import java.io.File;
 import java.io.IOException;
 import java.rmi.RemoteException;
 import java.sql.SQLException;
-import javafx.stage.DirectoryChooser;
+
 import ApplicationException.DatabaseException;
 
-import javax.sql.rowset.serial.SerialRef;
-
 import static core.SelectedSongList.Library;
-import static core.SelectedSongList.Playlist;
+import static core.SelectedSongList.PlayList;
 
 
 /**
@@ -53,13 +52,13 @@ public class SaveController implements interfaces.IController {
 		view.addToggleSongList((observable, oldValue, newValue) -> onToggle(newValue));
 
 		list = model.getQueue();
-		tableName = SelectedSongList.Playlist;
+		tableName = SelectedSongList.PlayList;
 	}
 
 	private void onToggle(Toggle newValue) {
 		RadioButton rb = (RadioButton) newValue;
 		if(rb.getId().equals(Library.toString()))tableName = Library;
-		else tableName = SelectedSongList.Playlist;
+		else tableName = SelectedSongList.PlayList;
 	}
 
 	/**
@@ -74,7 +73,7 @@ public class SaveController implements interfaces.IController {
 		if(file == null) return;
 		try {
 
-			if(Playlist == tableName){
+			if(PlayList == tableName){
 				strategy = new XMLStrategy(file.getPath(),"");
 
 				list = model.getQueue();
@@ -108,7 +107,7 @@ public class SaveController implements interfaces.IController {
 
 		if(file == null) return;
 		try {
-			if(Playlist == tableName){
+			if(PlayList == tableName){
 				strategy = new Binary("", file.getPath(),model.getAllSongs(), model.getQueue());
 				((Binary)strategy).writePl();
 			}
@@ -132,12 +131,17 @@ public class SaveController implements interfaces.IController {
 	 */
 	private void btDbClicked() {
 		try {
-			strategy = JDBCStrategy.getInstance(view.getLogin(), tableName);
+			File dbFile = EmptyView.getFile("SQL Database", "*.db");
+			if(dbFile == null) return;
+			if(dbFile.getPath().contains(";"))throw new DatabaseException("SQL INJECTION DETECTED");
+
+			strategy = JDBCStrategy.getInstance(view.getLogin(), tableName, dbFile.getPath());
+
 			// NOTE i mus cast the strategy to the specific class to use every method from the class
 			// Im using try-resource for DB access
 			// => nasty cleanup is not required with this method
 			// => less potential exception
-			if(Playlist == tableName) ((JDBCStrategy)strategy).writeSongList(model.getQueue());
+			if(PlayList == tableName) ((JDBCStrategy)strategy).writeSongList(model.getQueue());
 			else ((JDBCStrategy)strategy).writeSongList(model.getAllSongs());
 			view.close();
 		} catch (DatabaseException e) {
@@ -153,6 +157,33 @@ public class SaveController implements interfaces.IController {
 	 * Handle button JPA click event
 	 */
 	private void btJPAClicked() {
+		try {
+			strategy = OpenJPAStrategy.getInstance(tableName);
+			if(PlayList == tableName) {
+				strategy.openWriteablePlaylist();
+				for(ISong s : model.getQueue())
+				{
+					PlayList s2 = new PlayList(s, false);
+					strategy.writeSong(s2);
+				}
+				strategy.closeWriteable();
+			}
+			else  {
+				strategy.openWriteableSongs();
+				for(ISong s : model.getAllSongs())
+				{
+					core.Library s2 = new Library(s, false);
+					strategy.writeSong(s2);
+				}
+				strategy.closeWriteable();
+			}
+		} catch (DatabaseException e) {
+			System.err.println("[SYS][CRIT] SQL INJECTION DETECTED! at " + Util.getUnixTimeStamp());
+			e.printStackTrace(System.err);
+		}catch(IOException ex) {
+			System.err.println("[CRIT] Exception thrown at " + Util.getUnixTimeStamp());
+			ex.printStackTrace(System.err);
+		}
 	}
 
 	/**

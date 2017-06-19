@@ -57,9 +57,12 @@ public class SaveView extends BorderPane implements interfaces.IView {
 		toggleGroup = new ToggleGroup();
 		rbplayList = new RadioButton(SelectedSongList.Library.name());
 		rbplayList.setId(SelectedSongList.Library.toString());
-		rbQueue = new RadioButton(SelectedSongList.Playlist.name());
-		rbQueue.setId(SelectedSongList.Playlist.toString());
+		rbplayList.setTooltip(new Tooltip("Saving Library"));
+		rbQueue = new RadioButton(SelectedSongList.PlayList.name());
+		rbQueue.setId(SelectedSongList.PlayList.toString());
 		rbQueue.setSelected(true);
+		rbQueue.setTooltip(new Tooltip("Saving Queue"));
+
 		rbplayList.setToggleGroup(toggleGroup);
 		rbQueue.setToggleGroup(toggleGroup);
 		box3.getChildren().addAll(rbplayList,rbQueue);
@@ -79,17 +82,21 @@ public class SaveView extends BorderPane implements interfaces.IView {
 
 		btXml = new Button("XML");
 		btXml.setPrefWidth(150);
+		btXml.setTooltip(new Tooltip("Save playlist or queue metainformation as XML file"));
 
 		btBin = new Button("Binary");
 		btBin.setPrefWidth(150);
+		btBin.setTooltip(new Tooltip("Save playlist or queue metainformation as binary file"));
 
 		btDB = new Button("DB");
 		btDB.setPrefWidth(150);
 		btDB.setDisable(true);
+		btDB.setTooltip(new Tooltip("Save playlist or queue metainformation isnide a database"));
 
 		btOpenJPA = new Button("JPA");
 		btOpenJPA.setPrefWidth(150);
 		btOpenJPA.setDisable(true);
+		btOpenJPA.setTooltip(new Tooltip("Save playlist or queue metainformation isnide a database using JPA"));
 
 		left.getChildren().addAll(btXml, btBin, btDB, btOpenJPA);
 

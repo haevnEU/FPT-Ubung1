@@ -5,16 +5,16 @@ import view.*;
 import core.*;
 import interfaces.*;
 import javafx.scene.control.*;
-import javafx.stage.FileChooser;
-import ApplicationException.DatabaseException;
 
 import java.io.File;
 import java.util.List;
 import java.io.IOException;
 import java.sql.SQLException;
+import javafx.stage.FileChooser;
+import ApplicationException.DatabaseException;
 
 import static core.SelectedSongList.Library;
-import static core.SelectedSongList.Playlist;
+import static core.SelectedSongList.PlayList;
 
 /**
  * This class provides loading functionality
@@ -49,7 +49,7 @@ public class LoadController implements interfaces.IController {
 		view.addCheckBoxDbEnableEventHandler(e -> cbEnabledEvent());
 		view.addToggleSongList((observable, oldValue, newValue) -> onToggle(newValue));
 
-		tableName = SelectedSongList.Playlist;
+		tableName = SelectedSongList.PlayList;
 	}
 
 	/**
@@ -70,8 +70,8 @@ public class LoadController implements interfaces.IController {
 	private void onToggle(Toggle newValue) {
 		// Creates a local copy of the selected RadioButton
 		RadioButton rb = (RadioButton) newValue;
-		if(rb.getId() == Library.toString())tableName = Library;
-		else tableName = SelectedSongList.Playlist;
+		if(rb.getId().equals(Library.toString())) tableName = Library;
+		else tableName = SelectedSongList.PlayList;
 	}
 
 	/**
@@ -84,7 +84,7 @@ public class LoadController implements interfaces.IController {
 		File file = chooser.showOpenDialog(null);
 		if(file == null) return;
 		try {
-			if(Playlist == tableName){
+			if(PlayList == tableName){
 				XMLStrategy xmlStrategy = new XMLStrategy(file.getPath(), "");
 				xmlStrategy.openReadablePlaylist();
 				for(ISong s : xmlStrategy.getPlayList())
@@ -109,10 +109,10 @@ public class LoadController implements interfaces.IController {
 		chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("*(*.bin)","*.bin"));
 		chooser.setTitle("Load file...");
 		File file = chooser.showOpenDialog(null);
-
 		if(file == null) return;
+
 		try {
-			if(Playlist == tableName) {
+			if(PlayList == tableName) {
 				strategy = new Binary("", file.getAbsolutePath(), model.getAllSongs(), model.getQueue());
 				ISongList tmp = ((Binary) strategy).readPl();
 				for (ISong s : tmp) {
@@ -139,14 +139,17 @@ public class LoadController implements interfaces.IController {
 	 */
 	private void btDbClicked() {
 		try {
-			 strategy = JDBCStrategy.getInstance(view.getLogin(), tableName);
+			File dbFile = EmptyView.getFile("SQL Database", "*.db");
+			if(dbFile == null) return;
+			if(dbFile.getPath().contains(";"))throw new DatabaseException("SQL INJECTION DETECTED");
 
+			 strategy = JDBCStrategy.getInstance(view.getLogin(), tableName, dbFile.getPath());
 			// NOTE i mus cast the strategy to the specific class to use every method from the class
 			// Im using try-resource for DB access
 			// => nasty cleanup is not required with this method
 			// => less potential exception
 			// Adding songs
-			if(Playlist.equals(tableName))
+			if(PlayList.equals(tableName))
 				for(ISong s : ((JDBCStrategy)strategy).readTable())
 					model.getQueue().add(s);
 			else
@@ -167,6 +170,16 @@ public class LoadController implements interfaces.IController {
 	 */
 	private void btJPAClicked() {
 		try{
+			strategy = OpenJPAStrategy.getInstance(tableName);
+
+			if(PlayList.equals(tableName))
+				for(ISong s : ((OpenJPAStrategy)strategy).readSongs())
+					model.getQueue().add(s);
+			else
+				for(ISong s : ((OpenJPAStrategy)strategy).readSongs())
+					model.getAllSongs().add(s);
+
+			view.close();
 
 		} catch (Exception ex){
 			System.err.println("[CRIT] Exception occurred at " + Util.getUnixTimeStamp());

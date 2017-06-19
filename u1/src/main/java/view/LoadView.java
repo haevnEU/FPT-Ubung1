@@ -57,8 +57,11 @@ public class LoadView extends BorderPane implements interfaces.IView {
 		toggleGroup = new ToggleGroup();
 		rbplayList = new RadioButton(SelectedSongList.Library.toString());
 		rbplayList.setId(SelectedSongList.Library.toString());
-		rbQueue = new RadioButton(SelectedSongList.Playlist.toString());
-		rbQueue.setId(SelectedSongList.Playlist.toString());
+		rbplayList.setTooltip(new Tooltip("Saving Playlist"));
+		rbQueue = new RadioButton(SelectedSongList.PlayList.toString());
+		rbQueue.setId(SelectedSongList.PlayList.toString());
+		rbQueue.setTooltip(new Tooltip("Saving Library"));
+
 		rbQueue.setSelected(true);
 		rbplayList.setToggleGroup(toggleGroup);
 		rbQueue.setToggleGroup(toggleGroup);
@@ -79,20 +82,25 @@ public class LoadView extends BorderPane implements interfaces.IView {
 
 		btFileDialog = new Button("Local Files");
 		btFileDialog.setPrefWidth(150);
+		btFileDialog.setTooltip(new Tooltip("Load MP3 from disk"));
 
 		btXml = new Button("XML");
 		btXml.setPrefWidth(150);
+		btXml.setTooltip(new Tooltip("Load MP3-Metainformation with XML serialization from disk"));
 
 		btBin = new Button("Binary");
 		btBin.setPrefWidth(150);
+		btBin.setTooltip(new Tooltip("Load MP3-Metainformation with binary serialization from disk"));
 
 		btDB = new Button("DB");
 		btDB.setPrefWidth(150);
 		btDB.setDisable(true);
+		btDB.setTooltip(new Tooltip("Load MP3-Metainformation from a database"));
 
 		btOpenJPA = new Button("JPA");
 		btOpenJPA.setPrefWidth(150);
 		btOpenJPA.setDisable(true);
+		btOpenJPA.setTooltip(new Tooltip("Load MP3-Metainformation from a database using JPA"));
 
 		left.getChildren().addAll(btFileDialog, btXml, btBin, btDB, btOpenJPA);
 

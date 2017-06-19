@@ -2,10 +2,8 @@ package core;
 
 import java.io.*;
 import java.sql.*;
-
 import ApplicationException.*;
 
-import view.EmptyView;
 import interfaces.ISong;
 import javafx.scene.control.Alert;
 
@@ -19,22 +17,22 @@ public class JDBCStrategy implements interfaces.IDatabaseUtils {
 	private LoginCredentials loginCredentials;
 	private String tableName, dbPath;
 
-	public static JDBCStrategy getInstance(LoginCredentials loginCredentials, SelectedSongList tableName) throws DatabaseException{
+	public static JDBCStrategy getInstance(LoginCredentials loginCredentials, SelectedSongList tableName, String dbPath) throws DatabaseException{
 		if(loginCredentials.getUsername().contains(";") || loginCredentials.getPw().contains(";")) throw new DatabaseException("SQL INJECTION DETECTED");
-		return new JDBCStrategy(loginCredentials,  tableName);
+		return new JDBCStrategy(loginCredentials,  tableName, dbPath);
 	}
 
+	@SuppressWarnings("unused")
 	private JDBCStrategy(){}
 
 	/**
 	 * Internal usage
 	 * @param loginCredentials user infos
 	 * @param tableName table name which should be used as worling table
-	 * @throws DatabaseException
+	 * @throws DatabaseException DBException if there is any malicious actions
 	 */
-	private JDBCStrategy(LoginCredentials loginCredentials, SelectedSongList tableName) throws DatabaseException {
-		dbPath = EmptyView.getFile("SQL Database", "*.db").getPath();
-		if(dbPath.contains(";"))throw new DatabaseException("SQL INJECTION DETECTED");
+	private JDBCStrategy(LoginCredentials loginCredentials, SelectedSongList tableName, String dbPath) throws DatabaseException {
+		this.dbPath = dbPath;
 		System.out.println("[INFO] DB PATH: " + dbPath);
 		this.loginCredentials = loginCredentials;
 		this.tableName = tableName.toString();

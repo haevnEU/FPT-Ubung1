@@ -4,10 +4,7 @@ package core;
 
 
 import java.io.File;
-import java.rmi.RemoteException;
 import java.util.List;
-
-import interfaces.ISongList;
 import javafx.util.Duration;
 import javafx.scene.image.Image;
 import javafx.scene.media.Media;
@@ -71,32 +68,6 @@ public final class Model implements interfaces.IModel {
 	    } catch (IDOverFlowException e) {
 		    System.err.println("[SYS CRIT] IDOverflow exception occurred at " + e.getMessage());
 	    }
-    }
-
-	/**
-	 * Set the queue
-	 * @param queue new queue
-	 */
-	public void setQueue(SongList queue){
-		try {
-			this.queue.setList(queue.getList());
-		} catch (RemoteException ex) {
-			System.err.println("[CRIT] RemoteException occurred at " + Util.getUnixTimeStamp());
-			ex.printStackTrace(System.err);
-		}
-	}
-
-	/**
-	 * Set the all songs list
-	 * @param allSongs new all song list
-	 */
-	public void setAllSongs(SongList allSongs){
-		try {
-			this.allSongs.setList(allSongs.getList());
-		} catch (RemoteException ex) {
-			System.err.println("[CRIT] RemoteException occurred at " + Util.getUnixTimeStamp());
-			ex.printStackTrace(System.err);
-		}
     }
 
     /**

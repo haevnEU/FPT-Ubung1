@@ -1,17 +1,17 @@
 package core;
 
-import interfaces.ISong;
 import javafx.beans.property.*;
-import javafx.beans.value.ChangeListener;
 import javafx.scene.media.*;
-import javafx.util.Duration;
 
+import javafx.util.Duration;
 import java.rmi.RemoteException;
+import javafx.beans.value.ChangeListener;
+
 
 /**
  * This class provides playable logic
  */
-class Player implements interfaces.IPlayer {
+public class Player implements interfaces.IPlayer {
 
 	private MediaPlayer mediaPlayer;
 	private Media media;
@@ -20,7 +20,7 @@ class Player implements interfaces.IPlayer {
 	private SimpleBooleanProperty isPlaying = new SimpleBooleanProperty(false);
 	private SimpleBooleanProperty endOfTrack = new SimpleBooleanProperty(false);
 	private ChangeListener mediaPlayerChangeTime;
-	private Song nextSong;
+
 	// Singleton usage because there should never exists two player
 	private static Player instance;
 	private Player(){}
@@ -53,7 +53,7 @@ class Player implements interfaces.IPlayer {
 	 * Initialize the media object
 	 * @param songs the queue which should played
 	 */
-	public void init(SongList songs){
+	void init(SongList songs){
 		System.out.println("Initialize MediaPlayer object");
 		// return if the mediaPlayer is already initialized
 		if(isInitialized) return;
@@ -61,6 +61,7 @@ class Player implements interfaces.IPlayer {
 		initPlayer((Song)songs.get(0));
 
 		isInitialized = true;
+		//noinspection ConstantConditions
 		System.out.println("Initialized new state: " + isInitialized);
 	}
 
@@ -68,7 +69,7 @@ class Player implements interfaces.IPlayer {
 	 * Attach event handling for EOF
 	 * @param e Method which should be called
 	 */
-	public void addEndOfMediaListener(ChangeListener<Boolean> e){
+	void addEndOfMediaListener(ChangeListener<Boolean> e){
 		endOfTrack.addListener(e);
 	}
 
@@ -95,6 +96,7 @@ class Player implements interfaces.IPlayer {
 			// remove current song from queue
 			queue.remove(0);
 			initPlayer((Song)queue.get(0));
+
 			mediaPlayer.currentTimeProperty().addListener(mediaPlayerChangeTime);
 			play();
 			System.out.println("Successfully leaved EndOfMedia");
@@ -162,12 +164,12 @@ class Player implements interfaces.IPlayer {
 	 * Get the song length, note beta state
 	 * @return song length as seconds
 	 */
-	public double getSongLength() {
+	double getSongLength() {
 		if(isInitialized) return media.getDuration().toSeconds();
 		return 0;
 	}
 
-	public boolean getInitialized() {
+	boolean getInitialized() {
 		return isInitialized;
 	}
 }

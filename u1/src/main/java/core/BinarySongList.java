@@ -3,8 +3,8 @@ package core;
 import interfaces.ISong;
 
 import java.io.Serializable;
-import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.rmi.RemoteException;
 
 /**
  * Created by thahnen on 10.06.17.
@@ -12,6 +12,7 @@ import java.util.ArrayList;
  *  => dazu müssen SongList/ Song -Klassen umgewandelt werden
  *  => mal gucken
  */
+@SuppressWarnings("ALL")
 public class BinarySongList implements Serializable {
 
 	private ArrayList<SongWrapper> songs;

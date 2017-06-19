@@ -91,14 +91,11 @@ public class Song implements ISong {
         return getTitle();
     }
 
-    public ObservableValue<String> titleProperty() {
-        return title;
-    }
-
     public Image getCover() {
         return cover;
     }
 
+    @SuppressWarnings("WeakerAccess")
     public void setCover(Image cover) {
         this.cover = cover;
     }

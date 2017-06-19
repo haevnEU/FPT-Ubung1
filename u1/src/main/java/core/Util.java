@@ -64,7 +64,6 @@ public final class Util {
         System.out.println("[INFO] Decode to hexadecimal string \"" + text + "\"");
         StringBuilder out = new StringBuilder();
         for(int i = 0; i < text.length(); i++){
-            System.out.print(text.charAt(i));
          if(text.charAt(i) != ' ')
             try {
                 String tmp = text.substring(i, i+4);
