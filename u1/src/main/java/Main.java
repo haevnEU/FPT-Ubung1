@@ -1,5 +1,4 @@
 
-import controller.SaveController;
 import core.Util;
 import javafx.scene.input.*;
 import javafx.application.*;
@@ -9,11 +8,8 @@ import view.MainView;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import controller.MainController;
-import view.SaveView;
 
-import javax.print.DocFlavor;
 import java.io.*;
-import java.util.ArrayList;
 
 public class Main extends Application {
 
@@ -56,6 +52,9 @@ public class Main extends Application {
 					    System.setErr(new PrintStream(fos));
 					    System.setOut(new PrintStream(fos));
 				    }catch (IOException ex){}
+			    }
+			    else if(s.toUpperCase().contains("-ENABLEFEATURE")){
+			    	Model.setCustomDBFeature(true);
 			    }
 		    }
 	    }

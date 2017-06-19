@@ -139,8 +139,11 @@ public class LoadController implements interfaces.IController {
 	 */
 	private void btDbClicked() {
 		try {
-			File dbFile = EmptyView.getFile("SQL Database", "*.db");
-			if(dbFile == null) return;
+			File dbFile = new File("src/main/resources/music.db");
+			if(Model.isCustomDBFeaturesEnabled()){
+				dbFile = EmptyView.getFile("SQL Database", "*.db");
+				if(dbFile == null) return;
+			}
 			if(dbFile.getPath().contains(";"))throw new DatabaseException("SQL INJECTION DETECTED");
 
 			 strategy = JDBCStrategy.getInstance(view.getLogin(), tableName, dbFile.getPath());

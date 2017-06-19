@@ -18,9 +18,20 @@ import javafx.beans.property.SimpleBooleanProperty;
  */
 public final class Model implements interfaces.IModel {
 
+	// helper methods
+	static boolean customDBFeature = false;
+	public static void setCustomDBFeature(boolean customDBFeature) {
+		Model.customDBFeature = customDBFeature;
+	}
+	public static boolean isCustomDBFeaturesEnabled() {
+		return customDBFeature;
+	}
+
+
 	private SongList queue;
 	private SongList allSongs;
 	private  Player player;
+
 
 //     simple singleton skeleton => there is just one Model allowed
     private static Model instance;                                          // look at the imports
@@ -35,8 +46,7 @@ public final class Model implements interfaces.IModel {
         player = Player.getInstance();
     }
 
-
-    /**
+	/**
      * Method is used to loadAllSongsFromFile music files
      * @param files files which should be loaded
      */
