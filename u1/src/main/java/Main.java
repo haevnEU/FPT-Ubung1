@@ -53,7 +53,7 @@ public class Main extends Application {
 					    System.setOut(new PrintStream(fos));
 				    }catch (IOException ex){}
 			    }
-			    else if(s.toUpperCase().contains("-ENABLEFEATURE")){
+			    else if(s.toUpperCase().contains("-OWNDBPATH")){
 			    	Model.setCustomDBFeature(true);
 			    }
 		    }
