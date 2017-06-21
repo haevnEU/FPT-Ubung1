@@ -1,23 +1,16 @@
 package controller;
 
+import view.*;
 import core.*;
+import java.io.*;
 import interfaces.*;
 import javafx.scene.control.*;
 
-import javafx.stage.FileChooser;
-import view.EmptyView;
-import view.SaveView;
-
-import java.io.File;
-import java.io.IOException;
-import java.rmi.RemoteException;
 import java.sql.SQLException;
-
+import java.rmi.RemoteException;
 import ApplicationException.DatabaseException;
 
-import static core.SelectedSongList.Library;
-import static core.SelectedSongList.PlayList;
-
+import static core.SelectedSongList.*;
 
 /**
  * This class provides functionality for saving
@@ -52,7 +45,7 @@ public class SaveController implements interfaces.IController {
 		view.addToggleSongList((observable, oldValue, newValue) -> onToggle(newValue));
 
 		list = model.getQueue();
-		tableName = SelectedSongList.PlayList;
+		tableName = Library;
 	}
 
 	private void onToggle(Toggle newValue) {
@@ -65,11 +58,7 @@ public class SaveController implements interfaces.IController {
 	 * Handle button XML click event
 	 */
 	private void btXmlClicked() {
-		FileChooser chooser = new FileChooser();
-		chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("*(*.xml)","*.xml"));
-		chooser.setTitle("Load file...");
-		File file = chooser.showSaveDialog(null);
-
+	    File file = FileViewer.saveFile("XML", "*.xml");
 		if(file == null) return;
 		try {
 
@@ -85,7 +74,7 @@ public class SaveController implements interfaces.IController {
 			else {
 				strategy = new XMLStrategy("", file.getPath());
 
-				list = model.getAllSongs();
+				list = model.getLibrary();
 				strategy.openWriteableSongs();
 				for(ISong s : list) strategy.writeSong(s);
 				strategy.closeWriteable();
@@ -100,19 +89,16 @@ public class SaveController implements interfaces.IController {
 	 * Handle button binary click event
 	 */
 	private void btBinClicked() {
-		FileChooser chooser = new FileChooser();
-		chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("*(*.bin)","*.bin"));
-		chooser.setTitle("Save...");
-		File file = chooser.showSaveDialog(null);
+		File file = FileViewer.saveFile("Binary", "*.bin");
 
 		if(file == null) return;
 		try {
 			if(PlayList == tableName){
-				strategy = new Binary("", file.getPath(),model.getAllSongs(), model.getQueue());
+				strategy = new Binary("", file.getPath(),model.getLibrary(), model.getQueue());
 				((Binary)strategy).writePl();
 			}
 			else {
-				strategy = new Binary(file.getAbsolutePath(), "", model.getAllSongs(), model.getQueue());
+				strategy = new Binary(file.getAbsolutePath(), "", model.getLibrary(), model.getQueue());
 				((Binary) strategy).writeSongs();
 			}
 		} catch (RemoteException ex) {
@@ -133,7 +119,7 @@ public class SaveController implements interfaces.IController {
 		try {
 			File dbFile = new File("src/main/resources/music.db");
 			if(Model.isCustomDBFeaturesEnabled()){
-				dbFile = EmptyView.getFile("SQL Database", "*.db");
+				dbFile = FileViewer.getFile("SQL Database", "*.db");
 				if(dbFile == null) return;
 			}
 			if(dbFile.getPath().contains(";"))throw new DatabaseException("SQL INJECTION DETECTED");
@@ -145,7 +131,7 @@ public class SaveController implements interfaces.IController {
 			// => nasty cleanup is not required with this method
 			// => less potential exception
 			if(PlayList == tableName) ((JDBCStrategy)strategy).writeSongList(model.getQueue());
-			else ((JDBCStrategy)strategy).writeSongList(model.getAllSongs());
+			else ((JDBCStrategy)strategy).writeSongList(model.getLibrary());
 			view.close();
 		} catch (DatabaseException e) {
 			System.err.println("[SYS][CRIT] SQL INJECTION DETECTED! at " + Util.getUnixTimeStamp());
@@ -161,11 +147,17 @@ public class SaveController implements interfaces.IController {
 	 */
 	private void btJPAClicked() {
 		try {
-			strategy = OpenJPAStrategy.getInstance(tableName);
+			if(Model.isCustomDBFeaturesEnabled()) {
+				File dbFile = FileViewer.getFile("SQL Database", "*.db");
+				if (dbFile == null) return;
+
+				if (dbFile.getPath().contains(";")) throw new DatabaseException("SQL INJECTION DETECTED");
+				strategy = OpenJPAStrategy.getInstance(view.getLogin(), dbFile.getPath(), tableName);
+			}
+			else strategy = OpenJPAStrategy.getInstance(tableName);
 			if(PlayList == tableName) {
 				strategy.openWriteablePlaylist();
-				for(ISong s : model.getQueue())
-				{
+				for(ISong s : model.getQueue()) {
 					PlayList s2 = new PlayList(s, false);
 					strategy.writeSong(s2);
 				}
@@ -173,8 +165,7 @@ public class SaveController implements interfaces.IController {
 			}
 			else  {
 				strategy.openWriteableSongs();
-				for(ISong s : model.getAllSongs())
-				{
+				for(ISong s : model.getLibrary()) {
 					core.Library s2 = new Library(s, false);
 					strategy.writeSong(s2);
 				}
@@ -195,7 +186,4 @@ public class SaveController implements interfaces.IController {
 	private void cbEnabledEvent() {
 		view.toggleDbView();
 	}
-
-
-
 }

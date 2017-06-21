@@ -1,6 +1,7 @@
 package view;
 
 import javafx.event.*;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.control.*;
 
@@ -40,12 +41,19 @@ public class DeleteView extends BorderPane implements interfaces.IView {
         HBox btBox = new HBox();
         btBox.setSpacing(10);
         btBox.setPadding(new Insets(10));
-        btBox.getChildren().addAll(btDelete,btDeleteAll);
+        btBox.getChildren().addAll(btDelete, btDeleteAll);
 
         setPadding(new Insets(10));
         setCenter(lvContent);
 
         setBottom(btBox);
+    }
+    /**
+     * Attach an event to listview clicked
+     * @param eventHandler method which should handle the button click event
+     */
+    public void addListViewClickedEventHandler(EventHandler<MouseEvent> eventHandler){
+        lvContent.setOnMouseClicked(eventHandler);
     }
 
     /**

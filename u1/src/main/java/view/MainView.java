@@ -27,7 +27,6 @@ public class MainView extends BorderPane implements interfaces.IView{
 	private Slider sliderCurrentTime;
 
     public MainView() {
-
     	prepareBottomControl();
         prepareSideMenu();
 
@@ -40,13 +39,14 @@ public class MainView extends BorderPane implements interfaces.IView{
         leftBox.setPadding(new Insets(10));
         leftBox.setSpacing(10);
         leftBox.getChildren().addAll(new Label("All Songs"),lvAllSongs);
+	   // leftBox.setPrefWidth(300);
         setCenter(leftBox);
 
         VBox centerBox = new VBox();
         centerBox.setPadding(new Insets(10));
         centerBox.setSpacing(10);
         centerBox.getChildren().addAll(new Label("Current queue"), lvQueue);
-        setRight(centerBox);
+	    setRight(centerBox);
      }
 
 	/**
@@ -175,8 +175,6 @@ public class MainView extends BorderPane implements interfaces.IView{
 		System.out.println(preTitle);
 
 	}
-
-
 
 
 	// From here we just add event handler

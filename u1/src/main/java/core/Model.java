@@ -1,10 +1,12 @@
 package core;
-
+// TODO rewrite player class
 // imports btw look at the bottom
 
+import java.util.*;
 
 import java.io.File;
-import java.util.List;
+
+import interfaces.IModel;
 import javafx.util.Duration;
 import javafx.scene.image.Image;
 import javafx.scene.media.Media;
@@ -16,10 +18,10 @@ import javafx.beans.property.SimpleBooleanProperty;
 /**
  * This class provides application data and logic
  */
-public final class Model implements interfaces.IModel {
+public final class Model implements IModel {
 
-	// helper methods
-	static boolean customDBFeature = false;
+	// helper variable with getter/setter
+	private static boolean customDBFeature = false;
 	public static void setCustomDBFeature(boolean customDBFeature) {
 		Model.customDBFeature = customDBFeature;
 	}
@@ -28,10 +30,8 @@ public final class Model implements interfaces.IModel {
 	}
 
 
-	private SongList queue;
-	private SongList allSongs;
+	private SongList slQueue, slLibrary;
 	private  Player player;
-
 
 //     simple singleton skeleton => there is just one Model allowed
     private static Model instance;                                          // look at the imports
@@ -41,8 +41,8 @@ public final class Model implements interfaces.IModel {
     }
 
     private Model(){
-        queue = new SongList();
-        allSongs = new SongList();
+        slQueue = new SongList();
+        slLibrary = new SongList();
         player = Player.getInstance();
     }
 
@@ -60,20 +60,18 @@ public final class Model implements interfaces.IModel {
 
 			    song.setPath(f.toURI().toString());
 
-			    allSongs.add(song);
+			    slLibrary.add(song);
 			    song.setTitle(f.getName());
 
 			    // Receive metadata from mp3 file
 			    m.getMetadata().addListener((MapChangeListener<String, Object>) metaData -> {
 				    if (metaData.wasAdded()) {
 					    if (metaData.getKey().equals("album")) song.setAlbum((metaData.getValueAdded().toString()));
-					    else if (metaData.getKey().equals("artist"))
-						    song.setInterpret(metaData.getValueAdded().toString());
+					    else if (metaData.getKey().equals("artist")) song.setInterpret(metaData.getValueAdded().toString());
 					    else if (metaData.getKey().equals("title")) song.setTitle(metaData.getValueAdded().toString());
 					    else if (metaData.getKey().equals("image")) song.setCover((Image) metaData.getValueAdded());
 				    }
 			    });
-
 		    }
 	    } catch (IDOverFlowException e) {
 		    System.err.println("[SYS CRIT] IDOverflow exception occurred at " + e.getMessage());
@@ -81,10 +79,12 @@ public final class Model implements interfaces.IModel {
     }
 
     /**
-     * Returns the current queue
-     * @return queue
+     * Returns the current slQueue
+     * @return slQueue
      */
-    public SongList getQueue(){ return queue; }
+    public SongList getQueue(){
+        return slQueue;
+    }
 
 	/**
 	 * Initialize the media player
@@ -92,20 +92,23 @@ public final class Model implements interfaces.IModel {
 	 */
 	public void callPlayerInit(SongList queue){
 		player.init(queue);
-
     }
 
     /**
      * Returns every song in directory
      * @return every loaded song
      */
-    public SongList getAllSongs(){ return allSongs; }
+    public SongList getLibrary(){
+        return slLibrary;
+    }
 
 	/**
 	 * ...
 	 * @return true if mediaPlayer is playing otherwise false
 	 */
-	public SimpleBooleanProperty getIsPlaying(){ return player.getIsPlaying(); }
+	public SimpleBooleanProperty getIsPlaying(){
+	    return player.getIsPlaying();
+	}
 
 	/**
 	 * Add event handler for TimeChange events
@@ -182,6 +185,790 @@ public final class Model implements interfaces.IModel {
 
 
 // you are close!
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

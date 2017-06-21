@@ -1,8 +1,8 @@
 package core;
 
-import javafx.scene.control.Alert;
-
 import java.io.*;
+
+import javafx.scene.control.Alert;
 
 public final class Util {
 
@@ -28,15 +28,14 @@ public final class Util {
      * @throws IOException ...
      */
     public static String readFile(String path) throws IOException{
-        String line = "";
+        StringBuilder line = new StringBuilder();
         if(!new File(path).exists()) throw new FileNotFoundException();
         try(BufferedReader br = new BufferedReader(new FileReader(path))){
             String inLine;
-            while((inLine = br.readLine()) != null){
-                line += inLine +" \n";
-            }
+            while((inLine = br.readLine()) != null)
+                line.append(inLine).append(" \n");
         }
-        return line;
+        return line.toString();
     }
 
 
@@ -72,7 +71,6 @@ public final class Util {
         }
         return out.toString();
     }
-
 
     /**
      * Shows an alert window

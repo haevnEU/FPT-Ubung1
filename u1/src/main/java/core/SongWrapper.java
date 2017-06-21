@@ -1,7 +1,6 @@
 package core;
 
 import interfaces.ISong;
-
 import java.io.Serializable;
 
 /**

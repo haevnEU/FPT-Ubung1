@@ -4,7 +4,6 @@
     <groupId>G04</groupId>
     <artifactId>u1-G420</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-
     <build>
         <finalName>${project.groupId}-${project.artifactId}</finalName>
         <plugins>
@@ -37,7 +36,6 @@
                         target/pom.xml
                     </outputFile>
                     <regex>false</regex>
-
                     <replacements>
                         <replacement>
                             <token>
@@ -61,24 +59,25 @@
         </plugins>
     </build>
 
-
-
     <dependencies>
         <dependency>
             <groupId>org.apache.openjpa</groupId>
             <artifactId>openjpa</artifactId>
             <version>2.4.1</version>
         </dependency>
+
         <dependency>
             <groupId>postgresql</groupId>
             <artifactId>postgresql</artifactId>
             <version>9.1-901-1.jdbc4</version>
         </dependency>
+
         <dependency>
             <groupId>com.thoughtworks.xstream</groupId>
             <artifactId>xstream</artifactId>
             <version>1.4.7</version>
         </dependency>
+
         <dependency>
             <groupId>org.xerial</groupId>
             <artifactId>sqlite-jdbc</artifactId>

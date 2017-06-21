@@ -9,7 +9,6 @@ import java.rmi.RemoteException;
 /**
  * Created by thahnen on 10.06.17.
  */
-@SuppressWarnings("ALL")
 public class Binary implements interfaces.ISerializableStrategy {
 
 	private ObjectOutputStream osSongs;

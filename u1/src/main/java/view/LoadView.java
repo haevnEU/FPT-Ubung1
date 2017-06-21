@@ -1,18 +1,14 @@
 package view;
 
-import ApplicationException.DatabaseException;
-import core.LoginCredentials;
-import core.SelectedSongList;
-import core.Util;
-import javafx.beans.value.ChangeListener;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.geometry.Insets;
+import core.*;
+import javafx.event.*;
+import javafx.scene.layout.*;
 import javafx.scene.control.*;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+
 import javafx.stage.Stage;
+import javafx.geometry.Insets;
+import javafx.beans.value.ChangeListener;
+import ApplicationException.DatabaseException;
 
 public class LoadView extends BorderPane implements interfaces.IView {
 
@@ -23,12 +19,11 @@ public class LoadView extends BorderPane implements interfaces.IView {
 	private PasswordField pwUsername;
 	private Button btXml, btBin, btDB, btOpenJPA, btFileDialog;
 	private Label lbUserName, lbPW;
-	RadioButton rbplayList, rbQueue;
-	ToggleGroup toggleGroup;
+	private RadioButton rbplayList, rbQueue;
+	private ToggleGroup toggleGroup;
 
 	public static LoadView getInstance() {
 		if(instance != null) return null;
-
 		instance = new LoadView();
 		return instance;
 	}
@@ -62,10 +57,10 @@ public class LoadView extends BorderPane implements interfaces.IView {
 		rbQueue.setId(SelectedSongList.PlayList.toString());
 		rbQueue.setTooltip(new Tooltip("Saving Library"));
 
-		rbQueue.setSelected(true);
+		rbplayList.setSelected(true);
 		rbplayList.setToggleGroup(toggleGroup);
 		rbQueue.setToggleGroup(toggleGroup);
-		box3.getChildren().addAll(rbplayList,rbQueue);
+		box3.getChildren().addAll(rbplayList, rbQueue);
 
 		box1.setSpacing(10);
 		box2.setSpacing(10);
@@ -160,7 +155,6 @@ public class LoadView extends BorderPane implements interfaces.IView {
 	public LoginCredentials getLogin(){
 		if(!cbEnableDB.isSelected()) return null;
 		String username, pw;
-
 		username = tbUsername.getText();
 		pw = pwUsername.getText();
 

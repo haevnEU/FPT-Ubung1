@@ -6,7 +6,6 @@ import interfaces.ISong;
 import java.io.Serializable;
 import javafx.beans.value.ObservableValue;
 
-
 /**
  * This class provides
  * <p>

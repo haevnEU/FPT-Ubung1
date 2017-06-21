@@ -1,18 +1,8 @@
 package core;
 
-import core.Song;
-import core.SongList;
-import interfaces.ISerializableStrategy;
-import interfaces.ISong;
-import interfaces.ISongList;
-
-import java.beans.Encoder;
-import java.beans.XMLEncoder;
-import java.beans.XMLDecoder;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.Serializable;
+import java.io.*;
+import interfaces.*;
+import java.beans.*;
 
 /**
  * Created by Alex on 14.06.2017.
@@ -27,8 +17,7 @@ public class XMLStrategy implements ISerializableStrategy { // you did not imple
 	private XMLDecoder decoder;
 	private String playListPath, libraryPath;
 
-	public XMLStrategy() {
-	}
+	public XMLStrategy() {}
 
 	public XMLStrategy(String playListPath, String libraryPath) {
 		this.playListPath = playListPath;

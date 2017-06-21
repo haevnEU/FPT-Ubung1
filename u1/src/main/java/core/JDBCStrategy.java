@@ -130,12 +130,6 @@ public class JDBCStrategy implements interfaces.IDatabaseUtils {
 					Song s = new Song(path, title, interpret, album, id);
 					System.out.println("[INFO] Found: " + s.toString());
 					ret.add(s);
-					try {
-						IDGenerator.addId(id);
-					} catch (UnknownApplicationException ex) {
-						System.err.println("[CRIT][JDBCStrategy] Exception occurred: " + ex.getMessage());
-						ex.printStackTrace(System.err);
-					}
 				}
 				System.out.println("[INFO] Finished query at " + Util.getUnixTimeStamp());
 				return ret;

@@ -15,18 +15,12 @@ public class DetailView extends GridPane implements interfaces.IView{
 
     private Button btCommit;
 
-   // normal constructor just modified for singleton usage
-    public DetailView(){}
-
-
     // Used to prepare !INTERNAL USAGE!
     public void initUI(Song song){
-
         setPadding(new Insets(10));
 
         setHgap(10);
         setVgap(10);
-
 
         lbTitle = new Label("Title: ");
         lbAlbum = new Label("Album: ");
@@ -68,7 +62,9 @@ public class DetailView extends GridPane implements interfaces.IView{
             getChildren().add(cover);
         }
 
-        // prepare layout
+        btCommit = new Button("Change");
+
+        // prepare layout => you should skip this... its a huge tone of code which positions UI Controls
         setColumnIndex(lbTitle,0);
         setColumnIndex(lbAlbum,0);
         setColumnIndex(lbInterpret,0);
@@ -97,16 +93,13 @@ public class DetailView extends GridPane implements interfaces.IView{
         setRowIndex(tbPath,4);
         setRowIndex(tbYear,5);
 
-        btCommit = new Button("Change");
 
         setRowIndex(btCommit,8 );
         setColumnIndex(btCommit,0);
         setColumnSpan(btCommit,2);
 
         getChildren().addAll(lbAlbum, lbID, lbInterpret, lbPath, lbTitle, lbYear, tbTitle, tbAlbum, tbInterpret, tbID, tbPath, tbYear, btCommit);
-
     }
-
 
     /**
      * Adds an event handler to commit button

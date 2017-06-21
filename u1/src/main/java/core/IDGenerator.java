@@ -36,6 +36,15 @@ public final class IDGenerator {
 	}
 
 	/**
+	 * Checks if an ID already exists
+	 * @param id id which should be checked
+	 * @return true if the id exists => id is smaller than current idPointer
+	 */
+	public static boolean existsID(Long id){
+		return id < idPointer;
+	}
+
+	/**
 	 * Set the current maximum
 	 * @param id new maximum
 	 * @throws UnknownApplicationException if id is doubled

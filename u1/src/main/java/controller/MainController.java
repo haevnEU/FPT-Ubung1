@@ -12,11 +12,11 @@ import javafx.scene.layout.BorderPane;
 import ApplicationException.RichException;
 import javafx.beans.property.SimpleBooleanProperty;
 
-public class MainController implements interfaces.IController{
-
+public class MainController implements IController{
 
     private MainView view;
 	private Model model;
+
 	@Override
     public void link(IModel m, IView v){
 
@@ -35,7 +35,7 @@ public class MainController implements interfaces.IController{
 		this.view.addButtonSaveEventHandler( e-> invokeNewWindow(SceneType.SaveView));
         this.view.addListViewAllSongClickEventHandler((e) -> listViewAllSongClicked(e));
 
-        this.view.setAllSongs(model.getAllSongs());
+        this.view.setAllSongs(model.getLibrary());
         this.view.setQueue(model.getQueue());
 
 	    view.togglePlayPause(model.getIsPlaying());
@@ -44,7 +44,6 @@ public class MainController implements interfaces.IController{
 		model.addEndOfMediaListener((observable, oldValue, newValue) -> view.setSongLength(model.getSongLength()));
 
 	}
-
 
     /**
      * EventHandler for ListView click
@@ -93,7 +92,6 @@ public class MainController implements interfaces.IController{
     private void playPause(){
 		model.togglePlayPause();
 		view.setSongLength(model.getSongLength());
-
     }
 
 	/**
@@ -101,14 +99,12 @@ public class MainController implements interfaces.IController{
 	 */
 	private void addAll(){
         try {
-            model.getQueue().addAll(model.getAllSongs().getList());
+            model.getQueue().addAll(model.getLibrary().getList());
             initPlayer();
         } catch (RemoteException ex) {
 	        System.err.println("[CRIT] RemoteException occurred at " + Util.getUnixTimeStamp());
             ex.printStackTrace(System.err);
-
-	        //noinspection ThrowableNotThrown
-	        new RichException(ex);
+            new RichException(ex);
         }
     }
 
@@ -116,7 +112,6 @@ public class MainController implements interfaces.IController{
 	 * Skips current song
 	 */
 	private  void skipSong(){ model.skip(); }
-
 
 	/**
 	 * Invokes any window
@@ -127,7 +122,7 @@ public class MainController implements interfaces.IController{
 		Scene tmpScene = new Scene(new BorderPane());
 		Stage tmpStage = new Stage();
 		IController tmpController;
-		IView tmpView = new EmptyView();
+		IView tmpView = new FileViewer();
 		switch(t){
 			case DeleteView:
 				tmpController = new DeleteController();

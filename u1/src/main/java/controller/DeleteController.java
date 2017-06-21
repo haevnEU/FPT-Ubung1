@@ -3,6 +3,7 @@ package controller;
 import interfaces.*;
 
 import core.Model;
+import javafx.scene.input.MouseEvent;
 import view.DeleteView;
 
 public class DeleteController implements IController{
@@ -17,10 +18,15 @@ public class DeleteController implements IController{
         this.view = (DeleteView)v;
 
         this.view.addButtonDeleteEventHandler(e -> btRemoveClickEventHandler());
-        this.view.addButtonDeleteAllEventHandler(e->btRemoveAllEventHandler());
+        this.view.addButtonDeleteAllEventHandler(e -> btRemoveAllEventHandler());
+        this.view.addListViewClickedEventHandler(e -> lvItemsClicked(e));
     }
 
-	/**
+    private void lvItemsClicked(MouseEvent e) {
+        if(e.getClickCount() == 2) btRemoveClickEventHandler();
+    }
+
+    /**
 	 * Removes every entry in queue
 	 */
 	private void btRemoveAllEventHandler() {
@@ -35,5 +41,3 @@ public class DeleteController implements IController{
         if(deleteIndex >= 0) model.getQueue().remove(deleteIndex);
     }
 }
-
-

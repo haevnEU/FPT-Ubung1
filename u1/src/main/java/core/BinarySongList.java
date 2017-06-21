@@ -12,7 +12,6 @@ import java.rmi.RemoteException;
  *  => dazu müssen SongList/ Song -Klassen umgewandelt werden
  *  => mal gucken
  */
-@SuppressWarnings("ALL")
 public class BinarySongList implements Serializable {
 
 	private ArrayList<SongWrapper> songs;

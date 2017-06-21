@@ -1,13 +1,14 @@
 package ApplicationException;
 
 import java.io.IOException;
+import interfaces.IApplicationException;
 
 /**
  * This class provides database exception handling
  *
  * written by Nils Milewski (nimile)
  */
-public final class DatabaseException extends Exception implements interfaces.IApplicationException {
+public final class DatabaseException extends Exception implements IApplicationException {
 
 	/**
 	 * Empty database exception

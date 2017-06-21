@@ -1,12 +1,11 @@
 package ApplicationException;
 
 import java.io.*;
-
-import core.Util;
+import javafx.scene.layout.*;
 import javafx.scene.control.*;
 
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Priority;
+import core.Util;
+import interfaces.IApplicationException;
 
 
 /**
@@ -14,7 +13,7 @@ import javafx.scene.layout.Priority;
  *
  * Written by Nils Milewski (nimile)
  */
-public final class RichException extends Exception implements interfaces.IApplicationException {
+public final class RichException extends Exception implements IApplicationException {
 
 	/**
 	 * Creates a new RichException window using ApplicationException details

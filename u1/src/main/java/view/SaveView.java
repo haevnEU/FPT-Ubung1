@@ -1,20 +1,17 @@
 package view;
 
-import ApplicationException.DatabaseException;
-import core.LoginCredentials;
-import core.SelectedSongList;
-import core.Util;
-import javafx.beans.value.ChangeListener;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.geometry.Insets;
+import core.*;
+import javafx.event.*;
+import javafx.scene.layout.*;
 import javafx.scene.control.*;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
 
-public class SaveView extends BorderPane implements interfaces.IView {
+import interfaces.IView;
+import javafx.stage.Stage;
+import javafx.geometry.Insets;
+import javafx.beans.value.ChangeListener;
+import ApplicationException.DatabaseException;
+
+public class SaveView extends BorderPane implements IView {
 
 	private static SaveView instance;
 
@@ -23,8 +20,8 @@ public class SaveView extends BorderPane implements interfaces.IView {
 	private PasswordField pwUsername;
 	private Button btXml, btBin, btDB, btOpenJPA;
 	private Label lbUserName, lbPW;
-	RadioButton rbplayList, rbQueue;
-	ToggleGroup toggleGroup;
+	private RadioButton rbLibrary, rbQueue;
+	private ToggleGroup toggleGroup;
 
 	public static SaveView getInstance() {
 		if(instance != null) return null;
@@ -53,19 +50,19 @@ public class SaveView extends BorderPane implements interfaces.IView {
 		box1.getChildren().addAll(lbUserName, tbUsername);
 		box2.getChildren().addAll(lbPW, pwUsername);
 
-
 		toggleGroup = new ToggleGroup();
-		rbplayList = new RadioButton(SelectedSongList.Library.name());
-		rbplayList.setId(SelectedSongList.Library.toString());
-		rbplayList.setTooltip(new Tooltip("Saving Library"));
+		rbLibrary = new RadioButton(SelectedSongList.Library.name());
+		rbLibrary.setId(SelectedSongList.Library.toString());
+		rbLibrary.setTooltip(new Tooltip("Saving Library"));
 		rbQueue = new RadioButton(SelectedSongList.PlayList.name());
 		rbQueue.setId(SelectedSongList.PlayList.toString());
-		rbQueue.setSelected(true);
+
 		rbQueue.setTooltip(new Tooltip("Saving Queue"));
 
-		rbplayList.setToggleGroup(toggleGroup);
+		rbLibrary.setSelected(true);
+		rbLibrary.setToggleGroup(toggleGroup);
 		rbQueue.setToggleGroup(toggleGroup);
-		box3.getChildren().addAll(rbplayList,rbQueue);
+		box3.getChildren().addAll(rbLibrary,rbQueue);
 
 		box1.setSpacing(10);
 		box2.setSpacing(10);
@@ -144,7 +141,7 @@ public class SaveView extends BorderPane implements interfaces.IView {
 
 	/**
 	 * Get the login credentials for DB access
-	 * @return
+	 * @return entered login credentials
 	 */
 	public LoginCredentials getLogin(){
 		if(!cbEnableDB.isSelected()) return null;

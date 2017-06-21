@@ -1,11 +1,12 @@
 package core;
 
+import java.util.*;
 import javax.persistence.*;
 
-import view.EmptyView;
 import interfaces.ISong;
 import java.io.IOException;
 import ApplicationException.DatabaseException;
+import org.apache.openjpa.persistence.OpenJPAPersistence;
 
 /**
  * This class provides OpenJPA functionality
@@ -21,12 +22,11 @@ public class OpenJPAStrategy implements interfaces.ISerializableStrategy {
 	private EntityManager e;
 
 	private static OpenJPAStrategy instance;
-	private OpenJPAStrategy(LoginCredentials loginCredentials, SelectedSongList tableName) throws DatabaseException {
-		dbPath = EmptyView.getFile("SQL Database", "*.db").getPath();
-		if(dbPath.contains(";"))throw new DatabaseException("SQL INJECTION DETECTED");
+	private OpenJPAStrategy(LoginCredentials loginCredentials, String dbPath,SelectedSongList tableName) throws DatabaseException {
 		System.out.println("[INFO] DB PATH: " + dbPath);
 		this.loginCredentials = loginCredentials;
 		this.tableName = tableName;
+		this.dbPath = dbPath;
 		System.out.println("[INFO] Working on table: " + this.tableName);
 		System.out.println("[INFO] User: " + this.loginCredentials.getUsername() + " connected at " + Util.getUnixTimeStamp());
 	}
@@ -44,9 +44,9 @@ public class OpenJPAStrategy implements interfaces.ISerializableStrategy {
 	 * @return Instance
 	 * @throws DatabaseException if there are malicious input
 	 */
-	public static OpenJPAStrategy getInstance(LoginCredentials loginCredentials, SelectedSongList tableName) throws DatabaseException {
+	public static OpenJPAStrategy getInstance(LoginCredentials loginCredentials, String dbPath, SelectedSongList tableName) throws DatabaseException {
 		if(loginCredentials.getUsername().contains(";") || loginCredentials.getPw().contains(";")) throw new DatabaseException("SQL INJECTION DETECTED");
-		if(instance == null) instance = new OpenJPAStrategy(loginCredentials,  tableName);
+		if(instance == null) instance = new OpenJPAStrategy(loginCredentials, dbPath,  tableName);
 		return instance;
 	}
 
@@ -69,16 +69,36 @@ public class OpenJPAStrategy implements interfaces.ISerializableStrategy {
 	public void open(){
 		System.out.println("[INFO] Opening DB using JPA");
 		fac = Persistence.createEntityManagerFactory("openjpa", System.getProperties());
-		e = fac.createEntityManager();
-		if(dbPath != null){
-			// TODO set DB-Path inside OpenJPA
-			System.out.println("[INFO] Set DB to " + dbPath);
-		}
-		if(loginCredentials != null){
-			// TODO set DB-Login credential inside OpenJPA
-			System.out.println("[INFO] Set loging credentials to user \"" + loginCredentials.getUsername() + "\"");
-		}
 
+        // if the custom path is enabled this should be executed
+        // => Allows to add custom path and username / PW for DB Access -> DB Server access
+		if(Model.isCustomDBFeaturesEnabled()) {
+		    Map<String, String> map = new HashMap<String, String>();
+            map.put("openjpa.ConnectionURL", "jdbc:sqlite:" + dbPath);
+			map.put("openjpa.ConnectionDriverName", "org.sqlite.JDBC");
+			map.put("openjpa.ConnectionUserName", loginCredentials.getUsername());
+			map.put("openjpa.ConnectionPassword", loginCredentials.getPw());
+			map.put("openjpa.RuntimeUnenhancedClasses", "supported");
+			map.put("openjpa.jdbc.SynchronizeMappings", "false");
+
+			List<Class<?>> types = new ArrayList<Class<?>>();
+			types.add(PlayList.class);
+			types.add(Library.class);
+
+			if (!types.isEmpty()) {
+				StringBuffer buf = new StringBuffer();
+				for (Class<?> c : types) {
+					if (buf.length() > 0)
+						buf.append(";");
+					buf.append(c.getName());
+				}
+				// <class>Producer</class>
+				map.put("openjpa.MetaDataFactory", "jpa(Types=" + buf.toString() + ")");
+			}
+
+			fac = OpenJPAPersistence.getEntityManagerFactory(map);
+		}
+		e = fac.createEntityManager();
 		System.out.println("[INFO] opened");
 	}
 

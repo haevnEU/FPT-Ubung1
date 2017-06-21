@@ -1,14 +1,12 @@
 package controller;
 
-import core.Util;
+import core.*;
 import interfaces.*;
-
-import core.Song;
 import view.DetailView;
 
 public class DetailController implements interfaces.IController {
 
-    private core.Model model;
+    private Model model;
     private DetailView view;
     private Song song;
 
@@ -20,7 +18,7 @@ public class DetailController implements interfaces.IController {
     @Override
     public void link(IModel m, IView v){
 
-        this.model = (core.Model)m;
+        this.model = (Model)m;
         this.view = (DetailView)v;
       }
 
@@ -35,7 +33,6 @@ public class DetailController implements interfaces.IController {
      * Handles commit button
      */
     private void buttonCommitClickEventHandler(){
-
         try {
             song.setTitle(view.getTitle());
             song.setInterpret(view.getInterpret());

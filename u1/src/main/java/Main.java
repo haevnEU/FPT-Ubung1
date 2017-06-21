@@ -1,15 +1,13 @@
 
-import core.Util;
+import core.*;
+import java.io.*;
 import javafx.scene.input.*;
 import javafx.application.*;
 
-import core.Model;
 import view.MainView;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import controller.MainController;
-
-import java.io.*;
 
 public class Main extends Application {
 
@@ -43,6 +41,7 @@ public class Main extends Application {
 					    System.setOut(new PrintStream(fos));
 				    }catch (IOException ex){}
 			    }
+			    // Redirect warnings and critical exception
 			    else if(s.toUpperCase().contains("-R:")){
 				    try {
 					    String file = s.substring(s.indexOf(":") + 1, s.length());
@@ -53,22 +52,21 @@ public class Main extends Application {
 					    System.setOut(new PrintStream(fos));
 				    }catch (IOException ex){}
 			    }
+			    // enables own db functionality
 			    else if(s.toUpperCase().contains("-OWNDBPATH")){
 			    	Model.setCustomDBFeature(true);
 			    }
 		    }
 	    }
 
-	    System.out.println("[NONE] Application started at " + Util.getUnixTimeStamp());
+	    System.out.println("[INFO] Application started at " + Util.getUnixTimeStamp());
 	    Application.launch(args);
-
-
     }
 
     @Override
     public void start(Stage primaryStage) throws Exception {
 
-        Model model = Model.getInstance();
+	    Model model = Model.getInstance();
 
         MainView mainView = new MainView();
 	    MainController mainController = new MainController();
@@ -86,11 +84,11 @@ public class Main extends Application {
 	}
 
     private void sceneOnKeyDown(KeyEvent e) {
-        if(e.isAltDown() && e.getCode() == KeyCode.ESCAPE)Platform.exit();
+        if(e.isAltDown() && e.getCode() == KeyCode.ESCAPE) Platform.exit();
 	}
 
     private void onClose() {
-	    System.out.println("[NONE] Application quited at " + Util.getUnixTimeStamp());
+	    System.out.println("[INFO] Application quited at " + Util.getUnixTimeStamp());
 	    Platform.exit();
 	    System.exit(0);
     }
