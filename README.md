@@ -9,18 +9,20 @@ Die Warteschlange zeigt an welche Lieder gespielt werden sollen, an der ersten s
 
 ## Hauptansicht
 
-Links befindet sich die Warteschlange, hier ist es möglich mit alt + doppelklick lieder zu entfernen, mit doppelklick und gedrückter strg/ctrl ist es möglich details anzeigen zu lassen.
-Der Button All Songs öffnet sie Liste aller geladenen Lieder
-Im unteren fünftel befinden sich die Play/Pause, Skip und Seek funktionalitäten.
-
-Der Restliche platz ist für die Anzeige des Titel, Artisten, Album und Cover reserviert, es wird immer mittig zentriert.
+Links befindet sich ein Menü welches zugriff auf Funktionalität bereitstellt.
+Mittig werden alle Lieder bereitgestellt diese Liste dient als Library.
+Rechts ist die aktuelle Warteschlange.
+Unten kann man zwischen Play und Pause wechseln und genauso auch ein Song überspringen.
 
 ## Menü 
-Wurde entfernt und durch Shortcuts ersetzt.
-
-- Song details werden durc strg/ctrl Doppelklick auf das jeweilige lied geöffnet
-- Alt + Doppelklick entfernt ein Lied aus der Warteschlange
-- Alt + L öffnet den Lade dialog
+- Open Files: Über diesen Eintrag ist es möglich die Library und Warteschlange aus diversen Quellen zu beziehen. 
+      Quelle sind: Local (auf dem Datenträger gespeicherte MP3 Dateien), XML (XML Serialisierte Dateien), Binär (Binär  
+      Serialisierte Dateien), DataBase (Dateien aus einer Datenbank) und OpenJPA.
+- Edit Song: Hier können details von einem Song verändert werden.
+- Delete from Queue: Hier kann die Warteschlange entfernend manipuliert werden.
+- Add ever song to queue: Fügt alle Lieder in der Library in die Warteschlange
+- Save: Speichert Playlist oder Library ab.
+      Hierzu kann zwischen Binärer und XML Serialisierung gewählt werden genauso wie Datenbank und OpenJPA
 
 ## Steuerelemente
 
@@ -38,6 +40,10 @@ Zuerst sind zwei Buttons zu sehen.
 Hier befindet sich lediglich eine Anzeige aller geladenen Lieder und die Funktionalität alle hinzuzufügen.
 Einzelne Lieder werden mit doppelklick hinzugefügt.
 
+## Current Queue 
+
+Hier befindet sich lediglich eine Anzeige aller Warteschlange.
+
 ## Detail ansicht
 
 Wenn ein Cover vorhanden ist wird das Fenster breiter dargestellt da Rechts dann das Cover angezeigt wird.
@@ -45,9 +51,28 @@ Wenn ein Cover vorhanden ist wird das Fenster breiter dargestellt da Rechts dann
 Links zu sehen sind Titel, Album, Artist, ID, Pfad und Erscheinungsjahr des jeweilig ausgewählten Liedes.
 Diese Metadaten sind bearbeitbar und werden sofort geändert da hier auf die Technik der SimpleObjectProperty gesetzt wurde.
 
-
-### Aufgabenstellung
+## Sonstiges
+- Main.java ermöglicht wurde ein parametisierter Start
+      <br/>-R:/Users/user/Desktop/logfile.log => Umleitung alle System.err und System.out ausgaben in eine logdatei
+      <br/>-RWARN:/Users/user/Desktop/logfile.log => Umleitung von System.out ausgaben in eine logdatei
+      <br>-RCRIT:/Users/user/Desktop/logfile.log => Umleitung von System.err ausgaben in eine logdatei
+- Util: 
+      <br/> -Hex/String konverter
+      <br/> convertToHex(String) => Konvertiert einen String in ein hexadezimalen string mit einem offset von 4
+      <br/>       d.H: 0000 0001 0002 .... 00FF 00100 ... FFFF
+      <br/> - Anzeige von Hinweisen
+      <br/>     Es gibt zwei verschiedene einmal 
+      <br/>       showAlert(String) zeigt ein hinweis fenster
+      <br/>       showAlert(String, AlertType) zeigt ein hinweis mit entsprechenden Icon
+      
+      
+## Aufgabenstellungen
+### Aufgabenstellung 1
 
 In unserer FPT Übung 1 sollen wir in Gruppen einen Mediaplayer erstellen dazu wurde ein Projekt mit 3 Interface zur verfügung gestellt
 
 Aufgabe war es diese zu implementieren und dazugehörige Funktionalitäten hinzuzufüfen.
+
+### Aufgabenstellung 2
+In unserer FPT Übung 2 sollten wir als gruppe die erste Aufgabe erweitern um eine persistierungs möglichkeit, vorgabe war es ein IDGenerator zu gestalten mit entsprechender exception.
+Außerdem wurde gefordert über XML und Binär zu serialisieren genauso mit einer Datenbank zu arbeiten und OpenJPA zu nutzen.
