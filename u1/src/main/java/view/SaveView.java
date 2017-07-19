@@ -9,7 +9,7 @@ import interfaces.IView;
 import javafx.stage.Stage;
 import javafx.geometry.Insets;
 import javafx.beans.value.ChangeListener;
-import ApplicationException.DatabaseException;
+import applicationException.DatabaseException;
 
 public class SaveView extends BorderPane implements IView {
 

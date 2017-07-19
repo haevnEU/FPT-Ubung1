@@ -2,7 +2,20 @@ package core;
 
 import java.io.*;
 
+import controller.DeleteController;
+import controller.DetailController;
+import controller.LoadController;
+import controller.SaveController;
+import interfaces.IController;
+import interfaces.IModel;
+import interfaces.ISong;
+import interfaces.IView;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.input.KeyCode;
+import javafx.scene.layout.BorderPane;
+import javafx.stage.Stage;
+import view.*;
 
 public final class Util {
 
@@ -93,6 +106,77 @@ public final class Util {
         alert.setContentText(text);
         alert.showAndWait();
     }
+
+
+    public static void invokeNewWindow(SceneType t, Model model){
+        if(SceneType.DetailView != t) invokeNewWindow(t, model, null);
+    }
+
+    /**
+     * Invokes any window
+     * @param t which scene should be invoked, details could be seen inside view.SceneType
+     * @param model
+     * @param s
+     */
+    public static void invokeNewWindow(SceneType t, IModel model, ISong s){
+
+        Scene tmpScene = new Scene(new BorderPane());
+        Stage tmpStage = new Stage();
+        IController tmpController;
+        IView tmpView = new FileViewer();
+        switch(t){
+            case DeleteView:
+                tmpController = new DeleteController();
+                tmpView = DeleteView.getInstance(((Model)model).getQueue());
+                if(tmpView == null) return;
+                tmpScene = new Scene((DeleteView)tmpView);
+
+                tmpController.link(model, tmpView);
+                tmpStage.setTitle("Delete...");
+                tmpStage.setWidth(250);
+                tmpScene.setOnKeyPressed(e -> {
+                    if(e.getCode() == KeyCode.ESCAPE) tmpStage.close();
+                });
+                break;
+
+            case DetailView:
+                tmpController = new DetailController();
+                tmpView = new DetailView();
+                tmpScene = new Scene((DetailView)tmpView);
+
+                tmpController.link(model, tmpView);
+                ((DetailController)tmpController).init((Song)s);
+
+                tmpStage.setTitle(s.getTitle());
+                tmpScene.setOnKeyPressed(e -> {
+                    if(e.getCode() == KeyCode.ESCAPE) tmpStage.close();
+                });
+                break;
+
+            case SaveView:
+                tmpController = new SaveController();
+                tmpView = SaveView.getInstance();
+                if(tmpView == null) return;
+                tmpScene = new Scene((SaveView)tmpView);
+                tmpStage.setTitle("Save...");
+                tmpController.link(model, tmpView);
+                break;
+
+            case LoadView:
+                tmpController = new LoadController();
+                tmpView = LoadView.getInstance();
+                if(tmpView == null) return;
+                tmpScene = new Scene((LoadView)tmpView);
+                tmpStage.setTitle("Load...");
+                tmpController.link(model, tmpView);
+                break;
+        }
+        tmpStage.setScene(tmpScene);
+        tmpStage.setResizable(false);
+        tmpStage.showAndWait();
+        tmpView.destroy();
+    }
+
 }
 
 

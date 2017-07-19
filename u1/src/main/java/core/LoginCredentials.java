@@ -1,7 +1,7 @@
 package core;
 
 import javafx.scene.control.Alert;
-import ApplicationException.DatabaseException;
+import applicationException.DatabaseException;
 
 /**
  * This class hold login details for DB Access

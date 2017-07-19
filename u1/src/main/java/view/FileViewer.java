@@ -4,7 +4,7 @@ import java.util.*;
 
 import java.io.File;
 import javafx.stage.FileChooser;
-import ApplicationException.RichException;
+import applicationException.RichException;
 
 /**
  * THis class is used to open a single instance of loading file window

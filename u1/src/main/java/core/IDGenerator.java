@@ -1,7 +1,7 @@
 package core;
 
-import ApplicationException.IDOverFlowException;
-import ApplicationException.UnknownApplicationException;
+import applicationException.IDOverFlowException;
+import applicationException.UnknownApplicationException;
 
 public final class IDGenerator {
 

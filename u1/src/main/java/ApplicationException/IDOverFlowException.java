@@ -1,4 +1,4 @@
-package ApplicationException;
+package applicationException;
 
 import interfaces.IApplicationException;
 

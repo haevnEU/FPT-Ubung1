@@ -8,7 +8,7 @@ import javafx.scene.control.*;
 
 import java.sql.SQLException;
 import java.rmi.RemoteException;
-import ApplicationException.DatabaseException;
+import applicationException.DatabaseException;
 
 import static core.SelectedSongList.*;
 

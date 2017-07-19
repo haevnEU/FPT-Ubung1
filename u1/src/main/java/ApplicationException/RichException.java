@@ -1,4 +1,4 @@
-package ApplicationException;
+package applicationException;
 
 import java.io.*;
 import javafx.scene.layout.*;
@@ -16,9 +16,9 @@ import interfaces.IApplicationException;
 public final class RichException extends Exception implements IApplicationException {
 
 	/**
-	 * Creates a new RichException window using ApplicationException details
+	 * Creates a new RichException window using applicationException details
 	 *
-	 * @param ex ApplicationException details
+	 * @param ex applicationException details
 	 */
 	public RichException(Exception ex) {
 		super(ex);
@@ -43,7 +43,7 @@ public final class RichException extends Exception implements IApplicationExcept
 		alert.setContentText("Fatal exception occurred\nPlease submit the following StackTrace at GitHub");
 
 //        The following lines are modify from the default alert
-		Label label = new Label("ApplicationException stacktrace:");
+		Label label = new Label("applicationException stacktrace:");
 
 //        A non editable TextArea is used do display the stacktrace
 		TextArea textArea = new TextArea("TimeStamp: " + core.Util.getUnixTimeStamp() + " \n\nStackTrace\n" + stackTrace);
@@ -61,7 +61,7 @@ public final class RichException extends Exception implements IApplicationExcept
 		gridContent.add(textArea, 0, 1);
 		gridContent.add(bottomLabel, 0, 2);
 
-//         Set expandable ApplicationException into the dialog pane.
+//         Set expandable applicationException into the dialog pane.
 		alert.getDialogPane().setExpandableContent(gridContent);
 
 		alert.showAndWait();

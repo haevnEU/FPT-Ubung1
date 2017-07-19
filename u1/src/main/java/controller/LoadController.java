@@ -1,7 +1,7 @@
 package controller;
 
 
-import ApplicationException.UnknownApplicationException;
+import applicationException.UnknownApplicationException;
 import view.*;
 import core.*;
 import java.io.*;
@@ -11,7 +11,7 @@ import javafx.scene.control.*;
 import java.util.List;
 import java.sql.SQLException;
 
-import ApplicationException.DatabaseException;
+import applicationException.DatabaseException;
 
 import static core.SelectedSongList.*;
 

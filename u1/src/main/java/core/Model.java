@@ -2,23 +2,27 @@ package core;
 // TODO rewrite player class
 // imports btw look at the bottom
 
+import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
 import java.util.*;
 
 import java.io.File;
 
 import interfaces.IModel;
+import interfaces.ISong;
+import javafx.application.Platform;
 import javafx.util.Duration;
 import javafx.scene.image.Image;
 import javafx.scene.media.Media;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.MapChangeListener;
-import ApplicationException.IDOverFlowException;
+import applicationException.IDOverFlowException;
 import javafx.beans.property.SimpleBooleanProperty;
 
 /**
  * This class provides application data and logic
  */
-public final class Model implements IModel {
+public final class Model extends UnicastRemoteObject implements IModel {
 
 	// helper variable with getter/setter
 	private static boolean customDBFeature = false;
@@ -29,22 +33,108 @@ public final class Model implements IModel {
 		return customDBFeature;
 	}
 
-
+	private SimpleBooleanProperty queueUpdate = new SimpleBooleanProperty(false);
 	private SongList slQueue, slLibrary;
 	private  Player player;
-
+	private RMIBroadcaster rmiBroadcaster;
+	List<IModel> clients = new ArrayList<>();
 //     simple singleton skeleton => there is just one Model allowed
-    private static Model instance;                                          // look at the imports
+    private static Model instance;
+    // look at the imports
     public static Model getInstance(){
-        if(instance == null) instance = new Model();
-        return instance;
+    	return getInstance(null);
+    }
+	public static Model getInstance(List<IModel> clients){
+        if(instance == null) try {
+	        instance = new Model(clients);
+        } catch (RemoteException e) {
+	        e.printStackTrace();
+        }
+	    return instance;
     }
 
-    private Model(){
-        slQueue = new SongList();
-        slLibrary = new SongList();
-        player = Player.getInstance();
+    public void add(IModel client){
+    	clients.add(client);
     }
+
+    public SimpleBooleanProperty getQueueUpdate(){ return queueUpdate; }
+
+    private Model(List<IModel> clients) throws RemoteException {
+	    super();
+	    rmiBroadcaster = new RMIBroadcaster(clients, this);
+	    slQueue = new SongList();
+        slLibrary = new SongList();
+        player = Player.getInstance(rmiBroadcaster);
+        this.clients = clients;
+    }
+
+    @Override
+    public boolean getPlaying() throws RemoteException{
+		return player.getIsPlaying().getValue();
+    }
+
+	public RawList getRawLibrary() throws RemoteException{
+    	return new RawList(getLibrary());
+	}
+
+	public RawList getRawQueue() throws RemoteException{
+    	return new RawList(getQueue());
+	}
+
+	@Override
+	public void updateQueueView(RawList list) throws RemoteException {
+		if(CVars.isClientEnabled()) {
+		    slQueue.clear();
+		    for (ISong s : list.getSongList().getList()) {
+			    System.out.println("[INFO] adding " + s.getTitle() + " to queue.");
+			    slQueue.add(s);
+		    }
+		    queueUpdate.set(true);
+	    }
+	}
+
+	@Override
+	public void addToQueue(SongWrapper song) throws RemoteException {
+		Song s = new Song(song.getId());
+		s.setAlbum(song.getAlbum());
+		s.setInterpret(song.getArtist());
+		s.setPath(song.getPath());
+		s.setTitle(song.getTitle());
+
+		Platform.runLater(() -> {
+			getQueue().add(s);
+		System.out.println("BEFORE BROADCAST " + getQueue().size());
+		for (IModel client : clients)
+		{
+			try {
+				RawList r = new RawList(getQueue());
+				client.updateQueueView(r);
+			} catch (RemoteException e) {
+				e.printStackTrace();
+			}
+		}});
+	}
+
+	@Override
+	public void notifySongChange(SongWrapper song) throws RemoteException {
+		ISong s = new Song(song.getId());
+		s.setPath(song.getPath());
+		s.setInterpret(song.getArtist());
+		s.setAlbum(song.getAlbum());
+		s.setTitle(song.getTitle());
+		getLibrary().getList().set(Math.toIntExact(song.getId()), s);
+		getQueue().getList().set(Math.toIntExact(song.getId()), s);
+		getQueue().findSongById(s.getId()).setTitle(s.getTitle());
+		getQueue().findSongById(s.getId()).setAlbum(s.getAlbum());
+		getQueue().findSongById(s.getId()).setInterpret(s.getInterpret());
+		getQueue().findSongById(s.getId()).setPath(s.getPath());
+		System.out.println("[INFO] Updated: " + s.getTitle());
+	}
+
+	public String getTime() {
+
+    	return ""+((int)player.getTime());
+	}
 
 	/**
      * Method is used to loadAllSongsFromFile music files
@@ -83,7 +173,7 @@ public final class Model implements IModel {
      * @return slQueue
      */
     public SongList getQueue(){
-        return slQueue;
+	    return slQueue;
     }
 
 	/**
@@ -99,7 +189,7 @@ public final class Model implements IModel {
      * @return every loaded song
      */
     public SongList getLibrary(){
-        return slLibrary;
+	    return slLibrary;
     }
 
 	/**
@@ -129,24 +219,26 @@ public final class Model implements IModel {
 	/**
 	 * Plays a mp3 file
 	 */
-	public void togglePlayPause(){
-		if(!player.getInitialized()) callPlayerInit(getQueue());
-		if(getIsPlaying().getValue()) player.pause();
-		else player.play();
+	synchronized public void togglePlayPause(){
+		Platform.runLater(() -> {
+			if(!player.getInitialized()) callPlayerInit(getQueue());
+			if(getIsPlaying().getValue()) player.pause();
+			else player.play();
+		});
 	}
 
 	/**
 	 * Stops a mp3 file
 	 */
 	public void stop(){
-		player.stop();
+		Platform.runLater(() -> player.stop());
 	}
 
 	/**
 	 * Skips the current track
 	 */
-	public void skip(){
-		player.skip();
+	public void skip() {
+		Platform.runLater(() -> player.skip());
 	}
 
 
@@ -157,6 +249,12 @@ public final class Model implements IModel {
 	public double getSongLength() {
 		return player.getSongLength();
 	}
+
+	public String getCurrentSong() {
+		return getQueue().get(0).getTitle();
+	}
+
+
 }
 
 

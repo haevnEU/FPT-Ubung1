@@ -20,17 +20,20 @@ public class Player implements interfaces.IPlayer {
 	private SimpleBooleanProperty isPlaying = new SimpleBooleanProperty(false);
 	private SimpleBooleanProperty endOfTrack = new SimpleBooleanProperty(false);
 	private ChangeListener mediaPlayerChangeTime;
+	private RMIBroadcaster rmiBroadcaster;
 
 	// Singleton usage because there should never exists two player
 	private static Player instance;
 	private Player(){}
-
+	private Player(RMIBroadcaster rmiBroadcaster){
+		this.rmiBroadcaster = rmiBroadcaster;
+}
 	/**
 	 * Get MediaPlayer object
 	 * @return new MediaPlayer if there exists no one, otherwise existing MediaPlayer
 	 */
-	static Player getInstance(){
-		if(instance == null) instance = new Player();
+	static Player getInstance(RMIBroadcaster rmiBroadcaster){
+		if(instance == null) instance = new Player(rmiBroadcaster);
 		return instance;
 	}
 
@@ -39,6 +42,7 @@ public class Player implements interfaces.IPlayer {
 	 * @param s ISong which should be played
 	 */
 	private void initPlayer(Song s){
+		if(null == s) return;
 		// Set or change media
 		media = new Media(s.getPath());
 
@@ -89,7 +93,10 @@ public class Player implements interfaces.IPlayer {
 		try {
 			System.out.println("Enter EndOfMedia");
 			// return if queue has no elements
-			if(queue.sizeOfList() <= 0) return;
+			if(queue.sizeOfList() <= 0) {
+				stop();
+				return;
+			}
 			// reset media
 			media = null;
 			stop();
@@ -97,12 +104,12 @@ public class Player implements interfaces.IPlayer {
 			queue.remove(0);
 			initPlayer((Song)queue.get(0));
 
-			mediaPlayer.currentTimeProperty().addListener(mediaPlayerChangeTime);
 			play();
+			rmiBroadcaster.broadcastQueueChange();
 			System.out.println("Successfully leaved EndOfMedia");
 		}
 		catch (RemoteException ex) {
-			System.err.println("[CRIT] ApplicationException occurred at " + Util.getUnixTimeStamp());
+			System.err.println("[CRIT] applicationException occurred at " + Util.getUnixTimeStamp());
 			ex.printStackTrace();
 		}
 	}
@@ -171,5 +178,10 @@ public class Player implements interfaces.IPlayer {
 
 	boolean getInitialized() {
 		return isInitialized;
+	}
+
+	public double getTime() {
+		if(null == mediaPlayer) return 0000;
+		return mediaPlayer.getCurrentTime().toSeconds();
 	}
 }

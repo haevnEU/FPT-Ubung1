@@ -9,7 +9,7 @@ import javafx.scene.input.*;
 import javafx.scene.Scene;
 import java.rmi.RemoteException;
 import javafx.scene.layout.BorderPane;
-import ApplicationException.RichException;
+import applicationException.RichException;
 import javafx.beans.property.SimpleBooleanProperty;
 
 public class MainController implements IController{
@@ -32,7 +32,7 @@ public class MainController implements IController{
 
         this.view.addButtonPlayPauseEventHandler(e -> playPause());
         this.view.addButtonSkipEventHandler(e-> skipSong());
-		this.view.addButtonSaveEventHandler( e-> invokeNewWindow(SceneType.SaveView));
+		this.view.addButtonSaveEventHandler( e-> Util.invokeNewWindow(SceneType.SaveView, model));
         this.view.addListViewAllSongClickEventHandler((e) -> listViewAllSongClicked(e));
 
         this.view.setAllSongs(model.getLibrary());
@@ -50,7 +50,7 @@ public class MainController implements IController{
      * @param e Object which triggered the event
      */
     private void listViewAllSongClicked(MouseEvent e){
-       if(e.isAltDown() && e.getClickCount() == 2) invokeNewWindow(SceneType.DetailView);
+       if(e.isAltDown() && e.getClickCount() == 2) Util.invokeNewWindow(SceneType.DetailView, model, this.view.getSelectedSong());
        else if(e.getClickCount() == 2){
 	       model.getQueue().add(view.getSelectedSong());
 	       initPlayer();
@@ -69,21 +69,20 @@ public class MainController implements IController{
      * Loads any directory
      */
     private void menuItemLoadEventHandler() {
-		invokeNewWindow(SceneType.LoadView);
+		Util.invokeNewWindow(SceneType.LoadView, model);
     }
 
     /**
      * EventHandler for DetailView
      */
-    private void menuItemDetailEventHandler() {
-    	invokeNewWindow(SceneType.DetailView);
+    private void menuItemDetailEventHandler() {Util.invokeNewWindow(SceneType.DetailView, model, this.view.getSelectedSong());
 	 }
 
     /**
      * EventHandler for opening DeleteView
      */
     private void menuItemDeleteEventHandle() {
-        invokeNewWindow(SceneType.DeleteView);
+        Util.invokeNewWindow(SceneType.DeleteView, model);
     }
 
     /**
@@ -117,7 +116,8 @@ public class MainController implements IController{
 	 * Invokes any window
 	 * @param t which scene should be invoked, details could be seen inside view.SceneType
 	 */
-	private void invokeNewWindow(SceneType t){
+	@Deprecated
+	private void invokeNewWindows(SceneType t){
 
 		Scene tmpScene = new Scene(new BorderPane());
 		Stage tmpStage = new Stage();

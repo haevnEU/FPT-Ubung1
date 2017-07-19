@@ -1,4 +1,4 @@
-package ApplicationException;
+package applicationException;
 
 import java.io.IOException;
 import interfaces.IApplicationException;

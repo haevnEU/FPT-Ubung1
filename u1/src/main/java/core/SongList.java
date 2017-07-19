@@ -1,6 +1,6 @@
 package core;
 
-import ApplicationException.UnknownApplicationException;
+import applicationException.UnknownApplicationException;
 import interfaces.ISong;
 import interfaces.ISongList;
 import javafx.collections.FXCollections;
@@ -16,6 +16,8 @@ import java.util.ArrayList;
  * This class provides a List of ISong objects
  */
 public class SongList extends ModifiableObservableListBase<ISong> implements ISongList {
+
+    static final long serialVersionUID = 2945093870624213877L;
 
     private final ObservableList<ISong> songs;
 
@@ -129,7 +131,9 @@ public class SongList extends ModifiableObservableListBase<ISong> implements ISo
      */
     @Override
     public ISong get(int index) {
-        return songs.get(index);
+        if(songs.size() > index)
+           return songs.get(index);
+        return null;
     }
 
     /**
@@ -191,5 +195,19 @@ public class SongList extends ModifiableObservableListBase<ISong> implements ISo
     @Override
     protected ISong doRemove(int index) {
         return songs.remove(index);
+    }
+
+    /**
+     * Get the current songList as formated String
+     * @return
+     */
+    public String getSongList(SelectedSongList selectedSongList){
+        StringBuilder ret = new StringBuilder();
+        ret.append("\"" + selectedSongList + "\":[");
+        for(ISong s : songs){
+            ret.append("\""+s.getTitle()+"\",");
+        }
+        ret.append("]");
+        return ret.toString();
     }
 }

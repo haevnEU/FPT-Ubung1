@@ -8,7 +8,7 @@ import javafx.scene.control.*;
 import javafx.stage.Stage;
 import javafx.geometry.Insets;
 import javafx.beans.value.ChangeListener;
-import ApplicationException.DatabaseException;
+import applicationException.DatabaseException;
 
 public class LoadView extends BorderPane implements interfaces.IView {
 
