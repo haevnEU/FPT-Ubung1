@@ -29,6 +29,10 @@ public class ClientController implements interfaces.IController {
 	// Forbid the default ctor
 	private ClientController(){}
 
+	/**
+	 * Creates a new instance of this class
+	 * @param viewStage Stage which should hold the scene
+	 */
 	public ClientController(Stage viewStage) {
 		this();
 		this.viewStage = viewStage;
@@ -59,13 +63,18 @@ public class ClientController implements interfaces.IController {
 			} catch (MalformedURLException e) {
 				e.printStackTrace();
 			}
-			this.view.updateBtTogglePlayPauseText();
+			//this.view.updateBtTogglePlayPauseText();
 			this.view.addListViewLibraryCliecked(this::listViewLibraryClicked);
 			updateQueue = ((Model)model).getQueueUpdate();
 			updateQueue.addListener((observable1, oldValue1, newValue1) -> {
 				System.out.println(((Model) model).getQueue().size());
 				this.view.setItems(((Model) model).getQueue());
 				updateQueue.setValue(false);
+			});
+
+			((Model) model).togglePlayPause.addListener((observable12, oldValue12, newValue12) -> {
+				System.out.println(newValue12);
+				this.view.updateBtTogglePlayPauseText(newValue12);
 			});
 			// NOTE Determine that the queue has change
 			// Start time request
@@ -74,6 +83,8 @@ public class ClientController implements interfaces.IController {
 			runner.start();
 		});
 	}
+
+	// EVENT HANDLING
 
 	private void listViewLibraryClicked(MouseEvent mouseEvent) {
 		if( mouseEvent.isAltDown() && mouseEvent.getClickCount() >= 2){
@@ -95,11 +106,10 @@ public class ClientController implements interfaces.IController {
 		}
 	}
 
-
 	private void btStopClicked(MouseEvent mouseEvent) {
 		try {
 			stub.stop();
-			view.updateBtTogglePlayPauseText();
+			//view.updateBtTogglePlayPauseText();
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}
@@ -116,12 +126,17 @@ public class ClientController implements interfaces.IController {
 	private void btPlayPauseClicked(MouseEvent mouseEvent) {
 		try {
 			stub.togglePlayPause();
-			view.updateBtTogglePlayPauseText();
+		//	view.updateBtTogglePlayPauseText();
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}
 	}
 
+	// END EVENT HANDLING
+
+	/**
+	 * Request the current song time from server
+	 */
 	private void getTime() {
 		while (true) {
 			try {
@@ -136,13 +151,13 @@ public class ClientController implements interfaces.IController {
 				DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
 				clientSocket.setSoTimeout(10);
 				clientSocket.receive(receivePacket);
-				String modifiedSentence = "";
+				StringBuilder modifiedSentence = new StringBuilder();
 				for (byte b : receivePacket.getData()) {
 					for (int i = '0'; i <= '9'; i++) {
-						if (b == i) modifiedSentence += (char) b;
+						if (b == i) modifiedSentence.append((char) b);
 					}
 				}
-				Long time = Long.parseLong(modifiedSentence);
+				Long time = Long.parseLong(modifiedSentence.toString());
 				int min = (int) (time / 60);
 				int sec = (int) (time % 60);
 				Platform.runLater(() -> viewStage.setTitle(String.format("%02d", min) + ":" + String.format("%02d", sec)));

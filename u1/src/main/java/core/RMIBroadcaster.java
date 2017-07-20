@@ -2,26 +2,26 @@ package core;
 
 import interfaces.IModel;
 
-import javax.swing.text.html.ListView;
-import java.awt.event.MouseEvent;
 import java.rmi.RemoteException;
 import java.util.List;
 
 /**
- * This class provides
+ * This class provides broadcasting over RMI, required connected clients
  * <p>
  * Created by Nils Milewsi (nimile) on 16.07.17
  */
-public class RMIBroadcaster {
-	List<IModel> clients;
-	Model model;
+class RMIBroadcaster {
+	private List<IModel> clients;
+	private Model model;
 	private RMIBroadcaster(){}
 
-	public RMIBroadcaster(List<IModel> clients, Model model){
+	RMIBroadcaster(List<IModel> clients, Model model) {
+		this();
 		this.clients = clients;
 		this.model = model;
 	}
-	public void broadcastQueueChange(){
+
+	void broadcastQueueChange(){
 		// TODO Call Stub.updateQueueVIew
 		for(IModel s : clients){
 			try {
@@ -32,7 +32,7 @@ public class RMIBroadcaster {
 		}
 	}
 
-	public void broadcastSongChange(SongWrapper song){
+	void broadcastSongChange(SongWrapper song){
 		for(IModel s : clients){
 			try{
 				s.notifySongChange(song);
@@ -43,4 +43,14 @@ public class RMIBroadcaster {
 	}
 
 
+	void broadcastPlayPause(boolean b) {
+		for(IModel s : clients){
+			try {
+				if(b)s.notifyPlay();
+				else s.notifyPause();
+			} catch (RemoteException e) {
+				e.printStackTrace();
+			}
+		}
+	}
 }

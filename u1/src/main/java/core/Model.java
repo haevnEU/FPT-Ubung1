@@ -2,25 +2,26 @@ package core;
 // TODO rewrite player class
 // imports btw look at the bottom
 
-import java.rmi.RemoteException;
-import java.rmi.server.UnicastRemoteObject;
 import java.util.*;
 
 import java.io.File;
-
 import interfaces.IModel;
 import interfaces.ISong;
-import javafx.application.Platform;
 import javafx.util.Duration;
 import javafx.scene.image.Image;
 import javafx.scene.media.Media;
+import java.rmi.RemoteException;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
+import java.rmi.server.UnicastRemoteObject;
 import javafx.collections.MapChangeListener;
 import applicationException.IDOverFlowException;
 import javafx.beans.property.SimpleBooleanProperty;
 
 /**
  * This class provides application data and logic
+ *
+ * Written by Nils Milewski (nimile)
  */
 public final class Model extends UnicastRemoteObject implements IModel {
 
@@ -32,12 +33,12 @@ public final class Model extends UnicastRemoteObject implements IModel {
 	public static boolean isCustomDBFeaturesEnabled() {
 		return customDBFeature;
 	}
-
+	public SimpleBooleanProperty togglePlayPause = new SimpleBooleanProperty(false);
 	private SimpleBooleanProperty queueUpdate = new SimpleBooleanProperty(false);
 	private SongList slQueue, slLibrary;
 	private  Player player;
 	private RMIBroadcaster rmiBroadcaster;
-	List<IModel> clients = new ArrayList<>();
+	private List<IModel> clients = new ArrayList<>();
 //     simple singleton skeleton => there is just one Model allowed
     private static Model instance;
     // look at the imports
@@ -51,6 +52,16 @@ public final class Model extends UnicastRemoteObject implements IModel {
 	        e.printStackTrace();
         }
 	    return instance;
+    }
+
+    @Override
+    public void notifyPlay(){
+Platform.runLater(()->		togglePlayPause.setValue(false));
+    }
+
+    @Override
+    public void notifyPause() {
+	    Platform.runLater(() -> togglePlayPause.setValue(true));
     }
 
     public void add(IModel client){
@@ -222,8 +233,14 @@ public final class Model extends UnicastRemoteObject implements IModel {
 	synchronized public void togglePlayPause(){
 		Platform.runLater(() -> {
 			if(!player.getInitialized()) callPlayerInit(getQueue());
-			if(getIsPlaying().getValue()) player.pause();
-			else player.play();
+			if(getIsPlaying().getValue()) {
+				player.pause();
+				rmiBroadcaster.broadcastPlayPause(true);
+			}
+			else{
+				player.play();
+				rmiBroadcaster.broadcastPlayPause(false);
+			}
 		});
 	}
 
@@ -231,7 +248,10 @@ public final class Model extends UnicastRemoteObject implements IModel {
 	 * Stops a mp3 file
 	 */
 	public void stop(){
-		Platform.runLater(() -> player.stop());
+		Platform.runLater(() -> {
+			player.stop();
+			rmiBroadcaster.broadcastPlayPause(true);
+		});
 	}
 
 	/**

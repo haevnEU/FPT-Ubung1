@@ -1,7 +1,6 @@
 package controller;
 
 
-import applicationException.UnknownApplicationException;
 import view.*;
 import core.*;
 import java.io.*;
@@ -10,8 +9,8 @@ import javafx.scene.control.*;
 
 import java.util.List;
 import java.sql.SQLException;
-
 import applicationException.DatabaseException;
+import applicationException.UnknownApplicationException;
 
 import static core.SelectedSongList.*;
 
@@ -65,7 +64,7 @@ public class LoadController implements IController {
 	 * Handles button "local" click event
 	 */
 	private void btLocalClicked() {
-		List<File> files = FileViewer.getFiles("MP3 Files", "*.mp3");
+		List<File> files = FileViewer.getFiles();
 		// check if any file are selected
 		if(files != null) model.loadAllSongsFromFile(files);
 	}

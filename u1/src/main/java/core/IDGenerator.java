@@ -3,6 +3,11 @@ package core;
 import applicationException.IDOverFlowException;
 import applicationException.UnknownApplicationException;
 
+/**
+ * This class provides functionality for an ID Generation
+ *
+ * written by Nils Milewski (nimile)
+ */
 public final class IDGenerator {
 
 	// No instances allowed

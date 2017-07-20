@@ -1,25 +1,23 @@
 package server;
 
 import core.*;
-import javafx.collections.ListChangeListener;
-import javafx.scene.input.KeyEvent;
+import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.scene.control.*;
 
 import interfaces.ISong;
 import javafx.geometry.Insets;
 import javafx.event.EventHandler;
-import javafx.scene.input.MouseEvent;
+import javafx.collections.ListChangeListener;
 
 
 /**
- * This class provides
+ * This class provides server view
  * <p>
  * Created by Nils Milewsi (nimile) on 12.07.17
  */
 public class ServerView extends VBox implements interfaces.IView {
 
-	private OwnSyncArrayList log;
 	private TextArea tbLog;
 	private Button btStart, btRestart, btExit, btLoad, btSave;
 	private ListView<ISong> lvLibrary, lvQueue;
@@ -28,7 +26,6 @@ public class ServerView extends VBox implements interfaces.IView {
 	 * Constructor for ServerView
 	 */
 	public ServerView() {
-
 
 		HBox hBox = new HBox();
 		VBox vBox1, vBox2, vBox3;
@@ -73,15 +70,24 @@ public class ServerView extends VBox implements interfaces.IView {
 		hBox.getChildren().addAll(vBox1, vBox2, vBox3);
 
 		tbLog = new TextArea();
-		tbLog.setText("Console");
-
+		tbLog.setText("Console version beta 1.0\n" +
+				"Hier sollte eigentlich die Ausgabe vom server umgeleitet werden.\n" +
+				"CVars usage (Requires a restart)\n" +
+				"to modify a CVars you have to enter the CVar name followed by a : and the value into the box above\n" +
+				"Following CVars are able to modify\n" +
+				"LOGINPORT:<PORT> Modify the port which the server accept login request\n" +
+				"TIMEPORT:<PORT> Modify the port which the server accept time get request\n" +
+				"RMIPORT:<PORT> Specify the RMI Registry\n" +
+				"SERVERIP:<IP> Change the server IP, note you can user name (localhost) or blank IP (127.0.0.1)\n" +
+				"Replace <...> with a specific value" +
+				"In addition you can type EXIT to kill the server application");
+		tbLog.setEditable(false);
 		tbConsole = new TextField();
 		minWidth(600);
 		setPadding(new Insets(10));
 		getChildren().addAll(hBox, tbConsole,tbLog);
 
 		tbLog.textProperty().addListener((observable, oldValue, newValue) -> tbLog.setScrollTop(Double.MAX_VALUE));
-		log = new OwnSyncArrayList(tbLog);
 	}
 
 	void addButtonStartClicked(EventHandler<MouseEvent> eventHandler) {
@@ -124,11 +130,6 @@ public class ServerView extends VBox implements interfaces.IView {
 
 	void resetConsole(){
 		tbConsole.setText("");
-	}
-
-	// TODO REPLACE ?!
-	OwnSyncArrayList logProperty() {
-		return log;
 	}
 
 	/**

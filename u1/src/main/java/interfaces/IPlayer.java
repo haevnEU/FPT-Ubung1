@@ -1,5 +1,11 @@
 package interfaces;
 
+
+/**
+ * This interface is used for future player objects
+ *
+ * written by Nils Milewski (nimile)
+ */
 public interface IPlayer {
 
 	/**

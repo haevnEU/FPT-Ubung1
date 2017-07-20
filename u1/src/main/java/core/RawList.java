@@ -6,14 +6,19 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.rmi.RemoteException;
 
+/**
+ * This class is used as a temporary wrapper for serialization
+ *
+ * Written by Nils Milewski (nimile)
+ */
 public class RawList implements Serializable {
 
 	private ArrayList<SongWrapper> songs;
 
 	/**
-	 * SongList mit ObservableValues in serialisierbare Version umwandeln.
+	 * Convert local SongList into one which can be serialized.
 	 *
-	 * @param songList
+	 * @param songList SongList which should be serialized
 	 */
 	public RawList(SongList songList) throws RemoteException {
 		this.songs = new ArrayList<>();

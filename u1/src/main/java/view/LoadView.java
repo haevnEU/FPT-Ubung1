@@ -10,6 +10,11 @@ import javafx.geometry.Insets;
 import javafx.beans.value.ChangeListener;
 import applicationException.DatabaseException;
 
+/**
+ * This class provides UI for loading action
+ *
+ * Written by Nils Milewski (nimile)
+ */
 public class LoadView extends BorderPane implements interfaces.IView {
 
 	private static LoadView instance;
@@ -19,7 +24,6 @@ public class LoadView extends BorderPane implements interfaces.IView {
 	private PasswordField pwUsername;
 	private Button btXml, btBin, btDB, btOpenJPA, btFileDialog;
 	private Label lbUserName, lbPW;
-	private RadioButton rbplayList, rbQueue;
 	private ToggleGroup toggleGroup;
 
 	public static LoadView getInstance() {
@@ -50,17 +54,17 @@ public class LoadView extends BorderPane implements interfaces.IView {
 
 
 		toggleGroup = new ToggleGroup();
-		rbplayList = new RadioButton(SelectedSongList.Library.toString());
-		rbplayList.setId(SelectedSongList.Library.toString());
-		rbplayList.setTooltip(new Tooltip("Saving Playlist"));
-		rbQueue = new RadioButton(SelectedSongList.PlayList.toString());
+		RadioButton rbPlayList = new RadioButton(SelectedSongList.Library.toString());
+		rbPlayList.setId(SelectedSongList.Library.toString());
+		rbPlayList.setTooltip(new Tooltip("Saving Playlist"));
+		RadioButton rbQueue = new RadioButton(SelectedSongList.PlayList.toString());
 		rbQueue.setId(SelectedSongList.PlayList.toString());
 		rbQueue.setTooltip(new Tooltip("Saving Library"));
 
-		rbplayList.setSelected(true);
-		rbplayList.setToggleGroup(toggleGroup);
+		rbPlayList.setSelected(true);
+		rbPlayList.setToggleGroup(toggleGroup);
 		rbQueue.setToggleGroup(toggleGroup);
-		box3.getChildren().addAll(rbplayList, rbQueue);
+		box3.getChildren().addAll(rbPlayList, rbQueue);
 
 		box1.setSpacing(10);
 		box2.setSpacing(10);
@@ -150,7 +154,7 @@ public class LoadView extends BorderPane implements interfaces.IView {
 
 	/**
 	 * Get the login credentials for DB access
-	 * @return
+	 * @return the login credentials
 	 */
 	public LoginCredentials getLogin(){
 		if(!cbEnableDB.isSelected()) return null;

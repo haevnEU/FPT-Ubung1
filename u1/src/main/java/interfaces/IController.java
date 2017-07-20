@@ -1,5 +1,10 @@
 package interfaces;
 
+/**
+ * This interface is used for future controller
+ *
+ * written by Nils Milewski (nimile)
+ */
 public interface IController {
 
     /**

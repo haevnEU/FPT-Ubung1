@@ -1,14 +1,16 @@
 package interfaces;
 
-import core.BinarySongList;
 import core.RawList;
-import core.SongList;
 import core.SongWrapper;
-import javafx.collections.ObservableList;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 
+/**
+ * This interface is used for future models
+ *
+ * written by Nils Milewski (nimile)
+ */
 public interface IModel extends Remote{
 
 	void skip() throws RemoteException;
@@ -20,4 +22,6 @@ public interface IModel extends Remote{
 	void addToQueue(SongWrapper song) throws RemoteException;
 	void notifySongChange(SongWrapper song) throws RemoteException;
 	RawList getRawQueue() throws RemoteException;
+	void notifyPlay() throws RemoteException;
+	void notifyPause() throws RemoteException;
 }

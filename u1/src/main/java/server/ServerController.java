@@ -1,29 +1,18 @@
 package server;
 
 import core.*;
-import javafx.collections.ListChangeListener;
 import view.*;
+import java.rmi.*;
 import interfaces.*;
-import controller.*;
 import javafx.scene.input.*;
 import javafx.scene.control.*;
 
-import java.net.MalformedURLException;
-import java.rmi.Naming;
-import java.rmi.NotBoundException;
-import java.rmi.RemoteException;
-import java.rmi.registry.LocateRegistry;
-import java.rmi.registry.Registry;
-import java.util.ArrayList;
 import java.util.List;
-
-import javafx.scene.Scene;
-import javafx.stage.Stage;
 import javafx.application.Platform;
-import javafx.scene.layout.BorderPane;
+import javafx.collections.ListChangeListener;
 
 /**
- * This class provides
+ * This class provides server functionality
  * <p>
  * Created by Nils Milewsi (nimile) on 12.07.17
  */
@@ -31,8 +20,6 @@ public final class ServerController implements interfaces.IController {
 	private ServerView view;
 	private Model model;
 	private Thread loginThread, UDPServer;
-	// TODO REPLACE ?!
-	private OwnSyncArrayList log;
 	private ServerController(){}
 
 	private List<IModel> clients;
@@ -45,7 +32,6 @@ public final class ServerController implements interfaces.IController {
 		this.model = (Model) m;
 		this.view = (ServerView) v;
 
-		log = view.logProperty();
 		view.addButtonExitClicked(this::btExitClicked);
 		view.addButtonRestartClicked(this::btRestartClicked);
 		view.addButtonStartClicked(this::btStartClicked);
@@ -85,7 +71,7 @@ public final class ServerController implements interfaces.IController {
 	}
 
 	private void btRestartClicked(MouseEvent e) {
-		log.add("[DEV NOTE]Not implemented yet!");
+		System.out.println("[DEV NOTE]Not implemented yet!");
 		if(null != loginThread && null != UDPServer){
 			// Rebind
 			try{
@@ -111,16 +97,16 @@ public final class ServerController implements interfaces.IController {
 			// 2.
 			Naming.rebind("IModel", model);
 
-			log.add("[INFO] Successfully created remote model");
+			System.out.println("[INFO] Successfully created remote model");
 
 			// 3.
 			// The TCP and UDP server are daemons
 			//      that mean they have a low priority and they are killed with quiting the application
-			loginThread = new Thread(new TCPServer(log, model, clients), "Login-Server");
+			loginThread = new Thread(new TCPServer(model, clients), "Login-Server");
 			loginThread.setDaemon(true);
 			loginThread.start();
 
-			UDPServer = new Thread(new UDPServer(log, model), "State-Server");
+			UDPServer = new Thread(new UDPServer(model), "State-Server");
 			UDPServer.setDaemon(true);
 			UDPServer.start();
 
@@ -128,7 +114,7 @@ public final class ServerController implements interfaces.IController {
 			view.setButtonStartDisable(true);
 		} catch (Exception ex) {
 			ex.printStackTrace();
-			log.add("[SYS CRIT] Server initialize failed! Server is not running well. Exception message: " +ex.getMessage());
+			System.out.println("[SYS CRIT] Server initialize failed! Server is not running well. Exception message: " +ex.getMessage());
 		}
 	}
 

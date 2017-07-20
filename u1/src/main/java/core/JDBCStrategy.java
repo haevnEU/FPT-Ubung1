@@ -8,7 +8,7 @@ import interfaces.ISong;
 import javafx.scene.control.Alert;
 
 /**
- * This class provides database access
+ * This class provides database access using JDBC
  *
  * written by Nils Milewski (nimile)
  */

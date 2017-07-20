@@ -17,6 +17,12 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import view.*;
 
+
+/**
+ * This class provides utility functionality
+ *
+ * written by Nils Milewski (nimile)
+ */
 public final class Util {
 
     /**
@@ -80,7 +86,9 @@ public final class Util {
             try {
                 String tmp = text.substring(i, i+4);
                 out.append((char)Integer.parseInt(tmp, 16));
-            } catch (NumberFormatException | IndexOutOfBoundsException e) {}
+            } catch (NumberFormatException | IndexOutOfBoundsException ex) {
+             ex.printStackTrace();
+            }
         }
         return out.toString();
     }
@@ -115,8 +123,8 @@ public final class Util {
     /**
      * Invokes any window
      * @param t which scene should be invoked, details could be seen inside view.SceneType
-     * @param model
-     * @param s
+     * @param model Model which should be used
+     * @param s Song which should be used
      */
     public static void invokeNewWindow(SceneType t, IModel model, ISong s){
 

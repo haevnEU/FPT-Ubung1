@@ -11,6 +11,11 @@ import javafx.geometry.Insets;
 import javafx.beans.value.ChangeListener;
 import applicationException.DatabaseException;
 
+/**
+ * This class provides UI for saving action
+ *
+ * Written by Nils Milewski (nimile)
+ */
 public class SaveView extends BorderPane implements IView {
 
 	private static SaveView instance;
@@ -20,7 +25,6 @@ public class SaveView extends BorderPane implements IView {
 	private PasswordField pwUsername;
 	private Button btXml, btBin, btDB, btOpenJPA;
 	private Label lbUserName, lbPW;
-	private RadioButton rbLibrary, rbQueue;
 	private ToggleGroup toggleGroup;
 
 	public static SaveView getInstance() {
@@ -51,10 +55,10 @@ public class SaveView extends BorderPane implements IView {
 		box2.getChildren().addAll(lbPW, pwUsername);
 
 		toggleGroup = new ToggleGroup();
-		rbLibrary = new RadioButton(SelectedSongList.Library.name());
+		RadioButton rbLibrary = new RadioButton(SelectedSongList.Library.name());
 		rbLibrary.setId(SelectedSongList.Library.toString());
 		rbLibrary.setTooltip(new Tooltip("Saving Library"));
-		rbQueue = new RadioButton(SelectedSongList.PlayList.name());
+		RadioButton rbQueue = new RadioButton(SelectedSongList.PlayList.name());
 		rbQueue.setId(SelectedSongList.PlayList.toString());
 
 		rbQueue.setTooltip(new Tooltip("Saving Queue"));
@@ -62,7 +66,7 @@ public class SaveView extends BorderPane implements IView {
 		rbLibrary.setSelected(true);
 		rbLibrary.setToggleGroup(toggleGroup);
 		rbQueue.setToggleGroup(toggleGroup);
-		box3.getChildren().addAll(rbLibrary,rbQueue);
+		box3.getChildren().addAll(rbLibrary, rbQueue);
 
 		box1.setSpacing(10);
 		box2.setSpacing(10);

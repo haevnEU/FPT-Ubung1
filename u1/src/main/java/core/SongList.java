@@ -31,9 +31,9 @@ public class SongList extends ModifiableObservableListBase<ISong> implements ISo
 
     /**
      * Adds a song into ISongList
-     * @param s
-     * @return
-     * @throws RemoteException
+     * @param s Song which should be added
+     * @return true if it could be added
+     * @throws RemoteException If any remote exception occurred
      */
     @Override
     public boolean addSong(ISong s) throws RemoteException {
@@ -48,9 +48,9 @@ public class SongList extends ModifiableObservableListBase<ISong> implements ISo
 
     /**
      * Deletes a song from the ISongList
-     * @param s
-     * @return
-     * @throws RemoteException
+     * @param s Song which should be deleted
+     * @return True if its deleted
+     * @throws RemoteException If any remote exception occurred
      */
     @Override
     public boolean deleteSong(ISong s) throws RemoteException {
@@ -61,7 +61,7 @@ public class SongList extends ModifiableObservableListBase<ISong> implements ISo
      * set current ISongList
      * <p><i>if there is a ISongList this will be overwritten </i></p>
      * @param s new ISongList
-     * @throws RemoteException
+     * @throws RemoteException If any remote exception occurred
      */
     @Override
     public void setList(ArrayList<ISong> s) throws RemoteException {
@@ -197,17 +197,5 @@ public class SongList extends ModifiableObservableListBase<ISong> implements ISo
         return songs.remove(index);
     }
 
-    /**
-     * Get the current songList as formated String
-     * @return
-     */
-    public String getSongList(SelectedSongList selectedSongList){
-        StringBuilder ret = new StringBuilder();
-        ret.append("\"" + selectedSongList + "\":[");
-        for(ISong s : songs){
-            ret.append("\""+s.getTitle()+"\",");
-        }
-        ret.append("]");
-        return ret.toString();
-    }
+
 }

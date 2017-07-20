@@ -6,6 +6,11 @@ import core.Model;
 import javafx.scene.input.MouseEvent;
 import view.DeleteView;
 
+/**
+ * This class provides functionality for the delete view
+ *
+ * written by Nils Milewski (nimile)
+ */
 public class DeleteController implements IController{
 
     private DeleteView view;
@@ -19,10 +24,10 @@ public class DeleteController implements IController{
 
         this.view.addButtonDeleteEventHandler(e -> btRemoveClickEventHandler());
         this.view.addButtonDeleteAllEventHandler(e -> btRemoveAllEventHandler());
-        this.view.addListViewClickedEventHandler(e -> lvItemsClicked(e));
+        this.view.addListViewClickedEventHandler(this::lvItemsClicked);
     }
 
-    private void lvItemsClicked(MouseEvent e) {
+	private void lvItemsClicked(MouseEvent e) {
         if(e.getClickCount() == 2) btRemoveClickEventHandler();
     }
 

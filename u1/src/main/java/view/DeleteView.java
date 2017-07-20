@@ -11,6 +11,8 @@ import javafx.geometry.Insets;
 
 /**
  * This class provides UI for delete action
+ *
+ * Written by Nils Milewski (nimile)
  */
 public class DeleteView extends BorderPane implements interfaces.IView {
 

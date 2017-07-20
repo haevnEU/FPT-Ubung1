@@ -7,7 +7,9 @@ import javafx.stage.FileChooser;
 import applicationException.RichException;
 
 /**
- * THis class is used to open a single instance of loading file window
+ * This class is used to open a single instance of loading file window
+ *
+ * Written by Nils Milewski (nimile)
  */
 public class FileViewer implements interfaces.IView {
 
@@ -18,15 +20,13 @@ public class FileViewer implements interfaces.IView {
     /**
      * Invokes a new multiple file selection window
      *
-     * @param description Describes the File format (MP3 File, Text file, etc)
-     * @param extension   Describes the extension (*.mp3, *.txt, etc)
      * @return selected files as a List
      */
-    public static List<File> getFiles(String description, String extension) {
+    public static List<File> getFiles() {
         List<File> selectedFiles = null;
         try {
             FileChooser fc = new FileChooser();
-            fc.getExtensionFilters().addAll(new FileChooser.ExtensionFilter(description, extension));
+            fc.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("MP3 Files", "*.mp3"));
             selectedFiles = fc.showOpenMultipleDialog(null);
 
         } catch (Exception ex) {
@@ -72,6 +72,4 @@ public class FileViewer implements interfaces.IView {
         }
         return file;
     }
-
-
 }

@@ -6,8 +6,8 @@ import javafx.beans.value.ObservableValue;
 import javax.persistence.*;
 
 /**
- * This class provides
- * <p>
+ * This class is a temporary used class to stroe songs in a DB using OpenJPA
+ *
  * Created by Nils Milewsi (nimile) on 19.06.17
  */
 @Entity

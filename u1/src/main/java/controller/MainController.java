@@ -1,5 +1,6 @@
 package controller;
 
+import javafx.event.ActionEvent;
 import view.*;
 import core.*;
 import interfaces.*;
@@ -12,6 +13,11 @@ import javafx.scene.layout.BorderPane;
 import applicationException.RichException;
 import javafx.beans.property.SimpleBooleanProperty;
 
+/**
+ * This class provides functionality for the main view
+ *
+ * written by Nils Milewski (nimile)
+ */
 public class MainController implements IController{
 
     private MainView view;
@@ -23,17 +29,16 @@ public class MainController implements IController{
         this.model = (Model)m;
         this.view = (MainView)v;
 
-        this.view.addLoadFilesClickEventHandler(e -> menuItemLoadEventHandler());
-        this.view.addDetailClickEventHandler(e -> menuItemDetailEventHandler());
-        this.view.DeleteClickEventHandler(e -> menuItemDeleteEventHandle());
+        this.view.addLoadFilesClickEventHandler(this::menuItemLoadEventHandler);
+        this.view.addDetailClickEventHandler(this::menuItemDetailEventHandler);
+        this.view.DeleteClickEventHandler(this::menuItemDeleteEventHandle);
 
 
-        this.view.addButtonAllEventHandler(e -> addAll());
-
-        this.view.addButtonPlayPauseEventHandler(e -> playPause());
-        this.view.addButtonSkipEventHandler(e-> skipSong());
+        this.view.addButtonAllEventHandler(this::addAll);
+        this.view.addButtonPlayPauseEventHandler(this::playPause);
+        this.view.addButtonSkipEventHandler(this::skipSong);
+        this.view.addListViewAllSongClickEventHandler(this::listViewAllSongClicked);
 		this.view.addButtonSaveEventHandler( e-> Util.invokeNewWindow(SceneType.SaveView, model));
-        this.view.addListViewAllSongClickEventHandler((e) -> listViewAllSongClicked(e));
 
         this.view.setAllSongs(model.getLibrary());
         this.view.setQueue(model.getQueue());
@@ -44,8 +49,7 @@ public class MainController implements IController{
 		model.addEndOfMediaListener((observable, oldValue, newValue) -> view.setSongLength(model.getSongLength()));
 
 	}
-
-    /**
+	/**
      * EventHandler for ListView click
      * @param e Object which triggered the event
      */
@@ -68,27 +72,27 @@ public class MainController implements IController{
     /**
      * Loads any directory
      */
-    private void menuItemLoadEventHandler() {
+    private void menuItemLoadEventHandler(ActionEvent actionEvent) {
 		Util.invokeNewWindow(SceneType.LoadView, model);
     }
 
     /**
      * EventHandler for DetailView
      */
-    private void menuItemDetailEventHandler() {Util.invokeNewWindow(SceneType.DetailView, model, this.view.getSelectedSong());
+    private void menuItemDetailEventHandler(ActionEvent actionEvent) {Util.invokeNewWindow(SceneType.DetailView, model, this.view.getSelectedSong());
 	 }
 
     /**
      * EventHandler for opening DeleteView
      */
-    private void menuItemDeleteEventHandle() {
+    private void menuItemDeleteEventHandle(ActionEvent actionEvent) {
         Util.invokeNewWindow(SceneType.DeleteView, model);
     }
 
     /**
      * This method toggles play and pause
      */
-    private void playPause(){
+    private void playPause(ActionEvent actionEvent){
 		model.togglePlayPause();
 		view.setSongLength(model.getSongLength());
     }
@@ -96,7 +100,7 @@ public class MainController implements IController{
 	/**
 	 * Adds every son from AllSongs to queue
 	 */
-	private void addAll(){
+	private void addAll(ActionEvent actionEvent){
         try {
             model.getQueue().addAll(model.getLibrary().getList());
             initPlayer();
@@ -110,7 +114,7 @@ public class MainController implements IController{
 	/**
 	 * Skips current song
 	 */
-	private  void skipSong(){ model.skip(); }
+	private  void skipSong(ActionEvent actionEvent){ model.skip(); }
 
 	/**
 	 * Invokes any window

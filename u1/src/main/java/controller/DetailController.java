@@ -6,6 +6,12 @@ import view.DetailView;
 
 import java.rmi.RemoteException;
 
+
+/**
+ * This class provides functionality for the detail view
+ *
+ * written by Nils Milewski (nimile)
+ */
 public class DetailController implements interfaces.IController {
 
     private Model model;
@@ -24,6 +30,10 @@ public class DetailController implements interfaces.IController {
       }
 
 
+    /**
+     * Initialize the details
+     * @param song Song which should be displayed
+     */
     public void init(Song song){
         this.song = song;
         view.initUI(song);

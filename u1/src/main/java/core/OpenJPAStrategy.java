@@ -66,7 +66,7 @@ public class OpenJPAStrategy implements interfaces.ISerializableStrategy {
 	/**
 	 * Opens a connection
 	 */
-	public void open(){
+	private void open(){
 		System.out.println("[INFO] Opening DB using JPA");
 		fac = Persistence.createEntityManagerFactory("openjpa", System.getProperties());
 
@@ -86,7 +86,7 @@ public class OpenJPAStrategy implements interfaces.ISerializableStrategy {
 			types.add(Library.class);
 
 			if (!types.isEmpty()) {
-				StringBuffer buf = new StringBuffer();
+				StringBuilder buf = new StringBuilder();
 				for (Class<?> c : types) {
 					if (buf.length() > 0)
 						buf.append(";");
@@ -150,7 +150,7 @@ public class OpenJPAStrategy implements interfaces.ISerializableStrategy {
 	/**
 	 * Closes the connection
 	 */
-	public void close(){
+	private void close(){
 		System.out.println("[INFO] Closing DB using JPA");
 		if(e != null && e.isOpen()) e.close();
 		if(fac != null && fac.isOpen()) fac.close();

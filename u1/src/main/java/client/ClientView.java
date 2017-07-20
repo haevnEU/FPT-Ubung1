@@ -18,7 +18,6 @@ import javafx.event.EventHandler;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.property.SimpleBooleanProperty;
-import sun.jvm.hotspot.debugger.cdbg.CVAttributes;
 
 
 /**
@@ -128,12 +127,8 @@ public class ClientView extends VBox implements interfaces.IView {
 		try {
 			stub = (IModel) Naming.lookup("IModel");
 			rmiInitialized.setValue(true);
-		} catch (RemoteException e) {
-			e.printStackTrace();
-		} catch (NotBoundException e) {
-			e.printStackTrace();
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
+		} catch (RemoteException | NotBoundException | MalformedURLException ex) {
+			ex.printStackTrace();
 		}
 	}
 
@@ -192,14 +187,9 @@ public class ClientView extends VBox implements interfaces.IView {
 		rmiInitialized.addListener(event);
 	}
 
-	public void updateBtTogglePlayPauseText(){
-
-		try {
-			if(stub.getPlaying()) btPlayPause.setText("Pause");
-			else btPlayPause.setText("Play");
-		} catch (RemoteException e) {
-			e.printStackTrace();
-		}
+	public void updateBtTogglePlayPauseText(boolean b) {
+		if (b) btPlayPause.setText("Pause");
+		else btPlayPause.setText("Play");
 	}
 
 	private void expand(MouseEvent e) {
@@ -215,14 +205,26 @@ public class ClientView extends VBox implements interfaces.IView {
 		lvQueue.setVisible(expanded);
 	}
 
+	/**
+	 * Returns the stub
+	 * @return stub from RMI
+	 */
 	IModel getStub() {
 		return stub;
 	}
 
+	/**
+	 * Returns the selected library song
+	 * @return Library song
+	 */
 	SongWrapper getSelectedLibrarySong() {
 		return new SongWrapper(lvLibrary.getSelectionModel().getSelectedItem());
 	}
 
+	/**
+	 * Set queue items
+	 * @param list List which should be used to set
+	 */
 	void setItems(SongList list){
 		Platform.runLater(() -> {
 			lvQueue.getItems().clear();

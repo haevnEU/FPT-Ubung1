@@ -1,29 +1,20 @@
 
-import client.ClientController;
-import client.ClientView;
+import view.*;
 import core.*;
+import server.*;
+import client.*;
 import java.io.*;
-import java.net.MalformedURLException;
-import java.rmi.Naming;
-import java.rmi.NotBoundException;
-import java.rmi.RemoteException;
-import java.util.ArrayList;
-import java.util.List;
+import java.rmi.*;
+import java.util.*;
+import javafx.application.*;
+import javafx.scene.input.*;
 
 import interfaces.IModel;
-import javafx.scene.input.*;
-import javafx.application.*;
-
-import server.ServerController;
-import server.ServerView;
-import sun.jvm.hotspot.debugger.cdbg.CVAttributes;
-import view.MainView;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import controller.MainController;
-import view.SceneType;
+import java.net.MalformedURLException;
 
-import javax.print.attribute.standard.MediaSize;
 
 public class Main extends Application {
 
@@ -44,31 +35,37 @@ public class Main extends Application {
 				    try {
 					    String file = s.substring(s.indexOf(":") + 1, s.length());
 					    File f = new File(file);
-					    if (!f.exists()) f.createNewFile();
+					    if (!f.createNewFile()) return;
 					    FileOutputStream fos = new FileOutputStream(f);
 					    System.setErr(new PrintStream(fos));
-				    }catch (IOException ex){}
+				    }catch (IOException ex){
+				    	ex.printStackTrace();
+				    }
 			    }
 			    // Redirect warnings
 			    else if(s.toUpperCase().contains("-RWARN:")){
 				    try {
 					    String file = s.substring(s.indexOf(":") + 1, s.length());
 					    File f = new File(file);
-					    if (!f.exists()) f.createNewFile();
+					    if (!f.createNewFile()) return;
 					    FileOutputStream fos = new FileOutputStream(f);
 					    System.setOut(new PrintStream(fos));
-				    }catch (IOException ex){}
+				    }catch (IOException ex){
+				    	ex.printStackTrace();
+				    }
 			    }
 			    // Redirect warnings and critical exception
 			    else if(s.toUpperCase().contains("-R:")){
 				    try {
 					    String file = s.substring(s.indexOf(":") + 1, s.length());
 					    File f = new File(file);
-					    if (!f.exists()) f.createNewFile();
+					    if (!f.createNewFile()) return;
 					    FileOutputStream fos = new FileOutputStream(f);
 					    System.setErr(new PrintStream(fos));
 					    System.setOut(new PrintStream(fos));
-				    }catch (IOException ex){}
+				    }catch (IOException ex){
+				    	ex.printStackTrace();
+				    }
 			    }
 			    // enables own db functionality
 			    else if(s.toUpperCase().contains("-OWNDBPATH")){
@@ -149,19 +146,13 @@ public class Main extends Application {
 					    Naming.unbind(s);
 					    System.out.println("[INFO] Unbind: " + s);
 				    }
-			    } catch (RemoteException e) {
-				    e.printStackTrace();
+			    } catch (RemoteException | NotBoundException | MalformedURLException ex) {
+				    ex.printStackTrace();
 
-			    } catch (NotBoundException e) {
-				    e.printStackTrace();
-			    } catch (MalformedURLException e) {
-				    e.printStackTrace();
 			    }
 		    }
-	    } catch (MalformedURLException e) {
-		    e.printStackTrace();
-	    } catch (RemoteException e) {
-		    e.printStackTrace();
+	    } catch (MalformedURLException | RemoteException ex) {
+		    ex.printStackTrace();
 	    }
 	    Platform.exit();
 	    System.exit(0);

@@ -10,6 +10,8 @@ import javafx.beans.value.ChangeListener;
 
 /**
  * This class provides playable logic
+ *
+ * Written by Nils Milewski (nimile)
  */
 public class Player implements interfaces.IPlayer {
 
@@ -19,7 +21,6 @@ public class Player implements interfaces.IPlayer {
 	private boolean isInitialized = false;
 	private SimpleBooleanProperty isPlaying = new SimpleBooleanProperty(false);
 	private SimpleBooleanProperty endOfTrack = new SimpleBooleanProperty(false);
-	private ChangeListener mediaPlayerChangeTime;
 	private RMIBroadcaster rmiBroadcaster;
 
 	// Singleton usage because there should never exists two player
@@ -48,9 +49,9 @@ public class Player implements interfaces.IPlayer {
 
 		// Initialize or reinitialize MediaPlayer
 		mediaPlayer = new MediaPlayer(media);
-		mediaPlayer.setOnEndOfMedia(() -> endOfMedia());
-		mediaPlayer.setOnPlaying(() -> setOnPlaying());
-		mediaPlayer.setOnPaused(() -> setOnPaused());
+		mediaPlayer.setOnEndOfMedia(this::endOfMedia);
+		mediaPlayer.setOnPlaying(this::setOnPlaying);
+		mediaPlayer.setOnPaused(this::setOnPaused);
 	}
 
 	/**
@@ -82,7 +83,6 @@ public class Player implements interfaces.IPlayer {
 	 * @param e Method which should be called
 	 */
 	void addTimeChangeListener(ChangeListener<Duration> e){
-	    mediaPlayerChangeTime = e;
 		mediaPlayer.currentTimeProperty().addListener(e);
 	}
 
@@ -181,7 +181,7 @@ public class Player implements interfaces.IPlayer {
 	}
 
 	public double getTime() {
-		if(null == mediaPlayer) return 0000;
+		if(null == mediaPlayer) return 0;
 		return mediaPlayer.getCurrentTime().toSeconds();
 	}
 }

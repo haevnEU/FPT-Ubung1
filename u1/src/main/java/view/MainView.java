@@ -14,6 +14,8 @@ import javafx.beans.property.SimpleBooleanProperty;
 
 /**
  * This class provides our MainWindow
+ *
+ * Written by Nils Milewski (nimile)
  */
 public class MainView extends BorderPane implements interfaces.IView{
 

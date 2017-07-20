@@ -8,10 +8,16 @@ import core.Song;
 import javafx.geometry.Insets;
 import javafx.scene.image.ImageView;
 
+/**
+ * This class provides UI for detail action
+ *
+ * Written by Nils Milewski (nimile)
+ */
 public class DetailView extends GridPane implements interfaces.IView{
 
-    private TextField tbTitle, tbInterpret, tbAlbum, tbID, tbPath, tbYear;
-    private Label lbTitle, lbAlbum, lbInterpret, lbID, lbPath, lbYear;
+    private TextField tbTitle;
+    private TextField tbInterpret;
+    private TextField tbAlbum;
 
     private Button btCommit;
 
@@ -22,12 +28,12 @@ public class DetailView extends GridPane implements interfaces.IView{
         setHgap(10);
         setVgap(10);
 
-        lbTitle = new Label("Title: ");
-        lbAlbum = new Label("Album: ");
-        lbInterpret = new Label("Artist: ");
-        lbID = new Label("ID: ");
-        lbPath = new Label("Path: ");
-        lbYear = new Label("Year: ");
+        Label lbTitle = new Label("Title: ");
+        Label lbAlbum = new Label("Album: ");
+        Label lbInterpret = new Label("Artist: ");
+        Label lbID = new Label("ID: ");
+        Label lbPath = new Label("Path: ");
+        Label lbYear = new Label("Year: ");
 
         tbTitle = new TextField();
         // alt tbTitle.setText(song.getTitleProperty().getValue());
@@ -40,14 +46,14 @@ public class DetailView extends GridPane implements interfaces.IView{
         tbInterpret = new TextField();
         tbInterpret.setText(song.getInterpret());
 
-        tbID = new TextField();
+        TextField tbID = new TextField();
         tbID.setText(song.getId()+"");
         tbID.editableProperty().setValue(false);
 
-        tbPath = new TextField();
+        TextField tbPath = new TextField();
         tbPath.setText(song.getPath());
 
-        tbYear = new TextField();
+        TextField tbYear = new TextField();
 
         // Check if the ISong has a cover, if not we skip this part
         // => this part is enclosed from the rest

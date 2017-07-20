@@ -1,25 +1,10 @@
 package core;
-
-import controller.DeleteController;
-import controller.DetailController;
-import controller.LoadController;
-import controller.SaveController;
-import interfaces.IController;
-import interfaces.IModel;
-import interfaces.ISong;
-import interfaces.IView;
-import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.scene.Scene;
-import javafx.scene.input.KeyCode;
-import javafx.scene.layout.BorderPane;
-import javafx.stage.Stage;
-import view.*;
 
 import static java.lang.System.exit;
 
 /**
- * This class provides
+ * This class provides console variables
  * <p>
  * Created by Nils Milewsi (nimile) on 17.07.17
  */
@@ -31,10 +16,14 @@ public final class CVars {
 		String variable = "";
 		String value = "";
 		try {
+			if(command.length() < 0) return;
+			if(!command.contains(":")) command+=":";
 			variable = command.substring(0, command.indexOf(":"));
 			value = command.substring(command.indexOf(":") + 1, command.length());
-			System.out.println(variable + " " + value);
-		}catch(Exception ex){}
+			}catch(Exception ex){
+			ex.printStackTrace();
+		}
+
 		switch (variable.toUpperCase()) {
 			case "LOGINPORT":
 				LOGIN_PORT = Integer.parseInt(value);
@@ -53,9 +42,10 @@ public final class CVars {
 				break;
 			case "EXIT":
 				Platform.exit();
-				exit(Integer.parseInt(value));
+				exit(0);
 				break;
 			default:
+				System.out.println("Entered: " + command);
 				System.out.println("Invalid CVar, usage <CVar>:<new value>, " +
 						"possible commands: LOGINPORT:5020, TIMEPORT:5000, RMIPORT:1099, SERVERIP:localhost, EXIT:0");
 				break;
